@@ -253,3 +253,8 @@ input:checked + .slider:before {
     font-size: 80%;
     margin-bottom: 10px;
 }
+.adminarea {
+    background-color: #edddddd0;
+    border: 1px solid #a02020;
+    padding: 20px;
+}

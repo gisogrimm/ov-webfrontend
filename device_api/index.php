@@ -1,0 +1,202 @@
+<?php
+
+include '../php/ovbox.inc';
+
+$user = getenv('ovboxuser');
+
+if (isset($_SERVER['REMOTE_USER']))
+    $user = $_SERVER['REMOTE_USER'];
+
+if( isset($_SERVER['REDIRECT_REMOTE_USER']))
+    $user = $_SERVER['REDIRECT_REMOTE_USER'];
+
+// require a valid user:
+if( empty($user) )
+    die();
+
+// device update:
+if ($user == 'device') {
+    // get exclusive lock of device database:
+    flock($fp_dev, LOCK_EX );
+    $device = '';
+    if( isset($_GET['dev']) ){
+        $device = $_GET['dev'];
+        if( !empty($device) ){
+            $devhash = '';
+            if( isset($_GET['hash']) )
+                $devhash = $_GET['hash'];
+            $host = '';
+            if( isset($_GET['host']) )
+                $host = $_GET['host'];
+            get_tascar_cfg( $device, $devhash );
+            // touch device file:
+            $dprop = get_properties($device,'device');
+            if( empty($dprop['inittime']) )
+                modify_device_prop($device,'inittime',date(DATE_ATOM));
+            if( (time()-$dprop['access']) > 30 )
+                modify_device_prop( $device, 'onlineaccess', time() );
+            modify_device_prop( $device, 'access', time() );
+            modify_device_prop( $device, 'host', $host );
+        }
+    }
+    if( isset($_POST['dev']) ){
+        $device = $_POST['dev'];
+        if( !empty($device) ){
+            $devhash = '';
+            if( isset($_GET['hash']) )
+                $devhash = $_GET['hash'];
+            $host = '';
+            if( isset($_GET['host']) )
+                $host = $_GET['host'];
+            get_tascar_cfg( $device, $devhash );
+            // touch device file:
+            $dprop = get_properties($device,'device');
+            if( empty($dprop['inittime']) )
+                modify_device_prop($device,'inittime',date(DATE_ATOM));
+            if( (time()-$dprop['access']) > 30 )
+                modify_device_prop( $device, 'onlineaccess', time() );
+            modify_device_prop( $device, 'access', time() );
+            modify_device_prop( $device, 'host', $host );
+        }
+    }
+    if( isset($_GET['devinit']) ){
+        $device = $_GET['devinit'];
+        if( !empty($device) ){
+            $dprop = get_properties($device,'device');
+            echo json_encode( $dprop );
+            if( empty($dprop['inittime']) )
+                modify_device_prop($device,'inittime',date(DATE_ATOM));
+            /* PUT data comes in on the stdin stream */
+            $putdata = fopen("php://input", "r");
+            $jsdev = '';
+            while ($data = fread($putdata,1024))
+                $jsdev = $jsdev . $data;
+            fclose($putdata);
+            $jsdev = json_decode($jsdev,true);
+            modify_device_prop( $device, 'alsadevs', $jsdev );
+        }
+    }
+    if( isset($_GET['ovclientmsg']) ){
+        $device = $_GET['ovclientmsg'];
+        if( !empty($device) ){
+            $putdata = fopen("php://input", "r");
+            $devmsg = '';
+            while ($data = fread($putdata,1024))
+                $devmsg = $devmsg . $data;
+            fclose($putdata);
+            modify_device_prop( $device, 'message', $devmsg );
+        }
+    }
+    if( isset($_GET['ovclient']) ){
+        $host = '';
+        if( isset($_GET['host']) )
+            $host = $_GET['host'];
+        $device = $_GET['ovclient'];
+        if( !empty($device) ){
+            $devhash = '';
+            if( isset($_GET['hash']) )
+                $devhash = $_GET['hash'];
+            get_room_session( $device, $devhash );
+            $putdata = fopen("php://input", "r");
+            $jsdev = '';
+            while ($data = fread($putdata,1024))
+                $jsdev = $jsdev . $data;
+            fclose($putdata);
+            $jsdev = json_decode($jsdev,true);
+            $dprop = get_properties($device,'device');
+            if( empty($dprop['inittime']) )
+                modify_device_prop($device,'inittime',date(DATE_ATOM));
+            if( (time()-$dprop['access']) > 30 )
+                modify_device_prop( $device, 'onlineaccess', time() );
+            modify_device_prop( $device, 'access', time() );
+            modify_device_prop( $device, 'alsadevs', $jsdev );
+            modify_device_prop( $device, 'host', $host );
+        }
+    }
+    // update an ovclient:
+    if( isset($_GET['ovclient2']) ){
+        $host = '';
+        if( isset($_GET['host']) )
+            $host = $_GET['host'];
+        $device = $_GET['ovclient2'];
+        if( !empty($device) ){
+            $devhash = '';
+            if( isset($_GET['hash']) )
+                $devhash = $_GET['hash'];
+            get_room_session( $device, $devhash );
+            $putdata = fopen("php://input", "r");
+            $jsmsg = '';
+            while ($data = fread($putdata,1024))
+                $jsmsg = $jsmsg . $data;
+            fclose($putdata);
+            $jsmsg = json_decode($jsmsg,true);
+            $dprop = get_properties($device,'device');
+            if( empty($dprop['inittime']) )
+                modify_device_prop($device,'inittime',date(DATE_ATOM));
+            if( (time()-$dprop['access']) > 30 )
+                modify_device_prop( $device, 'onlineaccess', time() );
+            modify_device_prop( $device, 'access', time() );
+            modify_device_prop( $device, 'alsadevs', $jsmsg['alsadevs'] );
+            modify_device_prop( $device, 'bandwidth', $jsmsg['bandwidth'] );
+            if( isset($jsmsg['cpuload']) )
+                modify_device_prop( $device, 'cpuload', $jsmsg['cpuload'] );
+            else
+                modify_device_prop( $device, 'cpuload', 0 );
+            if( isset($jsmsg['localip']) )
+                modify_device_prop( $device, 'localip', $jsmsg['localip'] );
+            else
+                modify_device_prop( $device, 'localip', '' );
+            if( isset($jsmsg['hwinputchannels']) )
+                modify_device_prop( $device, 'hwinputchannels', $jsmsg['hwinputchannels'] );
+            else
+                modify_device_prop( $device, 'hwinputchannels', '' );
+            modify_device_prop( $device, 'host', $host );
+            if( isset($jsmsg['isovbox']) )
+                modify_device_prop( $device, 'isovbox', $jsmsg['isovbox'] );
+            else
+                modify_device_prop( $device, 'isovbox', true );
+        }
+    }
+    // register a device:
+    if( isset($_GET['setver']) && isset($_GET['ver'])){
+        $device = $_GET['setver'];
+        if( !empty($_GET['ver']) )
+            modify_device_prop($device,'version', $_GET['ver']);
+    }
+    // unlock database:
+    flock($fp_dev, LOCK_UN );
+    die();
+}
+
+// room update:
+if ($user == 'room') {
+    $clientip = get_client_ip();
+    // get exclusive database lock:
+    flock($fp_dev, LOCK_EX );
+    if( isset($_GET['port']) && isset($_GET['name']) && isset($_GET['pin']) ) {
+        $group = '';
+        if( isset($_GET['grp']) ){
+            if( in_array( $_GET['grp'], list_groups()))
+                $group = $_GET['grp'];
+        }
+        // update database entry:
+        if( isset($_GET['srvjit']) )
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $_GET['srvjit'] );
+        else
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group );
+    }
+    if( isset($_GET['latreport']) && isset($_GET['src']) && isset($_GET['dest']) && isset($_GET['lat']) && isset($_GET['jit']) ){
+        // update latency report from room service:
+        update_room_lat(
+            $clientip,
+            $_GET['latreport'],
+            $_GET['src'],
+            $_GET['dest'],
+            $_GET['lat'],
+            $_GET['jit']);
+    }
+    flock($fp_dev, LOCK_UN );
+    die();
+}
+
+?>

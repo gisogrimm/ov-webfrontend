@@ -10,8 +10,6 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 
 include '../php/ovbox.inc';
 
-flock($fp_dev, LOCK_EX );
-
 if( isset($_GET['activate']) ){
     flock($fp_user, LOCK_EX );
     $urlgroup = '';
@@ -70,11 +68,11 @@ if( !empty($urlgroup) ){
     $gprop = get_properties( $urlgroup, 'group' );
     $style = $gprop['style'];
 }
+
 if( !isset($_SESSION['user']) ){
     if( isset($_POST['forgotpw']) ){
         // we are registering a new user:
         print_head('',$style);
-        flock($fp_dev, LOCK_UN );
         echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
         $msg = '';
         flock($fp_user, LOCK_EX );
@@ -118,7 +116,6 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
     if( isset($_POST['register']) ){
         // we are registering a new user:
         print_head('',$style);
-        flock($fp_dev, LOCK_UN );
         echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
         $msg = '';
         flock($fp_user, LOCK_EX );
@@ -146,7 +143,6 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
     flock($fp_authfail, LOCK_EX );
     if( !auth($_POST['username'], $_POST['password']) ) {
         flock($fp_user, LOCK_UN );
-        flock($fp_dev, LOCK_UN );
         sleep( 1 );
         session_abort();
         header( "Location: ?grp=".grouphash($urlgroup)."&fail=" );
@@ -190,6 +186,7 @@ if( isset($_POST['terminateaccount']) ){
 }
 
 // now it is safe to do what we want:
+flock($fp_dev, LOCK_EX );
 
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );
@@ -468,6 +465,15 @@ if( isset($_POST['updatepassword']) )
 modify_user_prop( $user, 'access', time() );
 
 print_head( $user, $style );
+
+// admin area:
+$site = get_properties('site','config');
+$isadmin = in_array($user,$site['admin']);
+if( $isadmin ){
+    echo '<p class="adminarea">';
+    echo '<a href="/?">Home</a> - admin <a href="admin.php?adm=devices">devices</a> <a href="admin.php?adm=rooms">rooms</a> <a href="admin.php?adm=users">users</a> <a href="admin.php?adm=groups">groups</a>';
+    echo '</p>';
+}
 
 if( !empty($msg) ){
     echo '<div class="deverror">'.$msg.'</div>';

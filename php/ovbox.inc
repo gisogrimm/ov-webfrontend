@@ -15,6 +15,7 @@ function defaults( $type )
   );
   $defaults['config'] = array(
     'mail'=>'',
+    'admin'=>array(),
   );
   $defaults['style'] = array(
     'credits'=>'',
@@ -263,11 +264,11 @@ function print_head( $user = "", $style = "" )
     echo ' - ' . $user;
   }
   echo '</title><style>';
-  if( file_exists( '../www/ovbox.css' ) ){
-    echo file_get_contents( '../www/ovbox.css' );
+  if( file_exists( '../css/ovbox.css' ) ){
+    echo file_get_contents( '../css/ovbox.css' );
   }
-  if( (!empty($css)) && file_exists( '../www/'.$css ) ){
-    echo file_get_contents( '../www/'.$css );
+  if( (!empty($css)) && file_exists( '../css/'.$css ) ){
+    echo file_get_contents( '../css/'.$css );
   }
   echo '</style>';
   echo '<script>'.file_get_contents('../js/ovbox.js').'</script>'."\n";
@@ -1672,6 +1673,7 @@ function html_show_user( $user, $device, $devprop )
   $uprop = get_properties( $user, 'user' );
   $doc = new DOMDocument('1.0');
   $root = $doc->appendChild($doc->createElement('div'));
+  $root->setAttribute('class','userarea');
   $p = $root->appendChild($doc->createElement('p'));
   $devspan = $p->appendChild($doc->createElement('span'));
   $devspan->setAttribute('id','deviceuser');
