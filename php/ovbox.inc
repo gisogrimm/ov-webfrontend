@@ -1441,6 +1441,27 @@ function html_admin_rooms()
 
 function html_admin_users()
 {
+  $fname = '../db/ovpasswd';
+  $pws = array();
+  if( file_exists( $fname ) )
+    $pws = json_decode( file_get_contents( $fname ), true );
+  $oldusers = array();
+  $fname = '../ovboxusers';
+  if( file_exists( $fname ) ){
+    $fcontent = file_get_contents( $fname );
+    $lines = explode("\n",$fcontent);
+    foreach( $lines as $line ){
+      $linet = explode("#",trim($line));
+      $line = $linet[0];
+      if( !empty($line) ){
+        $linet = explode(":",trim($line));
+        if( !empty($linet[0]) ){
+          if( ($linet[0]!='room') && ($linet[0]!='device') && ($linet[0]!='admin'))
+            $oldusers[] = $linet[0];
+        }
+      }
+    }
+  }
   $users = list_users();
   $udb = array();
   foreach($users as $us){
@@ -1448,6 +1469,8 @@ function html_admin_users()
     $uprop['owneddev'] = owned_devices( $us );
     $uprop['numdev'] = count($uprop['owneddev']);
     $uprop['numgrp'] = count(list_groups( $us ));
+    $uprop['newdb'] = array_key_exists($us,$pws);
+    $uprop['olddb'] = in_array($us,$oldusers);
     $uprop['uname'] = $us;
     $devage = 3600*24*365*40*2;
     foreach($uprop['owneddev'] as $d=>$dprop){
@@ -1512,6 +1535,13 @@ function html_admin_users()
       }
     }
     $td = $tr->appendChild($doc->createElement('td'));
+    if( !$uprop['newdb'] ){
+      $td->setAttribute('style','background-color: #aaaaff;');
+    }else{
+      if( $uprop['olddb'] ){
+        $td->setAttribute('style','background-color: #ff88aa;');
+      }
+    }
     $td->appendChild($doc->createTextNode($us));
     $td = $tr->appendChild($doc->createElement('td'));
     $td->appendChild($doc->createTextNode(numage2str($uprop['age'])));
@@ -1734,6 +1764,10 @@ function html_show_user( $user, $device, $devprop )
   $el->setAttribute('value',$uprop['mail']);
   $el = $form->appendChild($doc->createElement('button'));
   $el->appendChild($doc->createTextNode('Save'));
+  $el = $inf->appendChild($doc->createElement('input'));
+  $el->setAttribute('value','reset password');
+  $el->setAttribute('type','button');
+  $el->setAttribute('onclick','location.href=\'?mypwreset\';');
   $inf->appendChild($doc->createElement('hr'));
   $el = $inf->appendChild($doc->createElement('div'));
   $el->setAttribute('class','devproptitle');
@@ -1893,7 +1927,7 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
   $el = $div->appendChild($doc->createElement('select'));
   $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('onchange','document.getElementById(\'jackrate\').value=this.value');
+  $el->setAttribute('onchange','update_jack_rate( this.value );');
   $opts = array('16000','22050','24000','32000','44100','48000');
   foreach($opts as $o){
     $opt = $el->appendChild($doc->createElement('option'));
@@ -2393,7 +2427,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
-  if( $devprop['jackplugdev'] && ($devprop['jackdevice'] != 'highest') && ($devprop['jackdevice'] != 'manual'))
+  if( $devprop['jackplugdev'] && (($devprop['jackdevice'] != 'highest')||(version_compare("0.5.11",$devprop['version'])<0)) && ($devprop['jackdevice'] != 'manual'))
     $audio['device'] = 'plug'.$devprop['jackdevice'];
   else
     $audio['device'] = $devprop['jackdevice'];

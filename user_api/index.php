@@ -188,6 +188,10 @@ if( isset($_POST['terminateaccount']) ){
 // now it is safe to do what we want:
 flock($fp_dev, LOCK_EX );
 
+if( isset($_GET['mypwreset']) ){
+    modify_user_prop( $user, 'validpw', false);
+}
+
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );
     header( "Location: /" );

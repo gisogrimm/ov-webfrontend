@@ -534,9 +534,10 @@ function update_deviceuser( user, device, owned_devices )
     var webm = document.getElementById('webmixerlink');
     if( webm ){
 	while( webm.firstChild ) webm.removeChild(webm.firstChild);
-	var mixer = device.host;
+	// use IP address for mixer if possible:
+	var mixer = device.localip;
 	if( mixer.length = 0 )
-	    mixer = device.localip;
+	    mixer = device.host;
 	if( (device.age < 20) && (mixer.length > 0) ){
             // device is active and we know the host name:
             webm.setAttribute('style','display: block;');
@@ -632,4 +633,9 @@ function dispvaluechanged(id){
 	}
         el[k].appendChild(document.createTextNode(" Press Save to apply changes."));
     }
+}
+
+function update_jack_rate( rate ){
+    document.getElementById('jackrate').value = rate;
+    document.getElementById('jackperiod').value = 16*Math.floor(0.002*rate/16);
 }
