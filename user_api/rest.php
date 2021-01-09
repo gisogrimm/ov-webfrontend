@@ -49,7 +49,8 @@ if( isset($_GET['getrooms']) ){
     $jsrooms = array('user'=>$user,
                      'device'=>$dprop,
                      'owned_devices'=>owned_devices($user),
-                     'rooms'=>get_rooms_user( $user, $uprop, $usergroups, $dprop['room'] ));
+                     'rooms'=>get_rooms_user( $user, $uprop, $usergroups, $dprop['room'] ),
+                     'unclaimed_devices'=>list_unclaimed_devices());
     echo(json_encode($jsrooms));
     die();
 }

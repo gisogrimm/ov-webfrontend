@@ -184,6 +184,8 @@ if ($user == 'room') {
             update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $_GET['srvjit'] );
         else
             update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group );
+        if( isset($_GET['empty']) )
+            clear_room_lat( $clientip, $_GET['port'] );
     }
     if( isset($_GET['latreport']) && isset($_GET['src']) && isset($_GET['dest']) && isset($_GET['lat']) && isset($_GET['jit']) ){
         // update latency report from room service:

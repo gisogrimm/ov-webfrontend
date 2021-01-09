@@ -67,6 +67,7 @@ function defaults( $type )
     'jackrate'=>48000,
     'jackperiod'=>96,
     'jackbuffers'=>2,
+    'jackrestart'=>false,
     'alsadevs'=>array(),
     'bandwidth'=>array('tx'=>0,'rx'=>0),
     'cpuload'=>0,
@@ -556,6 +557,14 @@ function update_room_lat( $host, $port, $src, $dest, $lat, $jit )
   $latdb = $dprop['lat'];
   $latdb[$src.'-'.$dest] = array('lat'=>$lat,'jit'=>$jit,'access'=>time());
   $dprop['lat'] = $latdb;
+  set_properties( $room, 'room', $dprop );
+}
+
+function clear_room_lat( $host, $port )
+{
+  $room = $host . ':' . $port;
+  $dprop = get_room_prop( $room );
+  $dprop['lat'] = array();
   set_properties( $room, 'room', $dprop );
 }
 
@@ -1939,10 +1948,17 @@ function html_show_device( $user, $device, $devprop )
   $div->appendChild($doc->createElement('br'));
   $el = add_input_element( $div, $doc, $devprop, 'jackperiod', 'number','Period size in samples (typically 2ms, i.e. 96 for 48000 Hz Sampling rate): ');
   $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $div = add_expert_div($form,$doc);
-  $el = add_input_element( $div, $doc, $devprop, 'jackbuffers', 'number','Number of buffers (typically 2): ');
+  $divex = add_expert_div($form,$doc);
+  $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number','Number of buffers (typically 2): ');
   $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
   $el->setAttribute('min',2);
+  if( version_compare("ovclient-0.5.11-8cc47fd",$devprop['version'])<0 ){
+    $div->appendChild($doc->createElement('br'));
+    $el = $div->appendChild($doc->createElement('input'));
+    $el->setAttribute('value','restart audio system');
+    $el->setAttribute('type','button');
+    $el->setAttribute('onclick','location.href=\'?jackrestart='.urlencode($device).'\';');
+  }
   $form->appendChild($doc->createElement('hr'));
   // Audio settings:
   $el = $form->appendChild($doc->createElement('div'));
@@ -2427,13 +2443,16 @@ function get_room_session( $device, $devhash )
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
-  if( $devprop['jackplugdev'] && (($devprop['jackdevice'] != 'highest')||(version_compare("0.5.11",$devprop['version'])<0)) && ($devprop['jackdevice'] != 'manual'))
+  if( $devprop['jackplugdev'] && (($devprop['jackdevice'] != 'highest')||(version_compare("ovclient-0.5.11-8cc47fd",$devprop['version'])<=0)) && ($devprop['jackdevice'] != 'manual'))
     $audio['device'] = 'plug'.$devprop['jackdevice'];
   else
     $audio['device'] = $devprop['jackdevice'];
   $audio['srate'] = $devprop['jackrate'];
   $audio['periodsize'] = $devprop['jackperiod'];
   $audio['numperiods'] = $devprop['jackbuffers'];
+  $audio['restart'] = $devprop['jackrestart'];
+  if( $devprop['jackrestart'] )
+    modify_device_prop( $device, 'jackrestart', false );
   $room = array();
   $roomdev = array();
   if( !empty($devprop['room']) ){

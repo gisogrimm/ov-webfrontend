@@ -319,6 +319,15 @@ function set_getprop_post( &$prop, $key )
     }
 }
 
+if( isset($_GET['jackrestart']) ){
+    $device = $_GET['jackrestart'];
+    if( !empty( $device ) ){
+        modify_device_prop( $device, 'jackrestart', true );
+    }
+    header( "Location: /" );
+    die();
+}
+
 if( isset($_POST['setdevprop']) ){
     $device = $_POST['setdevprop'];
     if( !empty( $device ) ){
@@ -567,17 +576,7 @@ if( !$userprop['validpw'] ){
 }
 
 if( $showrooms ){
-
-    $devs = list_unclaimed_devices();
-    if( !empty($devs) ){
-        echo '<div class="devclaim">';
-        echo "Unclaimed active devices exist. If this is your device, and it is active now, you may claim it by clicking on the device id: <br/>\n";
-        foreach( $devs as $dev ){
-            echo '<form style="display: inline;"><input type="hidden" name="claim" value="'.$dev.'"/><button>'.$dev."</button></form>\n ";
-        }
-        echo "</div>";
-    }
-
+    echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
     if ( empty( $device ) ) {
         $devprop = defaults('device');
     } else {

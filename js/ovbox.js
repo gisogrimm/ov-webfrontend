@@ -514,6 +514,7 @@ function update_deviceuser( user, device, owned_devices )
     }
     // update device selector:
     var devsel = document.getElementById('deviceselector');
+    if( devsel ){
     while( devsel.options.length > 0 )
 	devsel.remove(0);
     var opt = document.createElement('option');
@@ -529,6 +530,7 @@ function update_deviceuser( user, device, owned_devices )
 	opt.text = od+' ('+owned_devices[od].label+')'+act;
 	opt.selected = od==device.id;
 	devsel.add(opt);
+    }
     }
     // update webmixer link:
     var webm = document.getElementById('webmixerlink');
@@ -555,6 +557,28 @@ function update_deviceuser( user, device, owned_devices )
     }
 }
 
+function update_unclaimed( user, unclaimed_devices )
+{
+    var p = document.getElementById('devclaim');
+    while( p.firstChild ) p.removeChild(p.firstChild);
+    if( unclaimed_devices.length == 0 )
+	p.setAttribute('style','display:none;');
+    else{
+	p.setAttribute('style','display:block;');
+	p.appendChild(document.createTextNode('Unclaimed active devices exist. If this is your device, and it is active now, you may claim it by clicking on the device id:'));
+	p.appendChild(document.createElement('br'));
+        for( var k=0;k<unclaimed_devices.length;k++){
+	    var form=p.appendChild(document.createElement('form'));
+	    form.setAttribute('style','display:inline;');
+	    var inp=form.appendChild(document.createElement('input'));
+	    inp.setAttribute('type','hidden');
+	    inp.setAttribute('name','claim');
+	    inp.setAttribute('value',unclaimed_devices[k]);
+	    form.appendChild(document.createElement('button')).appendChild(document.createTextNode(unclaimed_devices[k]));
+        }
+    }
+}
+
 function updaterooms()
 {
     var droom=document.getElementById('roomlist');
@@ -575,8 +599,10 @@ function updaterooms()
 	    var rooms = data.rooms;
 	    var device = data.device;
 	    var owned_devices = data.owned_devices;
+	    var unclaimed_devices = data.unclaimed_devices;
 	    // update device display:
 	    update_deviceuser( user, device, owned_devices );
+	    update_unclaimed( user, unclaimed_devices );
 	    // delete unused rooms:
 	    for( let k=droom.children.length-1;k>=0;k--){
 		if( rooms.find(room=>room.id==droom.children[k].id)===undefined)
@@ -636,6 +662,10 @@ function dispvaluechanged(id){
 }
 
 function update_jack_rate( rate ){
+    if( rate < 32000 )
+	document.getElementById('jackplugdev').checked = true;
+    if( rate > 32000 )
+	document.getElementById('jackplugdev').checked = false;
     document.getElementById('jackrate').value = rate;
     document.getElementById('jackperiod').value = 16*Math.floor(0.002*rate/16);
 }
