@@ -131,7 +131,13 @@ echo '<p class="adminarea">';
 echo '<a href="/?">Home</a> - admin <a href="admin.php?adm=devices">devices</a> <a href="admin.php?adm=rooms">rooms</a> <a href="admin.php?adm=users">users</a> <a href="admin.php?adm=groups">groups</a>';
 echo ' - <input type="button" onclick="location.replace(\'/admin.php?adm='.$adm.'\');" value="Refresh"/>'.
     ' <span class="timedisplay">0</span>'."\n";
-    echo '</p>';
+echo '</p>';
+
+echo '<form class="login" method="POST" action="/">';
+echo '<input type="hidden" name="logout"><br>';
+echo '<button class="uibutton">Logout</button>';
+echo '</form>';
+
 if( $adm == 'devices' ){
     html_admin_db('device',array('roomage','version'));
     echo '<form><input type="hidden" name="rmolddevs"/><button>Remove inactive unclaimed devices</button></form>';
