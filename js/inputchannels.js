@@ -20,9 +20,19 @@ function inputchannels_remove( rk ) {
 }
 
 function inputchannels_onedit_port( rk, value ) {
-    inchannels[rk]['sourceport'] = value;
-    jsinputchannels.value = JSON.stringify(inchannels);
-    dispvaluechanged("valuechanged");
+    if( value.length > 0 ){
+	inchannels[rk]['sourceport'] = value;
+	jsinputchannels.value = JSON.stringify(inchannels);
+	dispvaluechanged("valuechanged");
+    }
+}
+
+function inputchannels_onedit_directivity( rk, value ) {
+    if( value.length > 0 ){
+	inchannels[rk]['directivity'] = value;
+	jsinputchannels.value = JSON.stringify(inchannels);
+	dispvaluechanged("valuechanged");
+    }
 }
 
 function inputchannels_onedit_x( rk, value ) {
@@ -46,38 +56,38 @@ function inputchannels_onedit_z( rk, value ) {
 function inputchannels_preset( p ){
     if(p=="p0"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1});
+	inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1,directivity:'cardioid'});
     }
     if(p=="p1"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:0,z:-0.6},gain:1});
+	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:0,z:-0.6},gain:1,directivity:'omni'});
     }
     if(p=="p2"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:0,z:-0.6},gain:1});
+	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:0,z:-0.6},gain:1,directivity:'omni'});
     }
     if(p=="p12dual"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:-0.7,z:-0.6},gain:1});
-	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:0.7,z:-0.6},gain:1});
+	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:-0.7,z:-0.6},gain:1,directivity:'omni'});
+	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:0.7,z:-0.6},gain:1,directivity:'omni'});
     }
     if(p=="p12dualviolin"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:-0.7,z:0},gain:1});
-	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:0.7,z:0},gain:1});
+	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:-0.7,z:0},gain:1,directivity:'omni'});
+	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:0.7,z:0},gain:1,directivity:'omni'});
     }
     if(p=="p1violin"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:0,z:0},gain:1});
+	inchannels.push({sourceport:'system:capture_1',position:{x:0.3,y:0,z:0},gain:1,directivity:'omni'});
     }
     if(p=="p12dualvoc"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1});
-	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:-0.1,z:-0.6},gain:1});
+	inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1,directivity:'omni'});
+	inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:-0.1,z:-0.6},gain:1,directivity:'omni'});
     }
     if(p=="p12single"){
 	inchannels = [];
-	inchannels.push({sourceport:'system:capture_[12]',position:{x:0.3,y:0,z:-0.6},gain:1});
+	inchannels.push({sourceport:'system:capture_[12]',position:{x:0.3,y:0,z:-0.6},gain:1,directivity:'omni'});
     }
     if(p=="listen"){
 	inchannels = [];
@@ -162,6 +172,10 @@ function inputchannels_createUI( ) {
 	adiv.appendChild(el);
 	var el = document.createElement('select');
 	el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
+	var eopt = el.appendChild(document.createElement('option'));
+	eopt.setAttribute('value','');
+	eopt.appendChild(document.createTextNode('- select channel -'));
+	el.appendChild(eopt);
 	function add_opt(optv,ind,options){
 	    var opt = el.appendChild(document.createElement('option'));
 	    opt.setAttribute('value',optv);
@@ -191,6 +205,20 @@ function inputchannels_createUI( ) {
 	el.setAttribute('size','1');
 	el.setAttribute('title','z position (positive values are above your ears)');
 	adiv.appendChild(el);
+	// source directivity:
+	var el = document.createElement('select');
+	el.setAttribute('onchange','{inputchannels_onedit_directivity('+k.toString(10)+',this.value);inputchannels_createUI();}');
+	function add_opt_dir(optv,ind,options){
+	    var opt = el.appendChild(document.createElement('option'));
+	    opt.setAttribute('value',optv);
+	    opt.appendChild(document.createTextNode(optv));
+	    if( inchannels[k]['directivity'] == optv )
+		opt.setAttribute('selected','');
+	    el.appendChild(opt);
+	}
+	['omni','cardioid'].forEach(add_opt_dir);
+	adiv.appendChild(el);
+	// end source directivity.
 	var el = document.createElement('input');
 	el.setAttribute('value','remove channel');
 	el.setAttribute('type','button');
