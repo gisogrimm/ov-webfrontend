@@ -342,6 +342,7 @@ if( isset($_POST['setdevprop']) ){
         $prop['sendlocal'] = isset($_POST['sendlocal']);
         $prop['headtracking'] = isset($_POST['headtracking']);
         $prop['headtrackingrot'] = isset($_POST['headtrackingrot']);
+        $prop['headtrackingrotsrc'] = isset($_POST['headtrackingrotsrc']);
         $prop['message'] = '';
         set_getprop_post($prop,'jittersend');
         set_getprop_post($prop,'jitterreceive');
@@ -367,6 +368,8 @@ if( isset($_POST['setdevprop']) ){
         set_getprop_post($prop,'headtrackingport');
         if( isset($_POST['xrecport']) )
             $prop['xrecport'] = explode( " ", $_POST['xrecport'] );
+        if( isset($_POST['jsfrontendconfig']) )
+            $prop['frontendconfig'] = json_decode($_POST['jsfrontendconfig']);
         set_properties( $device, 'device', $prop );
     }
     header( "Location: /" );

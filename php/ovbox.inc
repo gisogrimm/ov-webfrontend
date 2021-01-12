@@ -39,6 +39,7 @@ function defaults( $type )
       'sourceport'=>'system:capture_1',
       'gain'=>1,
       'position'=>array('x'=>0,'y'=>0,'z'=>0),
+      'directivity'=>'omni',
     )),
     'jitterreceive'=>5,
     'jittersend'=>5,
@@ -73,11 +74,13 @@ function defaults( $type )
     'cpuload'=>0,
     'headtracking'=>false,
     'headtrackingrot'=>true,
+    'headtrackingrotsrc'=>true,
     'headtrackingport'=>0,
     'sendlocal'=>true,
     'hwinputchannels'=>array('system:capture_1','system:capture_2'),
     'firmwareupdate'=>false,
     'isovbox'=>true,
+    'frontendconfig', array(),
     'message'=>'',
   );
   $defaults['room'] = array(
@@ -2141,6 +2144,7 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('for','headtracking');
   $el->appendChild($doc->createTextNode('load headtracking module '));
   $div->appendChild($doc->createElement('br'));
+  // apply headtracking:
   $el = $div->appendChild($doc->createElement('input'));
   $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
   $el->setAttribute('name','headtrackingrot');
@@ -2150,8 +2154,21 @@ function html_show_device( $user, $device, $devprop )
     $el->setAttribute('checked','');
   $el = $div->appendChild($doc->createElement('label'));
   $el->setAttribute('for','headtrackingrot');
-  $el->appendChild($doc->createTextNode('apply rotation '));
+  $el->appendChild($doc->createTextNode('apply rotation to receiver'));
   $div->appendChild($doc->createElement('br'));
+  //
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
+  $el->setAttribute('name','headtrackingrotsrc');
+  $el->setAttribute('id','headtrackingrotsrc');
+  $el->setAttribute('type','checkbox');
+  if( $devprop['headtrackingrotsrc'] )
+    $el->setAttribute('checked','');
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->setAttribute('for','headtrackingrotsrc');
+  $el->appendChild($doc->createTextNode('apply rotation to source'));
+  $div->appendChild($doc->createElement('br'));
+  //
   $el = $div->appendChild($doc->createElement('label'));
   $el->appendChild($doc->createTextNode('data logging port: '));
   $div->appendChild($doc->createElement('br'));
@@ -2251,6 +2268,22 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('type','text');
   $el->setAttribute('pattern','[0-9 ]*');
   $el->setAttribute('value',implode(" ",$devprop['xrecport']));
+  $div->appendChild($doc->createElement('br'));
+  // frontend:
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode('If required change frontend: '));
+  $el = $div->appendChild($doc->createElement('select'));
+  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
+  $el->setAttribute('name','jsfrontendconfig');
+  $opt = $el->appendChild($doc->createElement('option'));
+  $opt->setAttribute('value','{}');
+  $opt->appendChild($doc->createTextNode('-- switch frontend --'));
+  $opt = $el->appendChild($doc->createElement('option'));
+  $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/"}');
+  $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
+  $opt = $el->appendChild($doc->createElement('option'));
+  $opt->setAttribute('value','{"url":"http://dev.ovbox.de/"}');
+  $opt->appendChild($doc->createTextNode('ovbox.de'));
   // save:
   $form->appendChild($doc->createElement('hr'));
   $el = $form->appendChild($doc->createElement('button'));
@@ -2303,6 +2336,11 @@ update will take several minutes.'));
         $div->appendChild($doc->createTextNode('Please start your device to update the firmware.'));
         $div->appendChild($doc->createElement('br'));
       }
+      $a = $div->appendChild($doc->createElement('a'));
+      $a->setAttribute('target','blank');
+      $a->setAttribute('href','https://raw.githubusercontent.com/gisogrimm/ov-client/master/changelog');
+      $a->appendChild($doc->createTextNode('recent changes'));
+      $div->appendChild($doc->createElement('br'));
       $inp = $div->appendChild($doc->createElement('input'));
       $inp->setAttribute('type','button');
       $inp->setAttribute('onclick','location.href=\'?firmwareupdate='.$device.'\';');
@@ -2439,6 +2477,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['xrecport'] = $devprop['xrecport'];
   $rendersettings['headtracking'] = $devprop['headtracking'];
   $rendersettings['headtrackingrot'] = $devprop['headtrackingrot'];
+  $rendersettings['headtrackingrotsrc'] = $devprop['headtrackingrotsrc'];
   $rendersettings['headtrackingport'] = $devprop['headtrackingport'];
   $rendersettings['stagedevid'] = 0;
   $audio = array();
@@ -2477,6 +2516,10 @@ function get_room_session( $device, $devhash )
   $stagecfg = array('rendersettings'=>$rendersettings,'audiocfg'=>$audio,'room'=>$room,'roomdev'=>$roomdev,'firmwareupdate'=>$devprop['firmwareupdate']);
   if( $devprop['firmwareupdate'] )
     modify_device_prop( $device, 'firmwareupdate', false );
+  if( !empty($devprop['frontendconfig']) ){
+    $stagecfg['frontendconfig'] = $devprop['frontendconfig'];
+    modify_device_prop( $device, 'frontendconfig', array() );
+  }
   $stagecfg = json_encode( $stagecfg );
   $hash = hash('md5',$stagecfg);
   if( $hash != $devhash ){
