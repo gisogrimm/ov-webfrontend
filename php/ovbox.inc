@@ -173,6 +173,10 @@ function postproc_prop( &$prop, $type )
   if( array_key_exists('onlineaccess',$prop) )
     $prop['onlineage'] = time()-$prop['onlineaccess'];
   if( $type == 'device' ){
+    foreach(array_keys($prop) as $key){
+      if( is_numeric($key) )
+        unset($prop[$key]);
+    }
     if( empty($prop['label']) && (!empty($prop['owner'])))
       $prop['label'] = $prop['owner'];
     $prop['label'] = preg_replace('/[^a-zA-Z0-9-_]*/','',$prop['label']);
@@ -1244,10 +1248,10 @@ function html_admin_db($type, $showfields = array())
 {
   $sortprop = get_properties('list','sortkey');
   $devs = list_db($type);
-  if( $sortprop[$type]=='id' )
+  $sortkey = $sortprop[$type];
+  if( $sortkey=='id' )
     ksort($devs);
   else{
-    $sortkey = $sortprop[$type];
     sort_comp_key( $devs, $sortkey );
   }
   $doc = new DOMDocument('1.0');
@@ -1260,27 +1264,10 @@ function html_admin_db($type, $showfields = array())
   $s->appendChild($doc->createTextNode('('.count($devs).')'));
   $tab = $root->appendChild($doc->createElement('table'));
   $tr = $tab->appendChild($doc->createElement('tr'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=id&category='.$type);
-  $a->appendChild($doc->createTextNode($type));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=age&category='.$type);
-  $a->appendChild($doc->createTextNode('age'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=onlineage&category='.$type);
-  $a->appendChild($doc->createTextNode('onlineage'));
-  foreach( $showfields as $field ){
-    $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-    $a->setAttribute('href','?sortby='.$field.'&category='.$type);
-    $a->appendChild($doc->createTextNode($field));
+  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('owner','label'));
+  foreach( $headerfields as $field ){
+    table_add_header($tr,$field,$sortkey,$doc,$type);
   }
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=owner&category='.$type);
-  $a->appendChild($doc->createTextNode('owner'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=label&category='.$type);
-  $a->appendChild($doc->createTextNode('label'));
-  //$tr->appendChild($doc->createElement('th'))->appendChild($doc->createTextNode('label'));
   $users = list_users();
   foreach( $devs as $dev=>$dprop ){
     $tr = $tab->appendChild($doc->createElement('tr'));
@@ -1338,16 +1325,28 @@ function html_admin_db($type, $showfields = array())
   echo $doc->saveHTML() . "\n";
 }
 
+function table_add_header( &$tr, $field, $sortkey, &$doc, $type )
+{
+  $th = $tr->appendChild($doc->createElement('th'));
+  if( $field == $sortkey ){
+    $th->appendChild($doc->createTextNode('['.$field.']'));
+}else{
+    $a = $th->appendChild($doc->createElement('a'));
+    $a->setAttribute('href','?sortby='.$field.'&category='.$type);
+    $a->appendChild($doc->createTextNode($field));
+  }
+}
+
 function html_admin_rooms()
 {
   $showfields = array();
   $showfields[] = 'srvjit';
   $sortprop = get_properties('list','sortkey');
+  $sortkey = $sortprop['room'];
   $rooms = list_db('room');
-  if( $sortprop['room']=='id' )
+  if( $sortkey == 'id' )
     ksort($rooms);
   else{
-    $sortkey = $sortprop['room'];
     sort_comp_key( $rooms, $sortkey );
   }
   $doc = new DOMDocument('1.0');
@@ -1360,29 +1359,10 @@ function html_admin_rooms()
   $s->appendChild($doc->createTextNode('('.count($rooms).')'));
   $tab = $root->appendChild($doc->createElement('table'));
   $tr = $tab->appendChild($doc->createElement('tr'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=id&category=room');
-  $a->appendChild($doc->createTextNode('room'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=age&category=room');
-  $a->appendChild($doc->createTextNode('age'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=deventer&category=room');
-  $a->appendChild($doc->createTextNode('deventer'));
-  foreach( $showfields as $field ){
-    $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-    $a->setAttribute('href','?sortby='.$field.'&category=room');
-    $a->appendChild($doc->createTextNode($field));
-  }
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=owner&category=room');
-  $a->appendChild($doc->createTextNode('owner'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=group&category=room');
-  $a->appendChild($doc->createTextNode('group'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=label&category=room');
-  $a->appendChild($doc->createTextNode('label'));
+  // room id:
+  $headerfields = array_merge(array('id','age','deventer'),$showfields,array('owner','group','label'));
+  foreach( $headerfields as $field )
+    table_add_header($tr,$field,$sortkey,$doc,'room');
   $users = list_users();
   $groups = list_groups();
   foreach( $rooms as $dev=>$dprop ){
@@ -1493,7 +1473,8 @@ function html_admin_users()
   }
   // sort db:
   $sortprop = get_properties('list','sortkey');
-  if( $sortprop['user']=='id' )
+  $sortkey = $sortprop['user'];
+  if( $sortkey=='id' )
     ksort($udb);
   else{
     sort_comp_key( $udb, $sortprop['user'], 'uname' );
@@ -1511,24 +1492,9 @@ function html_admin_users()
   $tab = $root->appendChild($doc->createElement('table'));
   $tr = $tab->appendChild($doc->createElement('tr'));
   //
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=id&category=user');
-  $a->appendChild($doc->createTextNode('user'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=age&category=user');
-  $a->appendChild($doc->createTextNode('age'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=devage&category=user');
-  $a->appendChild($doc->createTextNode('devage'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=numdev&category=user');
-  $a->appendChild($doc->createTextNode('#devs'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=numgrp&category=user');
-  $a->appendChild($doc->createTextNode('#grp'));
-  $a = $tr->appendChild($doc->createElement('th'))->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','?sortby=maingroup&category=user');
-  $a->appendChild($doc->createTextNode('maingroup'));
+  $headerfields = array('id','age','devage','numdev','numgrp','maingroup');
+  foreach( $headerfields as $field )
+    table_add_header($tr,$field,$sortkey,$doc,'user');
   $tab->appendChild($doc->createTextNode("\n"));
   $usgroups = list_groups();
   foreach($udb as $us=>$uprop){
