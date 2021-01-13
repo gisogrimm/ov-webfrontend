@@ -477,10 +477,12 @@ function list_unclaimed_devices()
   return $devs;
 }
 
-function owned_devices( $user )
+function owned_devices( $user, $alldev = null )
 {
+  if( !isset($alldev) )
+    $alldev = list_devices();
   $devs = array();
-  foreach( list_devices() as $dev=>$devprop ){
+  foreach( $alldev as $dev=>$devprop ){
     if( $devprop['owner'] == $user )
       $devs[$dev] = $devprop;
   }
@@ -1456,9 +1458,10 @@ function html_admin_users()
   }
   $users = list_users();
   $udb = array();
+  $alldev = list_devices();
   foreach($users as $us){
     $uprop = get_properties($us,'user');
-    $uprop['owneddev'] = owned_devices( $us );
+    $uprop['owneddev'] = owned_devices( $us, $alldev );
     $uprop['numdev'] = count($uprop['owneddev']);
     $uprop['numgrp'] = count(list_groups( $us ));
     $uprop['newdb'] = array_key_exists($us,$pws);
