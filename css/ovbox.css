@@ -255,6 +255,16 @@ input:checked + .slider:before {
 }
 .adminarea {
     background-color: #edddddd0;
+    color: #000;
     border: 1px solid #a02020;
     padding: 20px;
+}
+.bulletinboard {
+    background-color: #fffdb4;
+    border: 1px solid #11266d;
+    color: #454577;
+    border-radius: 8px;
+    padding: 10px;
+    white-space: pre-wrap;
+    max-height: 80px;
 }

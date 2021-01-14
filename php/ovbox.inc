@@ -103,6 +103,7 @@ function defaults( $type )
     'srvjit'=>-1,
     'ambientsound'=>'',
     'ambientlevel'=>50,
+    'bulletinboard'=>'',
   );
   $defaults['user'] = array(
     'group'=>'',
@@ -2239,6 +2240,7 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('value',implode(" ",$devprop['xrecport']));
   $div->appendChild($doc->createElement('br'));
   // frontend:
+  $div->appendChild($doc->createElement('hr'));
   $el = $div->appendChild($doc->createElement('label'));
   $el->appendChild($doc->createTextNode('If required change frontend: '));
   $el = $div->appendChild($doc->createElement('select'));
@@ -2248,11 +2250,14 @@ function html_show_device( $user, $device, $devprop )
   $opt->setAttribute('value','{}');
   $opt->appendChild($doc->createTextNode('-- switch frontend --'));
   $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/"}');
+  $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/","protocol":"ov"}');
   $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
   $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{"url":"http://dev.ovbox.de/"}');
+  $opt->setAttribute('value','{"url":"http://dev.ovbox.de/","protocol":"ov"}');
   $opt->appendChild($doc->createTextNode('ovbox.de'));
+  $div->appendChild($doc->createElement('br'));
+  $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
+  $div->appendChild($doc->createTextNode('By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
   // save:
   $form->appendChild($doc->createElement('hr'));
   $el = $form->appendChild($doc->createElement('button'));
@@ -2816,6 +2821,10 @@ function cleanup_rooms()
             set_properties( $room, 'room', $rprop );
           }
         }
+      }
+      // clear bulletin board when entered at least 4 hours ago:
+      if( ($rprop['enterage']>4*3600) && empty($devs) ){
+        modify_room_prop( $room, 'bulletinboard', '' );
       }
     }
   }

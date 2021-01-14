@@ -54,6 +54,27 @@ function create_room_div( device, room )
     // create title:
     var tit = eroom.appendChild(document.createElement('div'));
     tit.setAttribute('id',id+':title');
+    var bbed = eroom.appendChild(document.createElement('form'));
+    bbed.setAttribute('id',id+':bulletinboard:editor');
+    //bbed.setAttribute('class','devprop');
+    bbed.setAttribute('method','POST');
+    bbed.setAttribute('style','display: none;');
+    var inp = bbed.appendChild(document.createElement('input'));
+    inp.setAttribute('name','editbulletinboard');
+    inp.setAttribute('value',id);
+    inp.setAttribute('type','hidden');
+    var inp = bbed.appendChild(document.createElement('textarea'));
+    inp.setAttribute('name','bulletinboard');
+    inp.setAttribute('rows','4');
+    inp.setAttribute('cols','60');
+    inp.setAttribute('class','bulletinboard');
+    inp.appendChild(document.createTextNode(room.bulletinboard));
+    var inp = bbed.appendChild(document.createElement('button'));
+    inp.appendChild(document.createTextNode('Save'));
+    var bulletinboard = eroom.appendChild(document.createElement('div'));
+    bulletinboard.setAttribute('id',id+':bulletinboard');
+    bulletinboard.setAttribute('class','bulletinboard');
+    bulletinboard.setAttribute('style','display: none;');
     var memb = eroom.appendChild(document.createElement('div'));
     memb.setAttribute('id',id+':members');
     memb.setAttribute('class','rmembers');
@@ -241,6 +262,22 @@ function update_room( device, room, droom )
 	    }       
 	}
 	span.appendChild(document.createTextNode('(jitter '+srvjit.toFixed(1)+' ms)'));
+    }
+    // bulletin board:
+    if( room.entered ){
+	var tog = tit.appendChild(document.createElement('input'));
+	tog.setAttribute('type','button');
+	tog.setAttribute('class','roomsettingstoggle uibutton');
+	tog.setAttribute('onclick','toggledisplay("'+room.id+':bulletinboard:editor","bulletin board editor");');
+	tog.setAttribute('value','show bulletin board editor');
+    }
+    var bull = document.getElementById(room.id+':bulletinboard');
+    while( bull.firstChild ) bull.removeChild( bull.firstChild );
+    if( room.bulletinboard.length > 0 ){
+	bull.appendChild(document.createTextNode(room.bulletinboard));
+	bull.setAttribute('style','display: block;');
+    }else{
+	bull.setAttribute('style','display: none;');
     }
     //span.appendChild(document.createTextNode(' ('+room.id+')'));
     var memb = document.getElementById(room.id+':members');

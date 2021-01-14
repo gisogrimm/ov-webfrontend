@@ -224,6 +224,12 @@ if( !empty($maingroup) ){
     $style = $groupprop['style'];
 }
 
+if( isset($_POST['editbulletinboard']) && isset($_POST['bulletinboard']) ){
+    $room = $_POST['editbulletinboard'];
+    modify_room_prop( $room, 'bulletinboard',$_POST['bulletinboard']);
+    header( "Location: /" );
+    die();
+}
 
 if( isset($_POST['claimdevid']) ){
     $msg = '';
@@ -448,6 +454,7 @@ if( isset($_GET['devreset']) ){
     if( $devprop['owner'] = $user ){
         rm_device( $device );
         modify_device_prop( $device, 'owner', $user);
+        modify_device_prop( $device, 'label', $devprop['label']);
         modify_device_prop( $device, 'version', $devprop['version']);
     }
     header( "Location: /" );
