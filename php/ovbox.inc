@@ -207,19 +207,16 @@ function postproc_prop( &$prop, $type )
     if( count($dim)!=3){
       $dim = array(25,13,7.5);
     }
-    foreach( $dim as &$d )
-      $d = max($d,0.01);
-    $vol = 1;
-    foreach($dim as $d)
-      $vol = $vol*$d;
-    $prop['volume'] = $vol;
+    $rs_x = max($dim[0], 0.01);
+    $rs_y = max($dim[1], 0.01);
+    $rs_z = max($dim[2], 0.01);
+    $prop['volume'] = $rs_x * $rs_y * $rs_z;
     $prop['rvbabs'] = max($prop['rvbabs'],0.01);
-    $t60 = 0.161*$vol/($prop['rvbabs']*2*($dim[0]*$dim[1]+$dim[1]*$dim[2]+$dim[2]*$dim[0]));
-    $prop['t60'] = $t60;
-    $prop['area'] = $dim[0]*$dim[1];
-    $prop['sx'] = $dim[0];
-    $prop['sy'] = $dim[1];
-    $prop['sz'] = $dim[2];
+    $prop['t60'] = 0.161*$prop['volume']/($prop['rvbabs']*2*($rs_x*$rs_y+$rs_y*$rs_z+$rs_z*$rs_x));
+    $prop['area'] = $rs_x*$rs_y;
+    $prop['sx'] = $rs_x;
+    $prop['sy'] = $rs_y;
+    $prop['sz'] = $rs_z;
   }
 }
 
@@ -513,29 +510,7 @@ function modify_user_prop( $user, $key, $value )
 
 function get_room_prop( $room )
 {
-  $prop = get_properties( $room, 'room' );
-
-  $dim = explode(" ",$prop['size']);
-  if( count($dim)==3){
-    $vol = 1;
-    foreach($dim as $d)
-      $vol = $vol*$d;
-    $prop['volume'] = $vol;
-    $t60 = 0.161*$vol/($prop['rvbabs']*2*($dim[0]*$dim[1]+$dim[1]*$dim[2]+$dim[2]*$dim[0]));
-    $prop['t60'] = $t60;
-    $prop['area'] = $dim[0]*$dim[1];
-    $prop['sx'] = $dim[0];
-    $prop['sy'] = $dim[1];
-    $prop['sz'] = $dim[2];
-  }else{
-    $prop['volume'] = 0;
-    $prop['t60'] = 0;
-    $prop['area'] = 0;
-    $prop['sx'] = 0;
-    $prop['sy'] = 0;
-    $prop['sz'] = 0;
-  }
-  return $prop;
+  return get_properties( $room, 'room' );
 }
 
 function modify_room_prop( $room, $key, $value )
