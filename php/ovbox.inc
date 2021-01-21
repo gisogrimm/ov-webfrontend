@@ -1721,6 +1721,7 @@ function html_show_user( $user, $device, $devprop )
   $el->setAttribute('value',$uprop['mail']);
   $el = $form->appendChild($doc->createElement('button'));
   $el->appendChild($doc->createTextNode('Save'));
+  $inf->appendChild($doc->createElement('hr'));
   $el = $inf->appendChild($doc->createElement('input'));
   $el->setAttribute('value','reset password');
   $el->setAttribute('type','button');
@@ -2225,10 +2226,10 @@ function html_show_device( $user, $device, $devprop )
   $opt->setAttribute('value','{}');
   $opt->appendChild($doc->createTextNode('-- switch frontend --'));
   $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/","protocol":"ov"}');
+  $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/","protocol":"ov","ui":"https://box.orlandoviols.com/"}');
   $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
   $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{"url":"http://dev.ovbox.de/","protocol":"ov"}');
+  $opt->setAttribute('value','{"url":"http://dev.ovbox.de/","protocol":"ov","ui":"https://ovbox.de/"}');
   $opt->appendChild($doc->createTextNode('ovbox.de'));
   $div->appendChild($doc->createElement('br'));
   $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
