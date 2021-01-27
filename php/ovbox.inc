@@ -16,6 +16,9 @@ function defaults( $type )
   $defaults['config'] = array(
     'mail'=>'',
     'admin'=>array(),
+    'pagetitle'=>'House of Consort',
+    'basecss'=>'ovbox.css',
+    'credits'=>'Background image by Johannes Gontarski.',
   );
   $defaults['style'] = array(
     'credits'=>'',
@@ -76,6 +79,7 @@ function defaults( $type )
     'headtrackingrot'=>true,
     'headtrackingrotsrc'=>true,
     'headtrackingport'=>0,
+    'headtrackingtauref'=>33.315,
     'sendlocal'=>true,
     'hwinputchannels'=>array('system:capture_1','system:capture_2'),
     'firmwareupdate'=>false,
@@ -257,8 +261,9 @@ function set_properties( $id, $type, $dprop )
 
 function print_head( $user = "", $style = "" )
 {
+  $sitecfg = get_properties('site','config');
   $css = '';
-  $title = 'House of Consort';
+  $title = $sitecfg['pagetitle'];
   if( !empty($style) ){
     $sprop = get_properties( $style, 'style' );
     $css = $sprop['css'];
@@ -270,8 +275,8 @@ function print_head( $user = "", $style = "" )
     echo ' - ' . $user;
   }
   echo '</title><style>';
-  if( file_exists( '../css/ovbox.css' ) ){
-    echo file_get_contents( '../css/ovbox.css' );
+  if( file_exists( '../css/'.$sitecfg['basecss'] ) ){
+    echo file_get_contents( '../css/'.$sitecfg['basecss'] );
   }
   if( (!empty($css)) && file_exists( '../css/'.$css ) ){
     echo file_get_contents( '../css/'.$css );
@@ -285,7 +290,8 @@ function print_head( $user = "", $style = "" )
 
 function print_foot($style = '',$show_donate = true)
 {
-  $credits = 'Background image by Johannes Gontarski.';
+  $sitecfg = get_properties('site','config');
+  $credits = $sitecfg['credits'];
   if( !empty($style) ){
     $sprop = get_properties( $style, 'style' );
     $credits = $sprop['credits'];
@@ -431,7 +437,22 @@ function modify_device_prop( $device, $key, $value )
 
 function sort_comp_key( &$db, $sortkey, $sortkey2 = '' )
 {
-  uasort( $db, function ( $a, $b ) use ($sortkey, $sortkey2)
+  if( $sortkey == 'version' ){
+    uasort( $db, function ( $a, $b ) use ($sortkey, $sortkey2)
+    {
+      $rv = version_compare( $a[$sortkey], $b[$sortkey] );
+      if( $rv != 0 )
+        return $rv;
+      if( empty( $sortkey2 ) )
+        return 0;
+      if( $a[$sortkey2] > $b[$sortkey2] )
+        return 1;
+      if( $a[$sortkey2] < $b[$sortkey2] )
+        return -1;
+      return 0;
+    } );
+  }else{
+    uasort( $db, function ( $a, $b ) use ($sortkey, $sortkey2)
     {
       if( $a[$sortkey] > $b[$sortkey] )
         return 1;
@@ -445,6 +466,7 @@ function sort_comp_key( &$db, $sortkey, $sortkey2 = '' )
         return -1;
       return 0;
     } );
+  }
 }
 
 function list_db($type)
@@ -2114,6 +2136,20 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('for','headtrackingrotsrc');
   $el->appendChild($doc->createTextNode('apply rotation to source'));
   $div->appendChild($doc->createElement('br'));
+  // tau auto-reference
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode('auto-referencing time constant in seconds: '));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
+  $el->setAttribute('value',round($devprop['headtrackingtauref'],1));
+  $el->setAttribute('id','headtrackingtauref');
+  $el->setAttribute('name','headtrackingtauref');
+  $el->setAttribute('type','number');
+  $el->setAttribute('min','0');
+  $el->setAttribute('max','500');
+  $el->setAttribute('step','0.1');
+  $div->appendChild($doc->createElement('br'));
   //
   $el = $div->appendChild($doc->createElement('label'));
   $el->appendChild($doc->createTextNode('data logging port: '));
@@ -2429,6 +2465,11 @@ function get_room_session( $device, $devhash )
   $rendersettings['headtrackingrot'] = $devprop['headtrackingrot'];
   $rendersettings['headtrackingrotsrc'] = $devprop['headtrackingrotsrc'];
   $rendersettings['headtrackingport'] = $devprop['headtrackingport'];
+  $rendersettings['headtrack'] = array('load'=>$devprop['headtracking'],
+                                       'applyrec'=>$devprop['headtrackingrot'],
+                                       'applysrc'=>$devprop['headtrackingrotsrc'],
+                                       'port'=>$devprop['headtrackingport'],
+                                       'tauref'=>$devprop['headtrackingtauref']);
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';

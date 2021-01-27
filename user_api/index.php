@@ -372,6 +372,7 @@ if( isset($_POST['setdevprop']) ){
         set_getprop_post($prop,'jackperiod');
         set_getprop_post($prop,'jackbuffers');
         set_getprop_post($prop,'headtrackingport');
+        set_getprop_post($prop,'headtrackingtauref');
         if( isset($_POST['xrecport']) )
             $prop['xrecport'] = explode( " ", $_POST['xrecport'] );
         if( isset($_POST['jsfrontendconfig']) )
