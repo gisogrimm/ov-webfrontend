@@ -2449,7 +2449,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['outputport2']=$devprop['outputport2'];
   $xp = json_decode($devprop['xport']);
   $nxp = array();
-  if( is_array( $xp ) ){
+  if( is_object( $xp ) ){
     foreach($xp as $src=>$dest){
       $nxp[] = array($src,$dest);
     }
