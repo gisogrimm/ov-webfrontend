@@ -590,13 +590,13 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
     $prop = get_properties( $device, 'device' );
     if( $getprop )
       $device = array('id'=>$device,
-                      'label'=>$prop['label'],
-                      'owner'=>$prop['owner'],
+                      'label'=>strval($prop['label']),
+                      'owner'=>strval($prop['owner']),
                       'isactive'=>$prop['age']<20,
                       'issender'=>issender($prop),
-                      'jittersend'=>$prop['jittersend'],
-                      'jitterreceive'=>$prop['jitterreceive'],
-                      'peer2peer'=>$prop['peer2peer']);
+                      'jittersend'=>floatval($prop['jittersend']),
+                      'jitterreceive'=>floatval($prop['jitterreceive']),
+                      'peer2peer'=>boolval($prop['peer2peer']));
     if( ($room == $prop['room']) && ((!$senderonly) || issender($prop)) ){
       if( array_key_exists( 'chair', $prop ) )
         $devices[$prop['chair']] = $device;
@@ -2431,8 +2431,8 @@ function get_dev_stage_settings( $device )
   $d['gain'] = pow(10.0,0.05*$dprop['playbackgain']);
   /// Mute flag:
   $d['mute'] = false;
-  $d['jitter'] = array('send'=>$dprop['jittersend'],'receive'=>$dprop['jitterreceive']);
-  $d['sendlocal'] = $dprop['sendlocal'];
+  $d['jitter'] = array('send'=>floatval($dprop['jittersend']),'receive'=>floatval($dprop['jitterreceive']));
+  $d['sendlocal'] = boolval($dprop['sendlocal']);
   return $d;
 }
 
@@ -2449,27 +2449,29 @@ function get_room_session( $device, $devhash )
   $rendersettings['outputport2']=$devprop['outputport2'];
   $xp = json_decode($devprop['xport']);
   $nxp = array();
-  foreach($xp as $src=>$dest){
-    $nxp[] = array($src,$dest);
+  if( is_array( $xp ) ){
+    foreach($xp as $src=>$dest){
+      $nxp[] = array($src,$dest);
+    }
   }
   $rendersettings['xport'] = $nxp;
-  $rendersettings['peer2peer'] = $devprop['peer2peer'];
-  $rendersettings['renderreverb'] = $devprop['reverb'];
-  $rendersettings['renderism'] = $devprop['renderism'];
+  $rendersettings['peer2peer'] = boolval($devprop['peer2peer']);
+  $rendersettings['renderreverb'] = boolval($devprop['reverb']);
+  $rendersettings['renderism'] = boolval($devprop['renderism']);
   $rendersettings['mastergain'] = pow(10.0,0.05*$devprop['mastergain']);
   $rendersettings['rectype'] = $devprop['rectype'];
-  $rendersettings['secrec'] = $devprop['secrec'];
-  $rendersettings['rawmode'] = $devprop['rawmode'];
+  $rendersettings['secrec'] = floatval($devprop['secrec']);
+  $rendersettings['rawmode'] = boolval($devprop['rawmode']);
   $rendersettings['xrecport'] = $devprop['xrecport'];
-  $rendersettings['headtracking'] = $devprop['headtracking'];
-  $rendersettings['headtrackingrot'] = $devprop['headtrackingrot'];
-  $rendersettings['headtrackingrotsrc'] = $devprop['headtrackingrotsrc'];
-  $rendersettings['headtrackingport'] = $devprop['headtrackingport'];
-  $rendersettings['headtrack'] = array('load'=>$devprop['headtracking'],
-                                       'applyrec'=>$devprop['headtrackingrot'],
-                                       'applysrc'=>$devprop['headtrackingrotsrc'],
-                                       'port'=>$devprop['headtrackingport'],
-                                       'tauref'=>$devprop['headtrackingtauref']);
+  $rendersettings['headtracking'] = boolval($devprop['headtracking']);
+  $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
+  $rendersettings['headtrackingrotsrc'] = boolval($devprop['headtrackingrotsrc']);
+  $rendersettings['headtrackingport'] = intval($devprop['headtrackingport']);
+  $rendersettings['headtrack'] = array('load'=>boolval($devprop['headtracking']),
+                                       'applyrec'=>boolval($devprop['headtrackingrot']),
+                                       'applysrc'=>boolval($devprop['headtrackingrotsrc']),
+                                       'port'=>intval($devprop['headtrackingport']),
+                                       'tauref'=>floatval($devprop['headtrackingtauref']));
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
@@ -2477,10 +2479,10 @@ function get_room_session( $device, $devhash )
     $audio['device'] = 'plug'.$devprop['jackdevice'];
   else
     $audio['device'] = $devprop['jackdevice'];
-  $audio['srate'] = $devprop['jackrate'];
-  $audio['periodsize'] = $devprop['jackperiod'];
-  $audio['numperiods'] = $devprop['jackbuffers'];
-  $audio['restart'] = $devprop['jackrestart'];
+  $audio['srate'] = floatval($devprop['jackrate']);
+  $audio['periodsize'] = intval($devprop['jackperiod']);
+  $audio['numperiods'] = intval($devprop['jackbuffers']);
+  $audio['restart'] = boolval($devprop['jackrestart']);
   if( $devprop['jackrestart'] )
     modify_device_prop( $device, 'jackrestart', false );
   $room = array();
@@ -2488,15 +2490,17 @@ function get_room_session( $device, $devhash )
   if( !empty($devprop['room']) ){
     $roomprop = get_room_prop( $devprop['room'] );
     if( $roomprop['age'] < 3600 ) {
-      $rendersettings['stagedevid'] = $devprop['chair'];
-      $room['size'] = array('x'=>$roomprop['sx'],'y'=>$roomprop['sy'],'z'=>$roomprop['sz']);
+      $rendersettings['stagedevid'] = intval($devprop['chair']);
+      $room['size'] = array('x'=>floatval($roomprop['sx']),'y'=>floatval($roomprop['sy']),'z'=>floatval($roomprop['sz']));
       $roomurl = explode( ":", $devprop['room'] );
-      $room['host'] = $roomurl[0];
-      $room['port'] = $roomurl[1];
-      $room['pin'] = $roomprop['pin'];
+      $room['host'] = strval($roomurl[0]);
+      $room['port'] = intval($roomurl[1]);
+      $room['pin'] = intval($roomprop['pin']);
       $room['ambientsound'] = $roomprop['ambientsound'];
-      $room['ambientlevel'] = $roomprop['ambientlevel'];
-      $room['reverb']= array('absorption'=>$roomprop['rvbabs'],'damping'=>$roomprop['rvbdamp'],'gain'=>pow(10.0,0.05*($roomprop['rvbgain']+$devprop['rvbgain'])));
+      $room['ambientlevel'] = floatval($roomprop['ambientlevel']);
+      $room['reverb']= array('absorption'=>floatval($roomprop['rvbabs']),
+                             'damping'=>floatval($roomprop['rvbdamp']),
+                             'gain'=>pow(10.0,0.05*($roomprop['rvbgain']+$devprop['rvbgain'])));
       // get all devices in room:
       $rdevs = get_devices_in_room( $devprop['room'] );
       foreach( $rdevs as $rdev ){
