@@ -2436,6 +2436,7 @@ function get_dev_stage_settings( $device )
   return $d;
 }
 
+// this is the main function for providing device configuration
 function get_room_session( $device, $devhash )
 {
   $devprop = get_properties($device,'device');
@@ -2467,11 +2468,11 @@ function get_room_session( $device, $devhash )
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
   $rendersettings['headtrackingrotsrc'] = boolval($devprop['headtrackingrotsrc']);
   $rendersettings['headtrackingport'] = intval($devprop['headtrackingport']);
-  $rendersettings['headtrack'] = array('load'=>boolval($devprop['headtracking']),
-                                       'applyrec'=>boolval($devprop['headtrackingrot']),
-                                       'applysrc'=>boolval($devprop['headtrackingrotsrc']),
-                                       'port'=>intval($devprop['headtrackingport']),
-                                       'tauref'=>floatval($devprop['headtrackingtauref']));
+  $rendersettings['extracfg'] = array('headtrack'=>array('load'=>boolval($devprop['headtracking']),
+                                                         'applyrec'=>boolval($devprop['headtrackingrot']),
+                                                         'applysrc'=>boolval($devprop['headtrackingrotsrc']),
+                                                         'port'=>intval($devprop['headtrackingport']),
+                                                         'tauref'=>floatval($devprop['headtrackingtauref'])));
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
