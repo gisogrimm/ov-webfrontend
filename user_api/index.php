@@ -354,6 +354,7 @@ if( isset($_POST['setdevprop']) ){
         set_getprop_post($prop,'jitterreceive');
         set_getprop_post($prop,'label');
         set_getprop_post($prop,'egogain');
+        set_getprop_post($prop,'selfmonitordelay');
         set_getprop_post($prop,'rvbgain');
         if( isset($_POST['jsinputchannels']) ){
             $prop['inputchannels'] = json_decode($_POST['jsinputchannels']);

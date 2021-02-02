@@ -36,6 +36,7 @@ function defaults( $type )
     'version'=>'',
     'selfmonitor'=>true,
     'egogain'=>0,
+    'selfmonitordelay'=>0,
     'host'=>'',
     'localip'=>'',
     'inputchannels'=>array(array(
@@ -2045,8 +2046,24 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('class','slider round');
   $el->appendChild($doc->createTextNode(''));
   $form->appendChild($doc->createElement('br'));
-  // reverb:
+  //
   $div = add_expert_div($form,$doc);
+  // ego monitor delay:
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->setAttribute('for','selfmonitordelay');
+  $el->appendChild($doc->createTextNode('self monitor delay in milliseconds: '));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
+  $el->setAttribute('id','selfmonitordelay');
+  $el->setAttribute('name','selfmonitordelay');
+  $el->setAttribute('type','number');
+  $el->setAttribute('min','0');
+  $el->setAttribute('max','1000');
+  $el->setAttribute('step','1');
+  $el->setAttribute('value',$devprop['selfmonitordelay']);
+  $div->appendChild($doc->createElement('br'));
+  // reverb:
   $el = $div->appendChild($doc->createElement('input'));
   $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
   $el->setAttribute('name','reverb');
@@ -2472,7 +2489,8 @@ function get_room_session( $device, $devhash )
                                                          'applyrec'=>boolval($devprop['headtrackingrot']),
                                                          'applysrc'=>boolval($devprop['headtrackingrotsrc']),
                                                          'port'=>intval($devprop['headtrackingport']),
-                                                         'tauref'=>floatval($devprop['headtrackingtauref'])));
+                                                         'tauref'=>floatval($devprop['headtrackingtauref'])),
+                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay'])));
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
@@ -2486,7 +2504,7 @@ function get_room_session( $device, $devhash )
   $audio['restart'] = boolval($devprop['jackrestart']);
   if( $devprop['jackrestart'] )
     modify_device_prop( $device, 'jackrestart', false );
-  $room = array();
+  $room = array('host'=>'','port'=>0,'pin'=>0);
   $roomdev = array();
   if( !empty($devprop['room']) ){
     $roomprop = get_room_prop( $devprop['room'] );
@@ -2509,7 +2527,11 @@ function get_room_session( $device, $devhash )
       }
     }
   }
-  $stagecfg = array('rendersettings'=>$rendersettings,'audiocfg'=>$audio,'room'=>$room,'roomdev'=>$roomdev,'firmwareupdate'=>$devprop['firmwareupdate']);
+  $stagecfg = array('rendersettings'=>$rendersettings,
+                    'audiocfg'=>$audio,
+                    'room'=>$room,
+                    'roomdev'=>$roomdev,
+                    'firmwareupdate'=>$devprop['firmwareupdate']);
   if( $devprop['firmwareupdate'] )
     modify_device_prop( $device, 'firmwareupdate', false );
   if( !empty($devprop['frontendconfig']) ){
