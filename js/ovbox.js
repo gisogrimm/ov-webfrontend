@@ -370,6 +370,12 @@ function update_room( device, room, droom )
     var ctl = document.getElementById(room.id+':ctl');
     while( ctl.firstChild ) ctl.removeChild( ctl.firstChild );
     if( device.id ){
+	if( room.lock ){
+	    var lck = ctl.appendChild(document.createElement('img'));
+	    lck.setAttribute('src','lock.svg');
+	    lck.setAttribute('width','20px');
+	    ctl.appendChild(document.createTextNode(' '));
+	}
 	if( room.entered ) {
 	    var a = ctl.appendChild(document.createElement('a'));
 	    a.setAttribute('href','?enterroom=');
