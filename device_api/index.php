@@ -162,6 +162,7 @@ if ($user == 'device') {
         $device = $_GET['setver'];
         if( !empty($_GET['ver']) )
             modify_device_prop($device,'version', $_GET['ver']);
+        echo('OK');
     }
     // unlock database:
     flock($fp_dev, LOCK_UN );

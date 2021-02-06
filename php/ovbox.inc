@@ -407,10 +407,16 @@ function rm_old_rooms()
 
 function rm_old_unclaimed_devices()
 {
+  $users = list_users();
   $alldevs = list_db('device');
   foreach( $alldevs as $dev => $rprop ){
-    if( empty($rprop['owner']) && ($rprop['age'] > 3600) ){
-      rm_device($dev);
+    // operate only on inactive devices:
+    if( $rprop['age'] > 3600 ){
+      if( empty($rprop['owner']) )
+        rm_device($dev);
+      else
+        if( !in_array($rprop['owner'],$users) )
+          rm_device($dev);
     }
   }
 }
