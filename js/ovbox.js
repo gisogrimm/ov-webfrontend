@@ -24,6 +24,13 @@ function toggledisplayclass(id,msg){
     }
 }
 
+function setmetro( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('GET', 'rest.php?metro'+name+'='+value);
+    request.send();
+}
+
 function escapeHtml(text) {
     var map = {
 	'&': '&amp;',

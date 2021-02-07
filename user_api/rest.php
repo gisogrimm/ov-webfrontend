@@ -40,6 +40,21 @@ if( isset($_GET['getdev']) ){
     flock($fp_dev, LOCK_UN );
     die();
 }
+if( isset($_GET['metroactive']) ){
+    modify_device_prop($device,'metroactive',$_GET['metroactive']=='true');
+}
+if( isset($_GET['metrobpm']) ){
+    modify_device_prop($device,'metrobpm',floatval($_GET['metrobpm']));
+}
+if( isset($_GET['metrobpb']) ){
+    modify_device_prop($device,'metrobpb',intval($_GET['metrobpb']));
+}
+if( isset($_GET['metrodelay']) ){
+    modify_device_prop($device,'metrodelay',floatval($_GET['metrodelay']));
+}
+if( isset($_GET['metrolevel']) ){
+    modify_device_prop($device,'metrolevel',floatval($_GET['metrolevel']));
+}
 flock($fp_dev, LOCK_UN );
 if( isset($_GET['getrooms']) ){
     $usergroups = list_groups($user);

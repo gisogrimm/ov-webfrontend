@@ -87,6 +87,11 @@ function defaults( $type )
     'isovbox'=>true,
     'frontendconfig', array(),
     'message'=>'',
+    'metrobpm'=>120,
+    'metrobpb'=>4,
+    'metrodelay'=>40,
+    'metroactive'=>false,
+    'metrolevel'=>65,
   );
   $defaults['room'] = array(
     'access'=>0,
@@ -2390,7 +2395,59 @@ update will take several minutes.'));
   $inp->setAttribute('class','roomsettingstoggle uibutton');
   $inp->setAttribute('onclick','location.href=\'?unclaim\';');
   $inp->setAttribute('value','not my device');
-  
+
+  // metronome:
+  if( version_compare("ovclient-0.5.42-656035c",$devprop['version'])>0 ){
+    $div = $root->appendChild($doc->createElement('div'));
+    $div->setAttribute('id','metronome');
+    $div->setAttribute('style','display: none;');
+    // use IP address for mixer if possible:
+    $div->setAttribute('class','mixer');
+    // device is active and we know the host name:
+    $div->setAttribute('style','display: block;');
+    $inpactive = $div->appendChild($doc->createElement('input'));
+    $inpactive->setAttribute('type','checkbox');
+    if( $devprop['metroactive'] )
+      $inpactive->setAttribute('checked','');
+    $inpactive->setAttribute('onchange','setmetro(\'active\',this.checked);');
+    $div->appendChild($doc->createTextNode(' metronome '));
+    $inpbpm = $div->appendChild($doc->createElement('input'));
+    $inpbpm->setAttribute('type','number');
+    $inpbpm->setAttribute('min','1');
+    $inpbpm->setAttribute('step','1');
+    $inpbpm->setAttribute('max','400');
+    $inpbpm->setAttribute('size','5');
+    $inpbpm->setAttribute('value',$devprop['metrobpm']);
+    $inpbpm->setAttribute('onchange','setmetro(\'bpm\',this.value);');
+    $div->appendChild($doc->createTextNode(' bpm '));
+    $inpbpb = $div->appendChild($doc->createElement('input'));
+    $inpbpb->setAttribute('type','number');
+    $inpbpb->setAttribute('min','1');
+    $inpbpb->setAttribute('step','1');
+    $inpbpb->setAttribute('max','20');
+    $inpbpb->setAttribute('size','5');
+    $inpbpb->setAttribute('value',$devprop['metrobpb']);
+    $inpbpb->setAttribute('onchange','setmetro(\'bpb\',this.value);');
+    $div->appendChild($doc->createTextNode(' bpb '));
+    $inpdelay = $div->appendChild($doc->createElement('input'));
+    $inpdelay->setAttribute('type','number');
+    $inpdelay->setAttribute('min','0');
+    $inpdelay->setAttribute('step','1');
+    $inpdelay->setAttribute('max','100');
+    $inpdelay->setAttribute('size','5');
+    $inpdelay->setAttribute('value',$devprop['metrodelay']);
+    $inpdelay->setAttribute('onchange','setmetro(\'delay\',this.value);');
+    $div->appendChild($doc->createTextNode(' local delay/ms '));
+    $inplevel = $div->appendChild($doc->createElement('input'));
+    $inplevel->setAttribute('type','number');
+    $inplevel->setAttribute('min','0');
+    $inplevel->setAttribute('step','1');
+    $inplevel->setAttribute('max','90');
+    $inplevel->setAttribute('size','5');
+    $inplevel->setAttribute('value',$devprop['metrolevel']);
+    $inplevel->setAttribute('onchange','setmetro(\'level\',this.value);');
+    $div->appendChild($doc->createTextNode(' level/dB '));
+  }
   // web mixer:
   $div = $root->appendChild($doc->createElement('div'));
   $div->setAttribute('id','webmixerlink');
@@ -2496,7 +2553,12 @@ function get_room_session( $device, $devhash )
                                                          'applysrc'=>boolval($devprop['headtrackingrotsrc']),
                                                          'port'=>intval($devprop['headtrackingport']),
                                                          'tauref'=>floatval($devprop['headtrackingtauref'])),
-                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay'])));
+                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay'])),
+                                      'metronome'=>array('active'=>boolval($devprop['metroactive']),
+                                                         'bpm'=>floatval($devprop['metrobpm']),
+                                                         'bpb'=>intval($devprop['metrobpb']),
+                                                         'level'=>floatval($devprop['metrolevel']),
+                                                         'delay'=>floatval($devprop['metrodelay'])));
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
