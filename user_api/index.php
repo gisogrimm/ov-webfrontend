@@ -204,6 +204,12 @@ if( isset($_GET['firmwareupdate']) ){
     die();
 }
 
+if( isset($_GET['usedevversion']) ){
+    modify_device_prop( $_GET['usedevversion'], 'usedevversion', true );
+    header( "Location: /" );
+    die();
+}
+
 $device = get_device( $user );
 if( !empty($device) ){
     $devprop = get_properties( $device, 'device' );

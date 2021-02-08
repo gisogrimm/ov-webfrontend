@@ -84,6 +84,7 @@ function defaults( $type )
     'sendlocal'=>true,
     'hwinputchannels'=>array('system:capture_1','system:capture_2'),
     'firmwareupdate'=>false,
+    'usedevversion'=>false,
     'isovbox'=>true,
     'frontendconfig', array(),
     'message'=>'',
@@ -91,7 +92,7 @@ function defaults( $type )
     'metrobpb'=>4,
     'metrodelay'=>40,
     'metroactive'=>false,
-    'metrolevel'=>65,
+    'metrolevel'=>55,
   );
   $defaults['room'] = array(
     'access'=>0,
@@ -2298,6 +2299,7 @@ function html_show_device( $user, $device, $devprop )
   $div->appendChild($doc->createElement('br'));
   $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
   $div->appendChild($doc->createTextNode('By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
+  $div->appendChild($doc->createElement('br'));
   // save:
   $form->appendChild($doc->createElement('hr'));
   $el = $form->appendChild($doc->createElement('button'));
@@ -2395,6 +2397,13 @@ update will take several minutes.'));
   $inp->setAttribute('class','roomsettingstoggle uibutton');
   $inp->setAttribute('onclick','location.href=\'?unclaim\';');
   $inp->setAttribute('value','not my device');
+  // developer version:
+  $inp = $div->appendChild($doc->createElement('input'));
+  $inp->setAttribute('type','button');
+  $inp->setAttribute('onclick','location.href=\'?usedevversion='.$device.'\';');
+  $inp->setAttribute('value','switch to development version');
+  $inp->setAttribute('class','uibutton');
+  
 
   // metronome:
   if( version_compare("ovclient-0.5.42-656035c",$devprop['version'])<0 ){
@@ -2599,9 +2608,12 @@ function get_room_session( $device, $devhash )
                     'audiocfg'=>$audio,
                     'room'=>$room,
                     'roomdev'=>$roomdev,
-                    'firmwareupdate'=>$devprop['firmwareupdate']);
+                    'firmwareupdate'=>$devprop['firmwareupdate'],
+                    'usedevversion'=>$devprop['usedevversion']);
   if( $devprop['firmwareupdate'] )
     modify_device_prop( $device, 'firmwareupdate', false );
+  if( $devprop['usedevversion'] )
+    modify_device_prop( $device, 'usedevversion', false );
   if( !empty($devprop['frontendconfig']) ){
     $stagecfg['frontendconfig'] = $devprop['frontendconfig'];
     modify_device_prop( $device, 'frontendconfig', array() );
