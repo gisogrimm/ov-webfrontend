@@ -2397,7 +2397,7 @@ update will take several minutes.'));
   $inp->setAttribute('value','not my device');
 
   // metronome:
-  if( version_compare("ovclient-0.5.42-656035c",$devprop['version'])>0 ){
+  if( version_compare("ovclient-0.5.42-656035c",$devprop['version'])<0 ){
     $div = $root->appendChild($doc->createElement('div'));
     $div->setAttribute('id','metronome');
     $div->setAttribute('style','display: none;');
