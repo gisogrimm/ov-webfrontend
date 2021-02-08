@@ -2300,6 +2300,12 @@ function html_show_device( $user, $device, $devprop )
   $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
   $div->appendChild($doc->createTextNode('By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
   $div->appendChild($doc->createElement('br'));
+  // developer version:
+  $inp = $div->appendChild($doc->createElement('input'));
+  $inp->setAttribute('type','button');
+  $inp->setAttribute('onclick','location.href=\'?usedevversion='.$device.'\';');
+  $inp->setAttribute('value','switch to development version');
+  $inp->setAttribute('class','uibutton');
   // save:
   $form->appendChild($doc->createElement('hr'));
   $el = $form->appendChild($doc->createElement('button'));
@@ -2397,13 +2403,6 @@ update will take several minutes.'));
   $inp->setAttribute('class','roomsettingstoggle uibutton');
   $inp->setAttribute('onclick','location.href=\'?unclaim\';');
   $inp->setAttribute('value','not my device');
-  // developer version:
-  $inp = $div->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('onclick','location.href=\'?usedevversion='.$device.'\';');
-  $inp->setAttribute('value','switch to development version');
-  $inp->setAttribute('class','uibutton');
-  
 
   // metronome:
   if( version_compare("ovclient-0.5.42-656035c",$devprop['version'])<0 ){
