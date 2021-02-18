@@ -1378,8 +1378,15 @@ function html_admin_rooms()
     table_add_header($tr,$field,$sortkey,$doc,'room');
   $users = list_users();
   $groups = list_groups();
+  $cnt_old = 0;
   foreach( $rooms as $dev=>$dprop ){
     $tr = $tab->appendChild($doc->createElement('tr'));
+    if( $dprop['age'] > 3600 ){
+      if( empty($dprop['owner']) ){
+        $tr->setAttribute('style','background-color: #ffaaaa;');
+        $cnt_old = $cnt_old+1;
+      }
+    }
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dev));
     $age = numage2str($dprop['age']);
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($age));
@@ -1440,6 +1447,14 @@ function html_admin_rooms()
     $inp->setAttribute('name','rmroom');
     $inp->setAttribute('value',$dev);
     $form->appendChild($doc->createElement('button'))->appendChild($doc->createTextNode('Delete'));
+  }
+  if( $cnt_old > 0 ){
+    $form = $root->appendChild($doc->createElement('form'));
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','rmoldrooms');
+    $inp = $form->appendChild($doc->createElement('button'));
+    $inp->appendChild($doc->createTextNode('Remove '.$cnt_old.' inactive unclaimed room(s)'));
   }
   echo $doc->saveHTML() . "\n";
 }

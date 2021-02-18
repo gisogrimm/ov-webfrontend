@@ -144,7 +144,6 @@ if( $adm == 'devices' ){
 }
 if( $adm == 'rooms' ){
     html_admin_rooms();
-    echo '<form><input type="hidden" name="rmoldrooms"/><button>Remove inactive unclaimed rooms</button></form>';
 }
 if( $adm == 'users' ){
     html_admin_users();
