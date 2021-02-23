@@ -194,9 +194,15 @@ function postproc_prop( &$prop, $type )
     $prop['label'] = preg_replace('/[^a-zA-Z0-9-_]*/','',$prop['label']);
     $dim = explode(" ",$prop['srcshiftxyz']);
     if( count($dim)==3)
-      $prop['srcshift'] = array('x'=>$dim[0],'y'=>$dim[1],'z'=>$dim[2]);
+      $prop['srcshift'] = array('x'=>floatval($dim[0]),'y'=>floatval($dim[1]),'z'=>floatval($dim[2]));
     else{
       $prop['srcshift'] = array('x'=>0,'y'=>0,'z'=>0);
+    }
+    foreach( $prop['inputchannels'] as &$channel ){
+      $channel['position'] = array('x'=>floatval($channel['position']['x']),
+                                   'y'=>floatval($channel['position']['y']),
+                                   'z'=>floatval($channel['position']['z']));
+      $channel['gain'] = floatval($channel['gain']);
     }
     // create two-channel input variables for backward compatibility:
     if( count($prop['inputchannels'])>0 )
@@ -2434,6 +2440,7 @@ update will take several minutes.'));
       $inpactive->setAttribute('checked','');
     $inpactive->setAttribute('onchange','setmetro(\'active\',this.checked);');
     $div->appendChild($doc->createTextNode(' metronome '));
+    $div->appendChild($doc->createElement('br'));
     $inpbpm = $div->appendChild($doc->createElement('input'));
     $inpbpm->setAttribute('type','number');
     $inpbpm->setAttribute('min','1');
@@ -2442,7 +2449,8 @@ update will take several minutes.'));
     $inpbpm->setAttribute('size','5');
     $inpbpm->setAttribute('value',$devprop['metrobpm']);
     $inpbpm->setAttribute('onchange','setmetro(\'bpm\',this.value);');
-    $div->appendChild($doc->createTextNode(' bpm '));
+    $div->appendChild($doc->createTextNode(' Beats per Minute'));
+    $div->appendChild($doc->createElement('br'));
     $inpbpb = $div->appendChild($doc->createElement('input'));
     $inpbpb->setAttribute('type','number');
     $inpbpb->setAttribute('min','1');
@@ -2451,16 +2459,8 @@ update will take several minutes.'));
     $inpbpb->setAttribute('size','5');
     $inpbpb->setAttribute('value',$devprop['metrobpb']);
     $inpbpb->setAttribute('onchange','setmetro(\'bpb\',this.value);');
-    $div->appendChild($doc->createTextNode(' bpb '));
-    $inpdelay = $div->appendChild($doc->createElement('input'));
-    $inpdelay->setAttribute('type','number');
-    $inpdelay->setAttribute('min','0');
-    $inpdelay->setAttribute('step','1');
-    $inpdelay->setAttribute('max','100');
-    $inpdelay->setAttribute('size','5');
-    $inpdelay->setAttribute('value',$devprop['metrodelay']);
-    $inpdelay->setAttribute('onchange','setmetro(\'delay\',this.value);');
-    $div->appendChild($doc->createTextNode(' local delay/ms '));
+    $div->appendChild($doc->createTextNode(' Beats per Bar'));
+    $div->appendChild($doc->createElement('br'));
     $inplevel = $div->appendChild($doc->createElement('input'));
     $inplevel->setAttribute('type','number');
     $inplevel->setAttribute('min','0');
@@ -2469,7 +2469,17 @@ update will take several minutes.'));
     $inplevel->setAttribute('size','5');
     $inplevel->setAttribute('value',$devprop['metrolevel']);
     $inplevel->setAttribute('onchange','setmetro(\'level\',this.value);');
-    $div->appendChild($doc->createTextNode(' level/dB '));
+    $div->appendChild($doc->createTextNode(' level/dB'));
+    $div->appendChild($doc->createElement('br'));
+    $inpdelay = $div->appendChild($doc->createElement('input'));
+    $inpdelay->setAttribute('type','number');
+    $inpdelay->setAttribute('min','0');
+    $inpdelay->setAttribute('step','1');
+    $inpdelay->setAttribute('max','100');
+    $inpdelay->setAttribute('size','5');
+    $inpdelay->setAttribute('value',$devprop['metrodelay']);
+    $inpdelay->setAttribute('onchange','setmetro(\'delay\',this.value);');
+    $div->appendChild($doc->createTextNode(' local delay/ms'));
   }
   // web mixer:
   $div = $root->appendChild($doc->createElement('div'));
@@ -2521,7 +2531,7 @@ function get_dev_stage_settings( $device )
   $d = array();
   $dprop = get_properties($device,'device');
   /// ID within the stage, typically a number from 0 to number of stage devices:
-  $d['id'] = $dprop['chair'];
+  $d['id'] = intval($dprop['chair']);
   /// Label of the stage device:
   $d['label'] = $dprop['label'];
   /// List of channels the device is providing:
