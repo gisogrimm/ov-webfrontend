@@ -526,7 +526,7 @@ function update_deviceuser( user, device, owned_devices )
 	span.appendChild(document.createElement('b')).appendChild(document.createTextNode(device.id+' ('+device.label+')' ));
 	p.appendChild(document.createTextNode(lastseen+'.'+otherdev));
 	if( device.age < 20 ){
-	    if( (device.bandwidth.tx>0)||(device.bandwidth.rx>0) ){
+	    if( device.bandwidth && ((device.bandwidth.tx>0)||(device.bandwidth.rx>0)) ){
 		var txstr;
 		if( device.bandwidth.tx >= 100000 )
 		    txstr = (0.000001*device.bandwidth.tx).toFixed(2)+' MBps';
@@ -539,7 +539,7 @@ function update_deviceuser( user, device, owned_devices )
 		    rxstr = (0.001*device.bandwidth.rx).toFixed(2)+' kBps';
 		p.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
 	    }
-	    if( device.cpuload > 0 ){
+	    if( device.cpuload && (device.cpuload > 0) ){
 		p.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
 	    }
 	}
