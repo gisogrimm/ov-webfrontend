@@ -293,3 +293,11 @@ input:checked + .slider:before {
     color: #700000;
     font-weight: bold;
 }
+.login {
+    font-size: 120%;
+}
+.presetact {
+    background-color: #206090;
+    color: #ffffff;
+    font-weight: bold;
+}

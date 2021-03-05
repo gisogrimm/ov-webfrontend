@@ -384,6 +384,7 @@ if( isset($_POST['setdevprop']) ){
             $prop['xrecport'] = explode( " ", $_POST['xrecport'] );
         if( isset($_POST['jsfrontendconfig']) )
             $prop['frontendconfig'] = json_decode($_POST['jsfrontendconfig']);
+        $prop['preset'] = '';
         set_properties( $device, 'device', $prop );
     }
     header( "Location: /" );

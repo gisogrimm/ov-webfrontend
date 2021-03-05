@@ -99,6 +99,7 @@ if( isset($_GET['devpresetsave']) ){
             $preset[$key] = $dprop[$key];
         $presets[$_GET['devpresetsave']] = $preset;
         set_properties( $user, 'devpresets', $presets );
+        modify_device_prop($device,'preset',$_GET['devpresetsave']);
     }
 }
 if( isset($_GET['devpresetload']) ){
@@ -108,6 +109,7 @@ if( isset($_GET['devpresetload']) ){
         foreach( $preset as $key=>$value )
             $dprop[$key]=$value;
         set_properties($device,'device',$dprop);
+        modify_device_prop($device,'preset',$_GET['devpresetload']);
     }
 }
 if( isset($_GET['devpresetrm']) ){
@@ -115,6 +117,8 @@ if( isset($_GET['devpresetrm']) ){
     if( array_key_exists( $_GET['devpresetrm'], $presets ) ){
         unset( $presets[$_GET['devpresetrm']]);
         set_properties( $user, 'devpresets', $presets );
+        if( $dprop['preset'] == $_GET['devpresetsave'] )
+            modify_device_prop($device,'preset','');
     }
 }
 ?>

@@ -93,6 +93,7 @@ function defaults( $type )
     'metrodelay'=>40,
     'metroactive'=>false,
     'metrolevel'=>55,
+    'preset'=>'',
   );
   $defaults['room'] = array(
     'access'=>0,
@@ -1882,10 +1883,15 @@ function html_show_device( $user, $device, $devprop )
   if( !empty($presets) ){
     $presets = array_keys($presets);
     foreach( $presets as $preset ){
+      $xclass = '';
+      error_log('preset = '.$preset);
+      error_log('devpreset = '.$devprop['preset']);
+      if( $preset == $devprop['preset'] )
+        $xclass = ' presetact';
       $span = $el->appendChild($doc->createElement('span'));
-      $span->setAttribute('class','presetspan');
+      $span->setAttribute('class','presetspan'.$xclass);
       $inp = $span->appendChild($doc->createElement('input'));
-      $inp->setAttribute('class','presetload');
+      $inp->setAttribute('class','presetload'.$xclass);
       $inp->setAttribute('type','button');
       $inp->setAttribute('value',$preset);
       $inp->setAttribute('onclick','load_preset(this.value);');
@@ -1902,10 +1908,12 @@ function html_show_device( $user, $device, $devprop )
   $span->setAttribute('class','presetspan');
   $inp = $span->appendChild($doc->createElement('input'));
   $inp->setAttribute('id','savepresetname');
-  $inp = $span->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('value','Create new');
-  $inp->setAttribute('onclick','create_preset();');
+  $inp->setAttribute('placeholder','Save current settings as preset');
+  $inp->setAttribute('onchange','create_preset();');
+  //$inp = $span->appendChild($doc->createElement('input'));
+  //$inp->setAttribute('type','button');
+  //$inp->setAttribute('value','Create new');
+  //$inp->setAttribute('onclick','create_preset();');
   $devset->appendChild($doc->createElement('hr'));
   // device settings:
   $form = $devset->appendChild($doc->createElement('form'));

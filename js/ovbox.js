@@ -739,10 +739,12 @@ function load_preset( preset ){
 }
 
 function rm_preset( preset ){
-    let request = new XMLHttpRequest();
-    request.onload = function() {
-	location.reload();
+    if( confirm('Really delete preset "'+preset+'"?') ){
+	let request = new XMLHttpRequest();
+	request.onload = function() {
+	    location.reload();
+	}
+	request.open('GET', 'rest.php?devpresetrm=' + preset);
+	request.send();
     }
-    request.open('GET', 'rest.php?devpresetrm=' + preset);
-    request.send();
 }
