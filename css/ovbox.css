@@ -268,3 +268,28 @@ input:checked + .slider:before {
     white-space: pre-wrap;
     max-height: 80px;
 }
+.presetarea {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+.presetspan {
+    background-color: #d6d6d6;
+    color: #666666;
+    margin: 9px;
+    padding: 5px;
+    border-radius: 7px;
+    border: 2px solid #000;
+    white-space: nowrap;
+}
+.presetload {
+    background-color: #d6d6d6;
+    color: #666666;
+    border: 0px solid;
+    border-radius: 7px;
+}
+.presetrm {
+    margin: 0px;
+    padding: 0px;
+    color: #700000;
+    font-weight: bold;
+}

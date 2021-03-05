@@ -1871,6 +1871,42 @@ function html_show_device( $user, $device, $devprop )
   $devset->setAttribute('class','devprop');
   $devset->setAttribute('id','devsettings');
   $devset->setAttribute('style','display: none;');
+  // preset list:
+  $el = $devset->appendChild($doc->createElement('div'));
+  $el->setAttribute('class','devproptitle');
+  $el->appendChild($doc->createTextNode('Device setting presets:'));
+  $presets = get_properties( $user, 'devpresets' );
+  unset($presets['now']);
+  $el = $devset->appendChild($doc->createElement('div'));
+  $el->setAttribute('class','presetarea');
+  if( !empty($presets) ){
+    $presets = array_keys($presets);
+    foreach( $presets as $preset ){
+      $span = $el->appendChild($doc->createElement('span'));
+      $span->setAttribute('class','presetspan');
+      $inp = $span->appendChild($doc->createElement('input'));
+      $inp->setAttribute('class','presetload');
+      $inp->setAttribute('type','button');
+      $inp->setAttribute('value',$preset);
+      $inp->setAttribute('onclick','load_preset(this.value);');
+      $inp = $span->appendChild($doc->createElement('input'));
+      $inp->setAttribute('class','presetrm');
+      $inp->setAttribute('type','button');
+      $inp->setAttribute('value','X');
+      $inp->setAttribute('name',$preset);
+      $inp->setAttribute('onclick','rm_preset(this.name);');
+    }
+  }
+  // settings presets:
+  $span = $el->appendChild($doc->createElement('span'));
+  $span->setAttribute('class','presetspan');
+  $inp = $span->appendChild($doc->createElement('input'));
+  $inp->setAttribute('id','savepresetname');
+  $inp = $span->appendChild($doc->createElement('input'));
+  $inp->setAttribute('type','button');
+  $inp->setAttribute('value','Create new');
+  $inp->setAttribute('onclick','create_preset();');
+  $devset->appendChild($doc->createElement('hr'));
   // device settings:
   $form = $devset->appendChild($doc->createElement('form'));
   $form->setAttribute('method','POST');
@@ -2373,7 +2409,7 @@ function html_show_device( $user, $device, $devprop )
       $div->appendChild($doc->createTextNode('Before starting the firmware update, please connect your device with a
 network cable. Once started, do not disconnect your device from the
 power supply or network until the firmware update is completed. The
-update will take several minutes.'));
+update may take up to 30 minutes.'));
       $div->appendChild($doc->createElement('br'));
       if($devprop['age']>=20){
         $div->appendChild($doc->createTextNode('Please start your device to update the firmware.'));

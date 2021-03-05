@@ -69,4 +69,52 @@ if( isset($_GET['getrooms']) ){
     echo(json_encode($jsrooms));
     die();
 }
+if( isset($_GET['devpresetsave']) ){
+    if( !empty($_GET['devpresetsave']) ){
+        $presets = get_properties( $user, 'devpresets' );
+        $preset = array();
+        foreach( array('selfmonitor',
+                       'egogain',
+                       'inputchannels',
+                       'jitterreceive',
+                       'jittersend',
+                       'outputport1',
+                       'outputport2',
+                       'xport',
+                       'peer2peer',
+                       'secrec',
+                       'xrecport',
+                       'rawmode',
+                       'reverb',
+                       'renderism',
+                       'rvbgain',
+                       'mastergain',
+                       'playbackgain',
+                       'rectype',
+                       'jackdevice',
+                       'jackplugdev',
+                       'jackrate',
+                       'jackperiod',
+                       'jackbuffers') as $key )
+            $preset[$key] = $dprop[$key];
+        $presets[$_GET['devpresetsave']] = $preset;
+        set_properties( $user, 'devpresets', $presets );
+    }
+}
+if( isset($_GET['devpresetload']) ){
+    $presets = get_properties( $user, 'devpresets' );
+    if( array_key_exists( $_GET['devpresetload'], $presets ) ){
+        $preset = $presets[$_GET['devpresetload']];
+        foreach( $preset as $key=>$value )
+            $dprop[$key]=$value;
+        set_properties($device,'device',$dprop);
+    }
+}
+if( isset($_GET['devpresetrm']) ){
+    $presets = get_properties( $user, 'devpresets' );
+    if( array_key_exists( $_GET['devpresetrm'], $presets ) ){
+        unset( $presets[$_GET['devpresetrm']]);
+        set_properties( $user, 'devpresets', $presets );
+    }
+}
 ?>

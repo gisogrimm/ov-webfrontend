@@ -497,6 +497,8 @@ modify_user_prop( $user, 'access', time() );
 
 print_head( $user, $style );
 
+//echo '<h1 style="color: #a00000;">ovbox service is currently not available.</h1><p>We are working on a solution.</p>';
+
 // admin area:
 $site = get_properties('site','config');
 $isadmin = in_array($user,$site['admin']);

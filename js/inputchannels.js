@@ -111,7 +111,7 @@ function inputchannels_createUI( ) {
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','none');
     opt.setAttribute('selected','');
-    opt.appendChild(document.createTextNode('-- select preset --'));
+    opt.appendChild(document.createTextNode('-- select channel preset --'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','p0');
     opt.appendChild(document.createTextNode('send first input, vocals'));

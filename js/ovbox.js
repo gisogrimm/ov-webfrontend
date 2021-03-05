@@ -719,3 +719,30 @@ function update_jack_rate( rate ){
     document.getElementById('jackrate').value = rate;
     document.getElementById('jackperiod').value = 16*Math.floor(0.002*rate/16);
 }
+
+function create_preset(){
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	location.reload();
+    }
+    request.open('GET', 'rest.php?devpresetsave=' + document.getElementById('savepresetname').value);
+    request.send();
+}
+
+function load_preset( preset ){
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	location.reload();
+    }
+    request.open('GET', 'rest.php?devpresetload=' + preset);
+    request.send();
+}
+
+function rm_preset( preset ){
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	location.reload();
+    }
+    request.open('GET', 'rest.php?devpresetrm=' + preset);
+    request.send();
+}
