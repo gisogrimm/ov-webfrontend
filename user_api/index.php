@@ -100,12 +100,12 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
             echo '<div class="failure">Sorry, invalid user name or password.</div>';
         echo '<h2>Login:</h2>';
         echo '<form class="login" method="POST">';
-        echo '<label>User name:</label><br>';
-        echo '<input type="text" name="username"><br>';
-        echo '<label>Password:</label><br>';
-        echo '<input type="password" name="password"><br>';
+        echo '<div class="loginlab">User name:</div>';
+        echo '<input class="logininp" type="text" name="username"><br>';
+        echo '<div class="loginlab">Password:</div>';
+        echo '<input class="logininp" type="password" name="password"><br>';
         echo '<input type="hidden" name="login">';
-        echo '<button>Login</button>';
+        echo '<button class="uibutton">Login</button>';
         echo '</form>';
         echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">Register as new user</a> &nbsp; '.
             '<a href="forgotpw.php?grp='.grouphash($urlgroup).'">I forgot my password</a></p>';

@@ -71,7 +71,7 @@ if( isset($_GET['getrooms']) ){
 }
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
-        $presets = get_properties( $user, 'devpresets' );
+        $presets = get_properties( $device, 'devpresets' );
         $preset = array();
         foreach( array('selfmonitor',
                        'egogain',
@@ -98,12 +98,12 @@ if( isset($_GET['devpresetsave']) ){
                        'jackbuffers') as $key )
             $preset[$key] = $dprop[$key];
         $presets[$_GET['devpresetsave']] = $preset;
-        set_properties( $user, 'devpresets', $presets );
+        set_properties( $device, 'devpresets', $presets );
         modify_device_prop($device,'preset',$_GET['devpresetsave']);
     }
 }
 if( isset($_GET['devpresetload']) ){
-    $presets = get_properties( $user, 'devpresets' );
+    $presets = get_properties( $device, 'devpresets' );
     if( array_key_exists( $_GET['devpresetload'], $presets ) ){
         $preset = $presets[$_GET['devpresetload']];
         foreach( $preset as $key=>$value )
@@ -113,10 +113,10 @@ if( isset($_GET['devpresetload']) ){
     }
 }
 if( isset($_GET['devpresetrm']) ){
-    $presets = get_properties( $user, 'devpresets' );
+    $presets = get_properties( $device, 'devpresets' );
     if( array_key_exists( $_GET['devpresetrm'], $presets ) ){
         unset( $presets[$_GET['devpresetrm']]);
-        set_properties( $user, 'devpresets', $presets );
+        set_properties( $device, 'devpresets', $presets );
         if( $dprop['preset'] == $_GET['devpresetsave'] )
             modify_device_prop($device,'preset','');
     }

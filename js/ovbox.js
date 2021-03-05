@@ -565,22 +565,22 @@ function update_deviceuser( user, device, owned_devices )
     // update device selector:
     var devsel = document.getElementById('deviceselector');
     if( devsel ){
-    while( devsel.options.length > 0 )
-	devsel.remove(0);
-    var opt = document.createElement('option');
-    opt.value = '';
-    opt.text = '-- please select a device --';
-    devsel.add(opt);
-    for( const od in owned_devices){
-	var act = '';
-	if( owned_devices[od].age<20 )
-	    act = ' *active*';
-	opt = document.createElement('option');
-	opt.value = od;
-	opt.text = od+' ('+owned_devices[od].label+')'+act;
-	opt.selected = od==device.id;
+	while( devsel.options.length > 0 )
+	    devsel.remove(0);
+	var opt = document.createElement('option');
+	opt.value = '';
+	opt.text = '-- please select a device --';
 	devsel.add(opt);
-    }
+	for( const od in owned_devices){
+	    var act = '';
+	    if( owned_devices[od].age<20 )
+		act = ' *active*';
+	    opt = document.createElement('option');
+	    opt.value = od;
+	    opt.text = od+' ('+owned_devices[od].label+')'+act;
+	    opt.selected = od==device.id;
+	    devsel.add(opt);
+	}
     }
     // update webmixer link:
     var webm = document.getElementById('webmixerlink');

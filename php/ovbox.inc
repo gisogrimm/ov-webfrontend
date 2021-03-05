@@ -1060,15 +1060,20 @@ function html_device_selector( $user, $currentdevice )
   $select->setAttribute('class','uibutton');
   $select->setAttribute('oninput','location.href=\'?devselect=\'+event.target.value;');
   $select->appendChild($doc->createElement('option'))->appendChild($doc->createTextNode(' -- please select a device -- '));
-  foreach( owned_devices( $user ) as $dev=>$dprop ){
+  foreach( owned_devices( $user ) as $dev=>$sdprop ){
     $opt = $select->appendChild($doc->createElement('option'));
     $opt->setAttribute('value',$dev);
     if( $currentdevice == $dev )
       $opt->setAttribute('selected','');
     $active = '';
-    if( $dprop['age'] < 20 )
+    if( $sdprop['age'] < 20 )
       $active = ' *active*';
-    $opt->appendChild($doc->createTextNode($dev.' ('.$dprop['label'].')'.$active));
+    $opt->appendChild($doc->createTextNode($dev.' ('.$sdprop['label'].')'.$active));
+  }
+  $pres = $div->appendChild($doc->createElement('span'));
+  if(!empty($dprop['preset'])){
+    $pres->appendChild($doc->createTextNode($dprop['preset']));
+    $pres->setAttribute('class','presetspan presetact');
   }
   $inp = $div->appendChild($doc->createElement('input'));
   $inp->setAttribute('type','button');
@@ -1876,7 +1881,7 @@ function html_show_device( $user, $device, $devprop )
   $el = $devset->appendChild($doc->createElement('div'));
   $el->setAttribute('class','devproptitle');
   $el->appendChild($doc->createTextNode('Device setting presets:'));
-  $presets = get_properties( $user, 'devpresets' );
+  $presets = get_properties( $device, 'devpresets' );
   unset($presets['now']);
   $el = $devset->appendChild($doc->createElement('div'));
   $el->setAttribute('class','presetarea');
@@ -1884,8 +1889,6 @@ function html_show_device( $user, $device, $devprop )
     $presets = array_keys($presets);
     foreach( $presets as $preset ){
       $xclass = '';
-      error_log('preset = '.$preset);
-      error_log('devpreset = '.$devprop['preset']);
       if( $preset == $devprop['preset'] )
         $xclass = ' presetact';
       $span = $el->appendChild($doc->createElement('span'));
@@ -1908,6 +1911,7 @@ function html_show_device( $user, $device, $devprop )
   $span->setAttribute('class','presetspan');
   $inp = $span->appendChild($doc->createElement('input'));
   $inp->setAttribute('id','savepresetname');
+  //$inp->setAttribute('class','presetspan');
   $inp->setAttribute('placeholder','Save current settings as preset');
   $inp->setAttribute('onchange','create_preset();');
   //$inp = $span->appendChild($doc->createElement('input'));

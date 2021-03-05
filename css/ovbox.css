@@ -1,3 +1,15 @@
+input {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    padding: 5px;
+    border-radius: 7px;
+    background: #eee;
+}
+input[type="button"]:hover {
+    background: #aaa;
+}
 html {
     background: url(houseofconsort.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -294,10 +306,31 @@ input:checked + .slider:before {
     font-weight: bold;
 }
 .login {
-    font-size: 120%;
+    font-size: 100%;
+}
+.logininp {
+    border-radius: 8px;
+    border: 1px solid #999;
+    padding: 5px;
+    font-size: 100%;
+}
+.loginlab {
+    margin-top: 15px;
 }
 .presetact {
     background-color: #206090;
     color: #ffffff;
     font-weight: bold;
+}
+.uibutton {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    padding: 5px;
+    border-radius: 7px;
+    background: #eee;
+}
+button.uibutton:hover {
+    background: #aaa;
 }
