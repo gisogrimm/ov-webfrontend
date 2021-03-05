@@ -117,7 +117,7 @@ if( isset($_GET['devpresetrm']) ){
     if( array_key_exists( $_GET['devpresetrm'], $presets ) ){
         unset( $presets[$_GET['devpresetrm']]);
         set_properties( $device, 'devpresets', $presets );
-        if( $dprop['preset'] == $_GET['devpresetsave'] )
+        if( $dprop['preset'] == $_GET['devpresetrm'] )
             modify_device_prop($device,'preset','');
     }
 }
