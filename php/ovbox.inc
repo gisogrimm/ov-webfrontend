@@ -19,6 +19,7 @@ function defaults( $type )
     'pagetitle'=>'House of Consort',
     'basecss'=>'ovbox.css',
     'credits'=>'Background image by Johannes Gontarski.',
+    'moderation'=>false,
   );
   $defaults['style'] = array(
     'credits'=>'',
@@ -51,7 +52,6 @@ function defaults( $type )
     'outputport2'=>'system:playback_2',
     'xport'=>'{}',
     'peer2peer'=>true,
-    'donotsend'=>false,
     'secrec'=>0,
     'xrecport'=>array(),
     'position'=>array('x'=>0,'y'=>0,'z'=>0),
@@ -94,6 +94,8 @@ function defaults( $type )
     'metroactive'=>false,
     'metrolevel'=>55,
     'preset'=>'',
+    'isproxy'=>false,
+    'useproxy'=>false,
   );
   $defaults['room'] = array(
     'access'=>0,
@@ -284,7 +286,7 @@ function print_head( $user = "", $style = "" )
     $title = $sprop['pagetitle'];
   }
   echo "<!DOCTYPE html>\n";
-  echo '<html><head><title>'.$title;
+  echo '<html lang="en"><head><title>'.$title;
   if( !empty($user) ){
     echo ' - ' . $user;
   }
@@ -300,6 +302,7 @@ function print_head( $user = "", $style = "" )
   echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
   echo '</head><body onload="starttimer();">';
   echo '<h1>'.$title.'</h1>' . "\n";
+  echo '<div class="ad">March 26th: <b>ovbox concert</b> <i>Hope of my Heart</i> <a target="blank" href="http://www.orlandoviols.com/">www.orlandoviols.com</a></div>'."\n";
 }
 
 function print_foot($style = '',$show_donate = true)
@@ -616,6 +619,8 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
                       'issender'=>issender($prop),
                       'jittersend'=>floatval($prop['jittersend']),
                       'jitterreceive'=>floatval($prop['jitterreceive']),
+                      'jackrate'=>floatval($prop['jackrate']),
+                      'numchannels'=>count($prop['inputchannels']),
                       'peer2peer'=>boolval($prop['peer2peer']));
     if( ($room == $prop['room']) && ((!$senderonly) || issender($prop)) ){
       if( array_key_exists( 'chair', $prop ) )
@@ -890,8 +895,6 @@ function get_tascar_cfg( $device, $devhash )
       $p2p = '';
       if( $localdevprop['peer2peer'] )
         $p2p = ' -2';
-      if( $localdevprop['donotsend'] )
-        $p2p = $p2p.' --donotsend';
       if( $localdevprop['secrec'] > 0 )
         $p2p = $p2p . ' -x 100';
       $mod->setAttribute("command","../udpmirror/ovboxclient --rtprio=30 -s ".$roomprop['pin']." -d ". $roomurl[0] . " -p " . $roomurl[1] . " -c " . $mychair . " -l " . $myport . $p2p);
@@ -2349,6 +2352,23 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('pattern','[0-9 ]*');
   $el->setAttribute('value',implode(" ",$devprop['xrecport']));
   $div->appendChild($doc->createElement('br'));
+  // proxy settings
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('oninput','rest_setval(\'isproxy\',this.checked);');
+  $el->setAttribute('type','checkbox');
+  $el->setAttribute('id','devisproxy');
+  if( $devprop['isproxy'] )
+    $el->setAttribute('checked','');
+  $div->appendChild($doc->createTextNode('act as proxy'));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('oninput','rest_setval(\'useproxy\',this.checked);');
+  $el->setAttribute('type','checkbox');
+  $el->setAttribute('id','devuseproxy');
+  if( $devprop['useproxy'] )
+    $el->setAttribute('checked','');
+  $div->appendChild($doc->createTextNode('use a proxy'));
+  $div->appendChild($doc->createElement('br'));
   // frontend:
   $div->appendChild($doc->createElement('hr'));
   $el = $div->appendChild($doc->createElement('label'));
@@ -2639,7 +2659,9 @@ function get_room_session( $device, $devhash )
                                                          'bpm'=>floatval($devprop['metrobpm']),
                                                          'bpb'=>intval($devprop['metrobpb']),
                                                          'level'=>floatval($devprop['metrolevel']),
-                                                         'delay'=>floatval($devprop['metrodelay'])));
+                                                         'delay'=>floatval($devprop['metrodelay'])),
+                                      'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),
+                                                     'useproxy'=>boolval($devprop['useproxy'])));
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
@@ -2775,8 +2797,14 @@ function register_new_user( $mail, $username, $password, $group, &$msg )
   $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
   $mailmsg = "Please follow this link to activate your ovbox acount ".$username.":\n\n" . $actual_link . "&activate=".$reghash .
     "\n\nThis link is valid for one hour.\n\nIf you did not request an activation, please ignore this mail.\n";
+  $site = get_properties('site','config');
+  if( $site['moderation'] )
+    $mailmsg = $mailmsg."\n"."from ".$mail."\n";
   file_put_contents( '../lastmailsg',$mailmsg);
-  mail( $mail, 'ovbox account activation', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+  if( $site['moderation'] )
+    mail( $size['mail'], 'ovbox account activation request', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+  else
+    mail( $mail, 'ovbox account activation', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
   return true;
 }
 

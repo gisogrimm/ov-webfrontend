@@ -69,6 +69,8 @@ if( !empty($urlgroup) ){
     $style = $gprop['style'];
 }
 
+$site = get_properties('site','config');
+
 if( !isset($_SESSION['user']) ){
     if( isset($_POST['forgotpw']) ){
         // we are registering a new user:
@@ -123,7 +125,10 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         $block = true;
         if( register_new_user( $_POST['mail'], $_POST['username'], $_POST['password'], $urlgroup, $msg ) ){
             echo '<h2>Account activation:</h2>';
-            echo '<p>An activation link has been sent to your email address. Please follow that link within one hour to activate your account. If you did not receive a message, please check in your spam folder.</p>';
+            if( $site['moderation'] )
+                echo '<p>An activation request has been issued, you will receive a confirmation email as soon as possible.</p>';
+            else
+                echo '<p>An activation link has been sent to your email address. Please follow that link within one hour to activate your account. If you did not receive a message, please check in your spam folder.</p>';
             echo '<p><a href="/">Back to login page</a></p>';
             $block = true;
         }else{
@@ -349,7 +354,6 @@ if( isset($_POST['setdevprop']) ){
         $prop['peer2peer'] = isset($_POST['peer2peer']);
         $prop['jackplugdev'] = isset($_POST['jackplugdev']);
         $prop['rawmode'] = isset($_POST['rawmode']);
-        $prop['donotsend'] = isset($_POST['donotsend']);
         $prop['selfmonitor'] = isset($_POST['selfmonitor']);
         $prop['sendlocal'] = isset($_POST['sendlocal']);
         $prop['headtracking'] = isset($_POST['headtracking']);
@@ -501,7 +505,6 @@ print_head( $user, $style );
 //echo '<h1 style="color: #a00000;">ovbox service is currently not available.</h1><p>We are working on a solution.</p>';
 
 // admin area:
-$site = get_properties('site','config');
 $isadmin = in_array($user,$site['admin']);
 if( $isadmin ){
     echo '<p class="adminarea">';

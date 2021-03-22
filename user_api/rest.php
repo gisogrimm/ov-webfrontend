@@ -55,6 +55,12 @@ if( isset($_GET['metrodelay']) ){
 if( isset($_GET['metrolevel']) ){
     modify_device_prop($device,'metrolevel',floatval($_GET['metrolevel']));
 }
+if( isset($_GET['useproxy']) ){
+    modify_device_prop($device,'useproxy',$_GET['useproxy']=='true');
+}
+if( isset($_GET['isproxy']) ){
+    modify_device_prop($device,'isproxy',$_GET['isproxy']=='true');
+}
 flock($fp_dev, LOCK_UN );
 if( isset($_GET['getrooms']) ){
     $usergroups = list_groups($user);

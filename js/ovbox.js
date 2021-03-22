@@ -31,6 +31,13 @@ function setmetro( name, value )
     request.send();
 }
 
+function rest_setval( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('GET', 'rest.php?'+name+'='+value);
+    request.send();
+}
+
 function escapeHtml(text) {
     var map = {
 	'&': '&amp;',
@@ -355,6 +362,9 @@ function update_room( device, room, droom )
 	    lab = dev.id;
 	memlink.appendChild(document.createTextNode( escapeHtml(lab) ));
 	if( room.entered ){
+	    if( dev.numchannels > 1 )
+		latdisp = dev.numchannels + 'c ' + latdisp;
+	    latdisp = (dev.jackrate*0.001).toFixed(0) + 'k ' + latdisp;
 	    if( dev.peer2peer )
 		latdisp = 'p2p ' + latdisp;
 	    else
