@@ -2802,7 +2802,7 @@ function register_new_user( $mail, $username, $password, $group, &$msg )
     $mailmsg = $mailmsg."\n"."from ".$mail."\n";
   file_put_contents( '../lastmailsg',$mailmsg);
   if( $site['moderation'] )
-    mail( $size['mail'], 'ovbox account activation request', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+    mail( $site['mail'], 'ovbox account activation request', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
   else
     mail( $mail, 'ovbox account activation', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
   return true;
