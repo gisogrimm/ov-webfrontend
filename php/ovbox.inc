@@ -302,7 +302,7 @@ function print_head( $user = "", $style = "" )
   echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
   echo '</head><body onload="starttimer();">';
   echo '<h1>'.$title.'</h1>' . "\n";
-  echo '<div class="ad">March 26th: <b>ovbox concert</b> <i>Hope of my Heart</i> <a target="blank" href="http://www.orlandoviols.com/">www.orlandoviols.com</a></div>'."\n";
+  //echo '<div class="ad">March 26th: <b>ovbox concert</b> <i>Hope of my Heart</i> <a target="blank" href="http://www.orlandoviols.com/">www.orlandoviols.com</a></div>'."\n";
 }
 
 function print_foot($style = '',$show_donate = true)
