@@ -127,4 +127,8 @@ if( isset($_GET['devpresetrm']) ){
             modify_device_prop($device,'preset','');
     }
 }
+if( isset($_GET['getrawjson']) ){
+    header('Content-Type: application/json');
+    echo(json_encode($dprop,JSON_PRETTY_PRINT));
+}
 ?>

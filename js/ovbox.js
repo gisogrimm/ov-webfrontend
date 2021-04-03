@@ -553,6 +553,10 @@ function update_deviceuser( user, device, owned_devices )
 		p.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
 	    }
 	}
+	if( device.useproxy && (device.proxyip.length>0))
+	    p.appendChild(document.createTextNode(' proxy: '+device.proxyip));
+	if( device.isproxy )
+	    p.appendChild(document.createTextNode(' offering proxy service'));
     }
     // update device error:
     var deverr = document.getElementById('deverror');

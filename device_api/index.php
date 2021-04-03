@@ -130,31 +130,36 @@ if ($user == 'device') {
                 $jsmsg = $jsmsg . $data;
             fclose($putdata);
             $jsmsg = json_decode($jsmsg,true);
-            $dprop = get_properties($device,'device');
-            if( empty($dprop['inittime']) )
-                modify_device_prop($device,'inittime',date(DATE_ATOM));
-            if( (time()-$dprop['access']) > 30 )
-                modify_device_prop( $device, 'onlineaccess', time() );
-            modify_device_prop( $device, 'access', time() );
-            modify_device_prop( $device, 'alsadevs', $jsmsg['alsadevs'] );
-            modify_device_prop( $device, 'bandwidth', $jsmsg['bandwidth'] );
-            if( isset($jsmsg['cpuload']) )
-                modify_device_prop( $device, 'cpuload', $jsmsg['cpuload'] );
-            else
-                modify_device_prop( $device, 'cpuload', 0 );
-            if( isset($jsmsg['localip']) )
-                modify_device_prop( $device, 'localip', $jsmsg['localip'] );
-            else
-                modify_device_prop( $device, 'localip', '' );
-            if( isset($jsmsg['hwinputchannels']) )
-                modify_device_prop( $device, 'hwinputchannels', $jsmsg['hwinputchannels'] );
-            else
-                modify_device_prop( $device, 'hwinputchannels', '' );
-            modify_device_prop( $device, 'host', $host );
-            if( isset($jsmsg['isovbox']) )
-                modify_device_prop( $device, 'isovbox', $jsmsg['isovbox'] );
-            else
-                modify_device_prop( $device, 'isovbox', true );
+            {
+                // update device settings:
+                $dprop = get_properties($device,'device');
+                if( empty($dprop['inittime']) )
+                    $dprop['inittime'] = date(DATE_ATOM);
+                if( (time()-$dprop['access']) > 30 )
+                    $dprop['onlineaccess'] = time();
+                $dprop['access'] = time();
+                $dprop['alsadevs'] = $jsmsg['alsadevs'];
+                $dprop['bandwidth'] = $jsmsg['bandwidth'];
+                if( isset($jsmsg['cpuload']) )
+                    $dprop['cpuload'] = $jsmsg['cpuload'];
+                else
+                    $dprop['cpuload'] = 0;
+                if( isset($jsmsg['localip']) )
+                    $dprop['localip'] = $jsmsg['localip'];
+                else
+                    $dprop['localip'] = '';
+                if( isset($jsmsg['hwinputchannels']) )
+                    $dprop['hwinputchannels'] = $jsmsg['hwinputchannels'];
+                else
+                    $dprop['hwinputchannels'] = '';
+                $dprop['host'] = $host;
+                $dprop['externalip'] = get_client_ip();
+                if( isset($jsmsg['isovbox']) )
+                    $dprop['isovbox'] = $jsmsg['isovbox'];
+                else
+                    $dprop['isovbox'] = true;
+                set_properties( $device, 'device', $dprop );
+            }
         }
     }
     // register a device:

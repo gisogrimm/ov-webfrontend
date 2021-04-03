@@ -40,6 +40,7 @@ function defaults( $type )
     'selfmonitordelay'=>0,
     'host'=>'',
     'localip'=>'',
+    'externalip'=>'',
     'inputchannels'=>array(array(
       'sourceport'=>'system:capture_1',
       'gain'=>1,
@@ -65,7 +66,6 @@ function defaults( $type )
     'playbackgain'=>0,
     'room'=>'',
     'roomenter'=>0,
-    'srcdist'=>0.7,
     'rectype'=>'hrtf',
     'jackdevice'=>'highest',
     'jackplugdev'=>false,
@@ -96,6 +96,7 @@ function defaults( $type )
     'preset'=>'',
     'isproxy'=>false,
     'useproxy'=>false,
+    'proxyip'=>'',
   );
   $defaults['room'] = array(
     'access'=>0,
@@ -242,17 +243,17 @@ function postproc_prop( &$prop, $type )
 
 function get_client_ip() {
   $ipaddress = '';
-  if (filter_var($_SERVER['HTTP_CLIENT_IP'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
+  if (isset($_SERVER['HTTP_CLIENT_IP']) && filter_var($_SERVER['HTTP_CLIENT_IP'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
     $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-  else if(filter_var($_SERVER['HTTP_X_FORWARDED_FOR'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
+  else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && filter_var($_SERVER['HTTP_X_FORWARDED_FOR'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
     $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-  else if(filter_var($_SERVER['HTTP_X_FORWARDED'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
+  else if(isset($_SERVER['HTTP_X_FORWARDED']) && filter_var($_SERVER['HTTP_X_FORWARDED'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
     $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-  else if(filter_var($_SERVER['HTTP_FORWARDED_FOR'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
+  else if(isset($_SERVER['HTTP_FORWARDED_FOR']) && filter_var($_SERVER['HTTP_FORWARDED_FOR'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
     $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-  else if(filter_var($_SERVER['HTTP_FORWARDED'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
+  else if(isset($_SERVER['HTTP_FORWARDED']) && filter_var($_SERVER['HTTP_FORWARDED'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
     $ipaddress = $_SERVER['HTTP_FORWARDED'];
-  else if(filter_var($_SERVER['REMOTE_ADDR'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
+  else if(isset($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'],FILTER_VALIDATE_IP,FILTER_FLAG_IPV4))
     $ipaddress = $_SERVER['REMOTE_ADDR'];
   else
     $ipaddress = 'UNKNOWN';
@@ -817,7 +818,7 @@ function get_tascar_cfg( $device, $devhash )
             $source->setAttribute("name",$devprop['label'].'_'.$chair);
           }
           $gain = $gain + $devprop['playbackgain'];
-          $dy = $devprop['srcdist'] * ($numsource > 1) * 0.5;
+          $dy = 0.7 * ($numsource > 1) * 0.5;
           if( !empty($devprop['inputport']) ){
             $inport = '';
             if ( $dev == $device )
@@ -2365,9 +2366,9 @@ function html_show_device( $user, $device, $devprop )
   $el->setAttribute('oninput','rest_setval(\'useproxy\',this.checked);');
   $el->setAttribute('type','checkbox');
   $el->setAttribute('id','devuseproxy');
-  if( $devprop['useproxy'] )
+  if( boolval($devprop['useproxy']))
     $el->setAttribute('checked','');
-  $div->appendChild($doc->createTextNode('use a proxy'));
+  $div->appendChild($doc->createTextNode(' use an audio proxy if possible'));
   $div->appendChild($doc->createElement('br'));
   // frontend:
   $div->appendChild($doc->createElement('hr'));
@@ -2395,6 +2396,11 @@ function html_show_device( $user, $device, $devprop )
   $inp->setAttribute('onclick','location.href=\'?usedevversion='.$device.'\';');
   $inp->setAttribute('value','switch to development version');
   $inp->setAttribute('class','uibutton');
+  $div->appendChild($doc->createElement('br'));
+  $a = $div->appendChild($doc->createElement('a'));
+  $a->setAttribute('href','rest.php?getrawjson=');
+  $a->setAttribute('target','blank');
+  $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
   // save:
   $form->appendChild($doc->createElement('hr'));
   $el = $form->appendChild($doc->createElement('button'));
@@ -2598,6 +2604,7 @@ function get_dev_stage_settings( $device )
 {
   $d = array();
   $dprop = get_properties($device,'device');
+  $d['deviceid'] = $device;
   /// ID within the stage, typically a number from 0 to number of stage devices:
   $d['id'] = intval($dprop['chair']);
   /// Label of the stage device:
@@ -2614,7 +2621,23 @@ function get_dev_stage_settings( $device )
   $d['mute'] = false;
   $d['jitter'] = array('send'=>floatval($dprop['jittersend']),'receive'=>floatval($dprop['jitterreceive']));
   $d['sendlocal'] = boolval($dprop['sendlocal']);
+  // settings used only by configuration server:
+  $d['useproxy'] = boolval($dprop['useproxy']);
+  $d['isproxy'] = boolval($dprop['isproxy']);
+  $d['localip'] = $dprop['localip'];
+  $d['externalip'] = $dprop['externalip'];
   return $d;
+}
+
+// get a proxy IP address from device ID
+function get_proxy_ip( $device )
+{
+  if( empty($device) )
+    return '';
+  $devprop = get_properties($device,'device');
+  if( $devprop['isproxy'] )
+    return $devprop['localip'];
+  return '';
 }
 
 // this is the main function for providing device configuration
@@ -2645,23 +2668,11 @@ function get_room_session( $device, $devhash )
   $rendersettings['secrec'] = floatval($devprop['secrec']);
   $rendersettings['rawmode'] = boolval($devprop['rawmode']);
   $rendersettings['xrecport'] = $devprop['xrecport'];
+  // old headtracking interface:
   $rendersettings['headtracking'] = boolval($devprop['headtracking']);
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
   $rendersettings['headtrackingrotsrc'] = boolval($devprop['headtrackingrotsrc']);
   $rendersettings['headtrackingport'] = intval($devprop['headtrackingport']);
-  $rendersettings['extracfg'] = array('headtrack'=>array('load'=>boolval($devprop['headtracking']),
-                                                         'applyrec'=>boolval($devprop['headtrackingrot']),
-                                                         'applysrc'=>boolval($devprop['headtrackingrotsrc']),
-                                                         'port'=>intval($devprop['headtrackingport']),
-                                                         'tauref'=>floatval($devprop['headtrackingtauref'])),
-                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay'])),
-                                      'metronome'=>array('active'=>boolval($devprop['metroactive']),
-                                                         'bpm'=>floatval($devprop['metrobpm']),
-                                                         'bpb'=>intval($devprop['metrobpb']),
-                                                         'level'=>floatval($devprop['metrolevel']),
-                                                         'delay'=>floatval($devprop['metrodelay'])),
-                                      'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),
-                                                     'useproxy'=>boolval($devprop['useproxy'])));
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';
@@ -2698,7 +2709,54 @@ function get_room_session( $device, $devhash )
       }
     }
   }
-  $stagecfg = array('rendersettings'=>$rendersettings,
+  // proxy settings:
+  if( $devprop['useproxy'] ){
+    // get potential proxies. Must be
+    // - in same session
+    // - offer proxy service
+    // - directly connected to the internet or in same network
+    $proxyip = '';
+    // devices of same session
+    foreach( $roomdev as $rdev ){
+      error_log('candidate '.$rdev['deviceid'].' localip: '.$rdev['localip']);
+      if( $rdev['isproxy'] && !empty($rdev['localip']) && !empty($rdev['externalip']) ){
+        // offers proxy service and has a configured IP address
+        if( ($rdev['localip']==$rdev['externalip'])||($rdev['externalip']==$devprop['externalip']) ){
+          // is exposed to internet (externalip==localip) or has same external IP as this device
+          if( $rdev['localip'] != $devprop['localip'] ){
+            // this is not the same device as this
+            $proxyip = $rdev['localip'];
+          }
+        }
+      }
+    }    
+  }
+  $proxyclients = array();
+  if( $devprop['isproxy'] ){
+    // get list of clients (ip/stage id) who use this device as proxy:
+    foreach( $roomdev as $rdev ){
+      if( $rdev['useproxy'] == $device ){
+        $proxyclientsettings = get_properties( $rdev['deviceid'], 'device' );
+        $proxyclients[] = array('id'=>$rdev['id'],'ip'=>$proxyclientsettings['localip']);
+      }
+    }
+  }
+  $rendersettings['extracfg'] = array('headtrack'=>array('load'=>boolval($devprop['headtracking']),
+                                                         'applyrec'=>boolval($devprop['headtrackingrot']),
+                                                         'applysrc'=>boolval($devprop['headtrackingrotsrc']),
+                                                         'port'=>intval($devprop['headtrackingport']),
+                                                         'tauref'=>floatval($devprop['headtrackingtauref'])),
+                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay'])),
+                                      'metronome'=>array('active'=>boolval($devprop['metroactive']),
+                                                         'bpm'=>floatval($devprop['metrobpm']),
+                                                         'bpb'=>intval($devprop['metrobpb']),
+                                                         'level'=>floatval($devprop['metrolevel']),
+                                                         'delay'=>floatval($devprop['metrodelay'])),
+                                      'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),
+                                                     'useproxy'=>!empty($proxyip),
+                                                     'proxyip'=>$proxyip,
+                                                     'clients'=>$proxyclients));
+    $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,
                     'room'=>$room,
                     'roomdev'=>$roomdev,
@@ -2712,6 +2770,8 @@ function get_room_session( $device, $devhash )
     $stagecfg['frontendconfig'] = $devprop['frontendconfig'];
     modify_device_prop( $device, 'frontendconfig', array() );
   }
+  if( $devprop['proxyip'] != $proxyip )
+    modify_device_prop( $device, 'proxyip', $proxyip );
   $stagecfg = json_encode( $stagecfg );
   $hash = hash('md5',$stagecfg);
   if( $hash != $devhash ){

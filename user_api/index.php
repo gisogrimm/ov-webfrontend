@@ -336,6 +336,13 @@ function set_getprop_post( &$prop, $key )
     }
 }
 
+function set_getprop_post_float( &$prop, $key )
+{
+    if( isset($_POST[$key]) ){
+        $prop[$key] = floatval($_POST[$key]);
+    }
+}
+
 if( isset($_GET['jackrestart']) ){
     $device = $_GET['jackrestart'];
     if( !empty( $device ) ){
@@ -360,30 +367,29 @@ if( isset($_POST['setdevprop']) ){
         $prop['headtrackingrot'] = isset($_POST['headtrackingrot']);
         $prop['headtrackingrotsrc'] = isset($_POST['headtrackingrotsrc']);
         $prop['message'] = '';
-        set_getprop_post($prop,'jittersend');
-        set_getprop_post($prop,'jitterreceive');
+        set_getprop_post_float($prop,'jittersend');
+        set_getprop_post_float($prop,'jitterreceive');
         set_getprop_post($prop,'label');
-        set_getprop_post($prop,'egogain');
-        set_getprop_post($prop,'selfmonitordelay');
-        set_getprop_post($prop,'rvbgain');
+        set_getprop_post_float($prop,'egogain');
+        set_getprop_post_float($prop,'selfmonitordelay');
+        set_getprop_post_float($prop,'rvbgain');
         if( isset($_POST['jsinputchannels']) ){
             $prop['inputchannels'] = json_decode($_POST['jsinputchannels']);
         }
-        set_getprop_post($prop,'srcdist');
         set_getprop_post($prop,'srcshiftxyz');
         set_getprop_post($prop,'outputport1');
         set_getprop_post($prop,'outputport2');
         set_getprop_post($prop,'xport');
-        set_getprop_post($prop,'secrec');
-        set_getprop_post($prop,'playbackgain');
-        set_getprop_post($prop,'mastergain');
+        set_getprop_post_float($prop,'secrec');
+        set_getprop_post_float($prop,'playbackgain');
+        set_getprop_post_float($prop,'mastergain');
         set_getprop_post($prop,'rectype');
         set_getprop_post($prop,'jackdevice');
-        set_getprop_post($prop,'jackrate');
-        set_getprop_post($prop,'jackperiod');
-        set_getprop_post($prop,'jackbuffers');
-        set_getprop_post($prop,'headtrackingport');
-        set_getprop_post($prop,'headtrackingtauref');
+        set_getprop_post_float($prop,'jackrate');
+        set_getprop_post_float($prop,'jackperiod');
+        set_getprop_post_float($prop,'jackbuffers');
+        set_getprop_post_float($prop,'headtrackingport');
+        set_getprop_post_float($prop,'headtrackingtauref');
         if( isset($_POST['xrecport']) )
             $prop['xrecport'] = explode( " ", $_POST['xrecport'] );
         if( isset($_POST['jsfrontendconfig']) )
