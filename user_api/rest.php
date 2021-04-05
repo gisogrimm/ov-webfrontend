@@ -9,6 +9,7 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 }
 
 include '../php/ovbox.inc';
+include '../php/rest.inc';
 
 session_start();
 

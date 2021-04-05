@@ -1,6 +1,7 @@
 <?php
 
 include '../php/ovbox.inc';
+include '../php/device.inc';
 
 $user = getenv('ovboxuser');
 
@@ -22,6 +23,8 @@ if ($user == 'device') {
     if( isset($_GET['dev']) ){
         $device = $_GET['dev'];
         if( !empty($device) ){
+
+            include '../php/device_deprecated.inc';
             $devhash = '';
             if( isset($_GET['hash']) )
                 $devhash = $_GET['hash'];

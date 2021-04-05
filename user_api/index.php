@@ -9,6 +9,7 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 }
 
 include '../php/ovbox.inc';
+include '../php/user.inc';
 
 if( isset($_GET['activate']) ){
     flock($fp_user, LOCK_EX );

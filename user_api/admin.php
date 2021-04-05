@@ -9,6 +9,8 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 }
 
 include '../php/ovbox.inc';
+include '../php/admin.inc';
+include '../php/user.inc';
 
 session_start();
 if( !isset($_SESSION['user']) )
