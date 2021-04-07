@@ -145,7 +145,10 @@ tr {
     font-weight: bold;
 }
 .foto {
-    font-size: x-small;
+    font-size: 75%;
+    float: left;
+    overflow: auto;
+    margin: 3px;
 }
 .devclaim {
     background-color: #EDDBD890;
@@ -258,8 +261,9 @@ input:checked + .slider:before {
 .ovstage {
     float: right;
     overflow: auto;
-    font-size: 80%;
+    font-size: 70%;
     margin-bottom: 10px;
+    margin: 3px;
 }
 .bulletinboard {
     background-color: #fffdb4;
@@ -509,6 +513,14 @@ a.adminarea:hover {
     a.navbar {
 	display: block;
 	float: none;
+    }
+    .ovstage {
+	font-size: x-small;
+	margin: 2px;
+    }
+    .foto {
+	font-size: x-small;
+	margin: 2px;
     }
 }
 @media (min-width: 1024px) {
