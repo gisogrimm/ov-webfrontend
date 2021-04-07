@@ -97,6 +97,7 @@ function defaults( $type )
     'isproxy'=>false,
     'useproxy'=>false,
     'proxyip'=>'',
+    'showexpertsettings'=>false,
   );
   $defaults['room'] = array(
     'access'=>0,
@@ -245,7 +246,7 @@ function get_properties( $id, $type )
 {
   $fname = '../db/'.$id.'.'.$type;
   $prop = defaults($type);
-  if( file_exists( $fname ) )
+  if( !empty($id) && file_exists( $fname ) )
     $prop = array_merge($prop, json_decode( file_get_contents( $fname ), true ));
   postproc_prop( $prop, $type );
   return $prop;
@@ -254,63 +255,8 @@ function get_properties( $id, $type )
 function set_properties( $id, $type, $dprop )
 {
   $fname = '../db/'.$id.'.'.$type;
-  file_put_contents( $fname, json_encode( $dprop ));
-}
-
-function print_head( $user = "", $style = "" )
-{
-  $sitecfg = get_properties('site','config');
-  $css = '';
-  $title = $sitecfg['pagetitle'];
-  if( !empty($style) ){
-    $sprop = get_properties( $style, 'style' );
-    $css = $sprop['css'];
-    $title = $sprop['pagetitle'];
-  }
-  echo "<!DOCTYPE html>\n";
-  echo '<html lang="en"><head><title>'.$title;
-  if( !empty($user) ){
-    echo ' - ' . $user;
-  }
-  echo '</title><style>';
-  if( file_exists( '../css/'.$sitecfg['basecss'] ) ){
-    echo file_get_contents( '../css/'.$sitecfg['basecss'] );
-  }
-  if( (!empty($css)) && file_exists( '../css/'.$css ) ){
-    echo file_get_contents( '../css/'.$css );
-  }
-  echo '</style>';
-  echo '<script>'.file_get_contents('../js/ovbox.js').'</script>'."\n";
-  echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
-  echo '</head><body onload="starttimer();">';
-  echo '<h1>'.$title.'</h1>' . "\n";
-  //echo '<div class="ad">March 26th: <b>ovbox concert</b> <i>Hope of my Heart</i> <a target="blank" href="http://www.orlandoviols.com/">www.orlandoviols.com</a></div>'."\n";
-}
-
-function print_foot($style = '',$show_donate = true)
-{
-  $sitecfg = get_properties('site','config');
-  $credits = $sitecfg['credits'];
-  if( !empty($style) ){
-    $sprop = get_properties( $style, 'style' );
-    $credits = $sprop['credits'];
-    $show_donate = $sprop['showdonate'];
-  }
-  if( $show_donate ){
-    echo '<div class="donate">';
-    echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">';
-    echo '<input type="hidden" name="cmd" value="_s-xclick" />';
-    echo '<input type="hidden" name="hosted_button_id" value="V63WV7SAVQ6EC" />';
-    echo '<input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />';
-    echo '<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />';
-    echo '</form>';
-    echo '</div>';
-  }
-  echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a> in cooperation with <a target="blank" href="https://digital-stage.org/">Digital Stage</a>.</div>';
-  echo '<div class="foto">'.$credits.'</div>';
-  echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerkärung</a></div>';
-  echo '</body>';
-  echo '</html>';
+  if( !empty($id) )
+    file_put_contents( $fname, json_encode( $dprop ));
 }
 
 function rm_device( $dev )
@@ -533,6 +479,16 @@ function get_device( $user )
     }
   }
   return $device;
+}
+
+function select_userdev( $user, $dev )
+{
+  $fname = '../db/' . $user . '.userdevice';
+  if( empty($dev) ){
+    unlink($fname);
+  }else{
+    file_put_contents( $fname, $dev );
+  }
 }
 
 

@@ -11,14 +11,8 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 include '../php/ovbox.inc';
 include '../php/admin.inc';
 include '../php/user.inc';
+include '../php/session.inc';
 
-session_start();
-if( !isset($_SESSION['user']) )
-    die();
-
-$user = $_SESSION['user'];
-
-$site = get_properties('site','config');
 if( !in_array($user,$site['admin']) ){
     unset($_SESSION['user']);
     session_unset();
@@ -123,22 +117,12 @@ if( isset($_GET['rmroom']) ){
     header( "Location: /admin.php?adm=rooms" );
     die();
 }
-print_head( $user );
+print_head( $user, $style, $urlgroup );
 rm_old_unclaimed_devices();
 $adm = 'devices';
 if( isset($_GET['adm']) ){
     $adm = $_GET['adm'];
 }
-echo '<p class="adminarea">';
-echo '<a href="/?">Home</a> - admin <a href="admin.php?adm=devices">devices</a> <a href="admin.php?adm=rooms">rooms</a> <a href="admin.php?adm=users">users</a> <a href="admin.php?adm=groups">groups</a>';
-echo ' - <input type="button" onclick="location.replace(\'/admin.php?adm='.$adm.'\');" value="Refresh"/>'.
-    ' <span class="timedisplay">0</span>'."\n";
-echo '</p>';
-
-echo '<form class="login" method="POST" action="/">';
-echo '<input type="hidden" name="logout"><br>';
-echo '<button class="uibutton">Logout</button>';
-echo '</form>';
 
 if( $adm == 'devices' ){
     html_admin_db('device',array('roomage','version'));

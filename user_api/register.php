@@ -9,6 +9,8 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 }
 
 include '../php/ovbox.inc';
+include '../php/rest.inc';
+include '../php/user.inc';
 
 $urlgroup = '';
 if( isset($_GET['grp'] ) )
@@ -23,7 +25,7 @@ print_head('',$style);
 // display registration box: username, username, password
 echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
 echo '<h2>Register as new user:</h2>'."\n";
-echo '<form name="register" class="login" action="/?grp='.grouphash($urlgroup).'" method="POST">'."\n";
+echo '<form name="register" class="login" action="/login.php?grp='.grouphash($urlgroup).'" method="POST">'."\n";
 echo '<label>e-mail address:</label><br>';
 echo '<input type="text" name="mail" required><br>';
 echo '<label>User name:</label><br>';

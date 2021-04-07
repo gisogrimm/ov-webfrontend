@@ -24,11 +24,30 @@ function toggledisplayclass(id,msg){
     }
 }
 
+function set_displayclass( id, value ){
+    var x=document.getElementsByClassName(id);
+    for(var k=0;k<x.length;k++){
+	if( value )
+	    x[k].style.display="block";
+	else
+	    x[k].style.display="none";
+    }
+}
+
 function setmetro( name, value )
 {
     let request = new XMLHttpRequest();
     request.open('GET', 'rest.php?metro'+name+'='+value);
     request.send();
+    if( name == 'active' ){
+	var x = document.getElementById('metrocontrols');
+	if( x ){
+	    if( value )
+		x.setAttribute('style','display: block;')
+	    else
+		x.setAttribute('style','display: none;')
+	}
+    }
 }
 
 function rest_setval( name, value )
@@ -36,6 +55,48 @@ function rest_setval( name, value )
     let request = new XMLHttpRequest();
     request.open('GET', 'rest.php?'+name+'='+value);
     request.send();
+}
+
+function rest_setval_reload( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	location.reload();
+    }
+    request.open('GET', 'rest.php?'+name+'='+value, true);
+    request.send();
+}
+
+function rest_setval_post( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send(name+'='+value);
+}
+
+function rest_setval_post_reload( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	location.reload();
+    }
+    request.open('POST', '/rest.php', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send(name+'='+value);
+}
+
+function rest_set_devprop( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    if( typeof value === "boolean" )
+	request.send('setdevpropbool='+name+'&'+name+'='+value);
+    else if( typeof value === "number" )
+	request.send('setdevpropfloat='+name+'&'+name+'='+value);
+    else
+	request.send('setdevprop='+name+'&'+name+'='+value);
 }
 
 function escapeHtml(text) {
@@ -504,24 +565,22 @@ function numage2str( nage )
     return age;
 }
 
-function update_deviceuser( user, device, owned_devices )
+function update_devicestatus( user, device, owned_devices )
 {
-    var p = document.getElementById('deviceuser');
-    while( p.firstChild ) p.removeChild(p.firstChild);
-    p.appendChild(document.createTextNode('You are logged in as user '));
-    p.appendChild(document.createElement('b')).appendChild(document.createTextNode(user));
+    var devstat = document.getElementById('devstatus');
+    while( devstat.firstChild ) devstat.removeChild(devstat.firstChild);
     if( device.id.length==0 ){
-	p.appendChild(document.createTextNode(' with no device.'));
+	devstat.appendChild(document.createTextNode('No device is linked to this account.'));
     }else{
 	var dclass = 'psvmember';
-	var state = '';
+	//var state = '';
 	var lastseen = '';
 	var otherdev = '';
 	if( device.age < 20 ){
 	    dclass = 'actmember';
-	    state = 'active';
+	    //state = 'active';
 	}else{
-	    lastseen = ', inactive since '+numage2str(device.age);
+	    lastseen = ' inactive since '+numage2str(device.age)+'.';
 	    var oact = false;
 	    for( const od in owned_devices){
 		if( owned_devices[od].age<20 )
@@ -530,11 +589,7 @@ function update_deviceuser( user, device, owned_devices )
 	    if( oact )
 		otherdev = ' You own active devices - please check the device selector below to access them.';
 	}
-	p.appendChild(document.createTextNode(' with '+state+' device '));
-	var span = p.appendChild(document.createElement('span'));
-	span.setAttribute('class',dclass);
-	span.appendChild(document.createElement('b')).appendChild(document.createTextNode(device.id+' ('+device.label+')' ));
-	p.appendChild(document.createTextNode(lastseen+'.'+otherdev));
+	devstat.appendChild(document.createTextNode(lastseen+otherdev));
 	if( device.age < 20 ){
 	    if( device.bandwidth && ((device.bandwidth.tx>0)||(device.bandwidth.rx>0)) ){
 		var txstr;
@@ -547,16 +602,16 @@ function update_deviceuser( user, device, owned_devices )
 		    rxstr = (0.000001*device.bandwidth.rx).toFixed(2)+' MBps';
 		else
 		    rxstr = (0.001*device.bandwidth.rx).toFixed(2)+' kBps';
-		p.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
+		devstat.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
 	    }
 	    if( device.cpuload && (device.cpuload > 0) ){
-		p.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
+		devstat.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
 	    }
 	}
 	if( device.useproxy && (device.proxyip.length>0))
-	    p.appendChild(document.createTextNode(' proxy: '+device.proxyip));
+	    devstat.appendChild(document.createTextNode(' proxy: '+device.proxyip));
 	if( device.isproxy )
-	    p.appendChild(document.createTextNode(' offering proxy service'));
+	    devstat.appendChild(document.createTextNode(' offering proxy service'));
     }
     // update device error:
     var deverr = document.getElementById('deverror');
@@ -587,7 +642,7 @@ function update_deviceuser( user, device, owned_devices )
 	devsel.add(opt);
 	for( const od in owned_devices){
 	    var act = '';
-	    if( owned_devices[od].age<20 )
+	    if( (owned_devices[od].age<20) && (od!=device.id))
 		act = ' *active*';
 	    opt = document.createElement('option');
 	    opt.value = od;
@@ -595,6 +650,10 @@ function update_deviceuser( user, device, owned_devices )
 	    opt.selected = od==device.id;
 	    devsel.add(opt);
 	}
+	if( device.age < 20 )
+	    devsel.setAttribute('class','actmember');
+	else
+	    devsel.setAttribute('class','psvmember');
     }
     // update webmixer link:
     var webm = document.getElementById('webmixerlink');
@@ -643,11 +702,26 @@ function update_unclaimed( user, unclaimed_devices )
     }
 }
 
-function updaterooms()
+var tstart;
+var timer;
+var timer10;
+
+function everysecond(){
+    var el=document.getElementsByClassName("timedisplay");
+    for( var k=0,len=el.length|0;k<len;k=k+1|0 ){
+	while (el[k].firstChild) {el[k].removeChild(el[k].firstChild);}
+	el[k].appendChild(document.createTextNode(Math.floor(0.001*(Date.now()-tstart))));
+    }
+}
+
+function everytenseconds()
 {
     var droom=document.getElementById('roomlist');
-    if( droom ){
-	var droomrm=document.getElementById('roomlistremove');
+    var droomrm=document.getElementById('roomlistremove');
+    var devstat = document.getElementById('devstatus');
+    var devclaim = document.getElementById('devclaim');
+    var phpdeviceid = document.getElementById('phpdeviceid');
+    if( droom || devstat || devclaim ){
 	if( droomrm )
 	    droomrm.remove(droomrm);
 	let request = new XMLHttpRequest();
@@ -664,39 +738,31 @@ function updaterooms()
 	    var device = data.device;
 	    var owned_devices = data.owned_devices;
 	    var unclaimed_devices = data.unclaimed_devices;
-	    // update device display:
-	    update_deviceuser( user, device, owned_devices );
-	    update_unclaimed( user, unclaimed_devices );
-	    // delete unused rooms:
-	    for( let k=droom.children.length-1;k>=0;k--){
-		if( rooms.find(room=>room.id==droom.children[k].id)===undefined)
-		    droom.removeChild(droom.children[k]);
+	    if( phpdeviceid ){
+		if( phpdeviceid.value != device.id)
+		    location.reload();
 	    }
-	    for( var k=0;k<rooms.length;k++){
-		// room div:
-		update_room( device, rooms[k], droom );
+	    if( devstat )
+		// update device display:
+		update_devicestatus( user, device, owned_devices );
+	    if( devclaim )
+		update_unclaimed( user, unclaimed_devices );
+	    if( droom ){
+		// delete unused rooms:
+	    	for( let k=droom.children.length-1;k>=0;k--){
+		    if( rooms.find(room=>room.id==droom.children[k].id)===undefined)
+			droom.removeChild(droom.children[k]);
+		}
+		for( var k=0;k<rooms.length;k++){
+		    // room div:
+		    update_room( device, rooms[k], droom );
+		}
 	    }
 	}
 	request.open('GET', 'rest.php?getrooms');
 	request.reponseType = 'json';
 	request.send();
     }
-}
-
-var tstart;
-var timer;
-var timer10;
-
-function everysecond(){
-    var el=document.getElementsByClassName("timedisplay");
-    for( var k=0,len=el.length|0;k<len;k=k+1|0 ){
-	while (el[k].firstChild) {el[k].removeChild(el[k].firstChild);}
-	el[k].appendChild(document.createTextNode(Math.floor(0.001*(Date.now()-tstart))));
-    }
-}
-
-function everytenseconds(){
-    updaterooms();
 }
 
 function starttimer(){
@@ -723,6 +789,12 @@ function dispvaluechanged(id){
 	}
         el[k].appendChild(document.createTextNode(" Press Save to apply changes."));
     }
+}
+
+function dispvaluechanged_id(id){
+    var savebutton=document.getElementById(id);
+    if( savebutton )
+	savebutton.style.border="5px solid #aa0000";
 }
 
 function update_jack_rate( rate ){
@@ -762,3 +834,48 @@ function rm_preset( preset ){
 	request.send();
     }
 }
+
+function select_device( device ){
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	location.reload();
+    }
+    request.open('GET', 'rest.php?devselect=' + device);
+    request.send();
+}
+
+function get_value_by_id( id, def='' ){
+    var x = document.getElementById(id);
+    if( x )
+	return x.value;
+    return def;
+}
+
+function apply_jack_settings(){
+    var x = document.getElementById('jackvaluechanged');
+    x.style.border = '';
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    var data = 'jackaudio=&jackplugdev=' + document.getElementById('jackplugdev').checked +
+	'&jackdevice='+encodeURIComponent(get_value_by_id('jackdevice')) +
+	'&jackrate='+get_value_by_id('jackrate') +
+	'&jackperiod='+get_value_by_id('jackperiod') +
+	'&jackbuffers='+get_value_by_id('jackbuffers');    
+    request.send(data);
+    console.log(data);
+}
+
+function switch_to_frontend( js ){
+    if( js && (js.length>0)){
+	frontend = JSON.parse(js);
+	console.log(frontend);
+	rest_setval_post('jsfrontendconfig',js);
+	location.href = frontend.ui;
+    }
+}
+/*
+ * Local Variables:
+ * c-basic-offset: 2
+ * End:
+ */

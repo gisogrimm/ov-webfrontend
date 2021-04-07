@@ -53,6 +53,89 @@ function get_rooms_user( $user, $userprop, $usergroups, $devroom )
   return $allrooms;
 }
 
+function set_getprop( &$prop, $key )
+{
+  if( isset($_GET[$key]) ){
+    $prop[$key] = $_GET[$key];
+  }
+}
+
+function set_getprop_float( &$prop, $key )
+{
+  if( isset($_GET[$key]) ){
+    $prop[$key] = floatval($_GET[$key]);
+  }
+}
+
+function update_pw( $password, $username, &$msg )
+{
+  if( empty($username) ){
+    $msg = 'No user name was provided.';
+    return false;
+  }
+  if( empty($password) ){
+    $msg = 'No password was provided.';
+    return false;
+  }
+  $errs = array();
+  if( !checkPassword($password,$errs) ){
+    foreach($errs as $err)
+      $msg = $msg . '<br/>'.$err;
+    return false;
+  }
+  $users = list_users();
+  if( !in_array( $username, $users ) ){
+    $msg = 'The user "'.$username.'" does not exist.';
+    return false;
+  }
+  $pwhash = password_hash( $password, PASSWORD_DEFAULT );
+  $fname = '../db/ovpasswd';
+  $pws = array();
+  if( file_exists( $fname ) )
+    $pws = json_decode( file_get_contents( $fname ), true );
+  $pws[$username] = $pwhash;
+  file_put_contents( $fname, json_encode( $pws ));
+  modify_user_prop( $username, 'validpw', true);
+  return true;
+}
+
+function checkPassword($pwd, &$errors) {
+  $errors_init = $errors;
+  if (strlen($pwd) < 6) {
+    $errors[] = "Password too short!";
+  }
+  if (!preg_match("#[0-9]+#", $pwd)) {
+    $errors[] = "Password must include at least one number!";
+  }
+  if (!preg_match("#[a-zA-Z]+#", $pwd)) {
+    $errors[] = "Password must include at least one letter!";
+  }     
+  return ($errors == $errors_init);
+}
+
+function submit_contact( $user, $contact, $msg )
+{
+  $mailmsg = 'From: '.$user.' ('.$contact.")\n\n".$msg."\n";
+  file_put_contents( '../lastmailsg',$mailmsg);
+  $sitecfg = get_properties('site','config');
+  mail( $sitecfg['mail'], 'ovbox contact from '.$user, $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+}
+
+function set_getprop_post( &$prop, $key )
+{
+    if( isset($_POST[$key]) ){
+        $prop[$key] = $_POST[$key];
+    }
+}
+
+function set_getprop_post_float( &$prop, $key )
+{
+    if( isset($_POST[$key]) ){
+        $prop[$key] = floatval($_POST[$key]);
+    }
+}
+
+
 /*
  * Local Variables:
  * c-basic-offset: 2

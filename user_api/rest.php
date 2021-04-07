@@ -12,7 +12,6 @@ include '../php/ovbox.inc';
 include '../php/rest.inc';
 
 session_start();
-
 if( !isset($_SESSION['user']) )
     die();
 $user = $_SESSION['user'];
@@ -31,6 +30,10 @@ flock($fp_dev, LOCK_EX );
 $device = get_device( $user );
 flock($fp_user, LOCK_UN );
 $dprop = get_properties( $device, 'device' );
+if( $dprop['owner'] != $user ){
+    $device = '';
+    $dprop = get_properties( $device, 'device' );
+}
 if( empty($dprop['owner']) )
     $dprop['owner'] = $user;
 if( isset($_GET['getdev']) ){
@@ -74,7 +77,6 @@ if( isset($_GET['getrooms']) ){
                      'rooms'=>get_rooms_user( $user, $uprop, $usergroups, $dprop['room'] ),
                      'unclaimed_devices'=>list_unclaimed_devices());
     echo(json_encode($jsrooms));
-    die();
 }
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
@@ -98,6 +100,8 @@ if( isset($_GET['devpresetsave']) ){
                        'mastergain',
                        'playbackgain',
                        'rectype',
+                       'isproxy',
+                       'useproxy',
                        'jackdevice',
                        'jackplugdev',
                        'jackrate',
@@ -128,8 +132,75 @@ if( isset($_GET['devpresetrm']) ){
             modify_device_prop($device,'preset','');
     }
 }
+if( isset($_POST['jackaudio']) ){
+    $dprop['jackplugdev'] = isset($_POST['jackplugdev']) && ($_POST['jackplugdev']=='true');
+    set_getprop_post($dprop,'jackdevice');
+    set_getprop_post_float($dprop,'jackrate');
+    set_getprop_post_float($dprop,'jackperiod');
+    set_getprop_post_float($dprop,'jackbuffers');
+    $dprop['preset'] = '';
+    set_properties( $device, 'device', $dprop );
+}
 if( isset($_GET['getrawjson']) ){
     header('Content-Type: application/json');
     echo(json_encode($dprop,JSON_PRETTY_PRINT));
 }
+if( isset($_GET['devselect']) ){
+    select_userdev( $user, $_GET['devselect'] );
+}
+if( isset($_GET['primarygroup']) ){
+    if( empty($_GET['primarygroup']) || in_array($_GET['primarygroup'],list_groups($user)) ){
+        modify_user_prop( $user, 'maingroup', $_GET['primarygroup'] );
+    }
+}
+if( isset($_GET['usermail']) )
+    modify_user_prop( $user, 'mail', $_GET['usermail'] );
+if( isset($_POST['usermail']) )
+    modify_user_prop( $user, 'mail', $_POST['usermail'] );
+if( isset($_POST['agreepriv']) )
+    modify_user_prop( $user, 'agreedprivacy', true );
+if( isset($_POST['agreeterms']) )
+    modify_user_prop( $user, 'agreedterms', true );
+if( isset($_POST['updatepassword']) ){
+    $msg = '';
+    update_pw( $_POST['updatepassword'], $user, $msg );
+    if( !empty($msg) )
+        $_SESSION['usermsg'] = 'Invalid password:'.$msg;
+}
+if( isset($_POST['mypwreset']) ){
+    modify_user_prop( $user, 'validpw', false);
+}
+if( isset($_POST['setdevprop']) ){
+    if( isset($_POST[$_POST['setdevprop']])){
+        if($_POST['setdevprop']=='xrecport')
+            modify_device_prop( $device, 'xrecport', explode( " ", $_POST['xrecport'] ));
+        else
+            modify_device_prop($device,$_POST['setdevprop'],$_POST[$_POST['setdevprop']]);
+    }
+}
+if( isset($_POST['setdevpropfloat']) ){
+    if( isset($_POST[$_POST['setdevpropfloat']]))
+        modify_device_prop($device,$_POST['setdevpropfloat'],floatval($_POST[$_POST['setdevpropfloat']]));
+}
+if( isset($_POST['setdevpropbool']) ){
+    if( isset($_POST[$_POST['setdevpropbool']]))
+        modify_device_prop($device,$_POST['setdevpropbool'],$_POST[$_POST['setdevpropbool']]=='true');
+}
+if( isset($_POST['jsinputchannels']) )
+    modify_device_prop($device,'inputchannels',json_decode($_POST['jsinputchannels']));
+if( isset($_POST['jsfrontendconfig']) )
+    modify_device_prop($device,'frontendconfig',json_decode($_POST['jsfrontendconfig']));
+if( isset($_POST['devreset']) ){
+    if( $devprop['owner'] = $user ){
+        rm_device( $device );
+        modify_device_prop( $device, 'owner', $user);
+        modify_device_prop( $device, 'label', $devprop['label']);
+        modify_device_prop( $device, 'version', $devprop['version']);
+    }
+}
+if( isset($_POST['unclaimdevice']) ){
+    if( $devprop['owner'] = $user )
+        rm_device( $device );
+}
+
 ?>

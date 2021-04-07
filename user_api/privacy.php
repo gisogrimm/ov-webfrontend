@@ -9,6 +9,8 @@ if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
 }
 
 include '../php/ovbox.inc';
+include '../php/rest.inc';
+include '../php/user.inc';
 
 print_head( );
 

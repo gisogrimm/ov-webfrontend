@@ -67,9 +67,8 @@ function htpw_matches($password, $filePasswd)
   return false;
 }
 
-function html_device_selector( $user, $currentdevice )
+function html_device_selector( $user, $currentdevice, $dprop )
 {
-  $dprop = get_properties($currentdevice,'device');
   $devs = list_unclaimed_devices();
   $doc = new DOMDocument('1.0');
   $root = $doc->appendChild($doc->createElement('div'));
@@ -91,16 +90,19 @@ function html_device_selector( $user, $currentdevice )
   $div = $root->appendChild($doc->createElement('div'));
   $select = $div->appendChild($doc->createElement('select'));
   $select->setAttribute('id','deviceselector');
-  $select->setAttribute('class','uibutton');
-  $select->setAttribute('oninput','location.href=\'?devselect=\'+event.target.value;');
+  $select->setAttribute('oninput','select_device(event.target.value);');
   $select->appendChild($doc->createElement('option'))->appendChild($doc->createTextNode(' -- please select a device -- '));
+  $actclass = ' psvmember';
+  if( $dprop['age'] < 20 )
+    $actclass = ' actmember';
+  $select->setAttribute('class',$actclass);
   foreach( owned_devices( $user ) as $dev=>$sdprop ){
     $opt = $select->appendChild($doc->createElement('option'));
     $opt->setAttribute('value',$dev);
     if( $currentdevice == $dev )
       $opt->setAttribute('selected','');
     $active = '';
-    if( $sdprop['age'] < 20 )
+    if( ($currentdevice != $dev ) && ($sdprop['age'] < 20 ) )
       $active = ' *active*';
     $opt->appendChild($doc->createTextNode($dev.' ('.$sdprop['label'].')'.$active));
   }
@@ -109,11 +111,9 @@ function html_device_selector( $user, $currentdevice )
     $pres->appendChild($doc->createTextNode($dprop['preset']));
     $pres->setAttribute('class','presetspan presetact');
   }
-  $inp = $div->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('class','roomsettingstoggle uibutton');
-  $inp->setAttribute('onclick','toggledisplay(\'devsettings\',\'device settings\');');
-  $inp->setAttribute('value','show device settings');
+  $devstat = $div->appendChild($doc->createElement('div'));
+  $devstat->setAttribute('class','devstatus');
+  $devstat->setAttribute('id','devstatus');
   echo $doc->saveHTML();
 }
 
@@ -134,7 +134,7 @@ function create_inputportcfg( &$doc, &$form, $devprop )
   $div->setAttribute('id','jsinputchannelsdiv');
   // load java scripts:
   $script = $form->appendChild($doc->createElement('script'));
-  $script->appendChild($doc->createTextNode(file_get_contents( '../js/inputchannels.js' )));
+  $script->setAttribute('src','/js/inputchannels.js' );
 }
 
 function add_input_element( &$parent, &$doc, &$devprop, $prop, $type, $label, $endbr = true )
@@ -153,13 +153,64 @@ function add_input_element( &$parent, &$doc, &$devprop, $prop, $type, $label, $e
   return $el;
 }
 
-function add_expert_div( &$el, &$doc )
+function add_expert_div( &$el, &$doc, $devprop = array() )
 {
   $div = $el->appendChild( $doc->createElement('div') );
-  //$div->setAttribute('id','expert');
   $div->setAttribute('class','expert');
-  $div->setAttribute('style','display: none;');
+  if( isset($devprop['showexpertsettings']) ){
+    if( $devprop['showexpertsettings'] )
+      $div->setAttribute('style','display: block;');
+    else
+      $div->setAttribute('style','display: none;');
+  }else{
+    $div->setAttribute('style','display: none;');
+  }
   return $div;
+}
+
+function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false )
+{
+  if( $styled ){
+    $lab = $div->appendChild($doc->createElement('label'));
+    $lab->setAttribute('class','switch');
+    $el = $lab->appendChild($doc->createElement('input'));
+    $span = $lab->appendChild($doc->createElement('span'));
+    $span->setAttribute('class','slider round');
+    $span->appendChild($doc->createTextNode(''));
+    $span->setAttribute('title',$msg);
+  }else{
+    $el = $div->appendChild($doc->createElement('input'));
+  }
+  $el->setAttribute('id',$id);
+  $el->setAttribute('type','checkbox');
+  if( $devprop[$id] )
+    $el->setAttribute('checked','');
+  $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);');
+  if( !$styled ){
+    $el = $div->appendChild($doc->createElement('label'));
+    $el->setAttribute('for',$id);
+    $el->appendChild($doc->createTextNode($msg));
+  }
+  $div->appendChild($doc->createElement('br'));
+  return $el;
+}
+
+
+
+function xml_add_input_generic( $id, $msg, $div, $doc, $devprop, $bratend = true )
+{
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode($msg));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  if( is_array($devprop[$id]) )
+    $el->setAttribute('value',implode(" ",$devprop[$id]));
+  else
+    $el->setAttribute('value',$devprop[$id]);
+  $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.value);');
+  if( $bratend )
+    $div->appendChild($doc->createElement('br'));
+  return $el;
 }
 
 function set_dev_room_pos( $room )
@@ -179,16 +230,6 @@ function set_dev_room_pos( $room )
     $dprop['position'] = array('x'=>$pos_x,'y'=>$pos_y,'z'=>0);
     $dprop['orientation'] = array('z'=>(180/pi()*($az+pi())),'y'=>0,'x'=>0);
     set_properties( $dev, 'device', $dprop );
-  }
-}
-
-function select_userdev( $user, $dev )
-{
-  $fname = '../db/' . $user . '.userdevice';
-  if( empty($dev) ){
-    unlink($fname);
-  }else{
-    file_put_contents( $fname, $dev );
   }
 }
 
@@ -219,776 +260,16 @@ function lock_room( $room, $device, $lock )
   }
 }
 
-function html_show_user( $user, $device, $devprop )
-{
-  $uprop = get_properties( $user, 'user' );
-  $doc = new DOMDocument('1.0');
-  $root = $doc->appendChild($doc->createElement('div'));
-  $root->setAttribute('class','userarea');
-  $p = $root->appendChild($doc->createElement('p'));
-  $devspan = $p->appendChild($doc->createElement('span'));
-  $devspan->setAttribute('id','deviceuser');
-  $devspan->appendChild($doc->createTextNode('You are logged in as user '));
-  $devspan->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode($user));
-  if( empty( $device ) ){
-    $devspan->appendChild($doc->createTextNode(' with no device.'));
-  }else{
-    $class = 'psvmember';
-    $state = '';
-    $lastseen = '';
-    $otherdev = '';
-    if( $devprop['age'] < 20 ){
-      $class = 'actmember';
-      $state = 'active';
-    }else{
-      $lastseen = ', inactive since '.numage2str($devprop['age']);
-      $oact = false;
-      foreach( owned_devices($user) as $od=>$odp )
-        if( $odp['age']<20 )
-          $oact = true;
-      if( $oact )
-        $otherdev = ' You own active devices - please check the device selector below to access them.';
-    }
-    $devspan->appendChild($doc->createTextNode(' with '.$state.' device '));
-    $span = $devspan->appendChild($doc->createElement('span'));
-    $span->setAttribute('class',$class);
-    $span->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode($device.' ('.$devprop['label'].')' ));
-    $devspan->appendChild($doc->createTextNode($lastseen.'.'.$otherdev));
-    if( ($devprop['age'] < 20) && (($devprop['bandwidth']['tx']>0)||($devprop['bandwidth']['rx']>0)) ){
-      if( $devprop['bandwidth']['tx'] >= 100000 )
-        $txstr = number_format(0.000001*$devprop['bandwidth']['tx'],2).' MBps';
-      else
-        $txstr = number_format(0.001*$devprop['bandwidth']['tx'],2).' kBps';
-      if( $devprop['bandwidth']['rx'] >= 100000 )
-        $rxstr = number_format(0.000001*$devprop['bandwidth']['rx'],2).' MBps';
-      else
-        $rxstr = number_format(0.001*$devprop['bandwidth']['rx'],2).' kBps';
-      $devspan->appendChild($doc->createTextNode(' sending: '. $txstr.', receiving: '. $rxstr));
-    }
-    if( ($devprop['age'] < 20) && ($devprop['cpuload']>0) ){
-      $devspan->appendChild($doc->createTextNode(' CPU load: '. number_format(100*$devprop['cpuload'],1).'%'));
-    }
-  }
-  $inf = $root->appendChild($doc->createElement('div'));
-  $inf->setAttribute('id','groupinfo');
-  $inf->setAttribute('class','devprop');
-  $inf->setAttribute('style','display: none;');
-  $form = $inf->appendChild($doc->createElement('form'));
-  $form->setAttribute('method','POST');
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','usermail');
-  $el->appendChild($doc->createTextNode('e-mail address (only used for password recovery):'));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('type','email');
-  $el->setAttribute('name','usermail');
-  $el->setAttribute('value',$uprop['mail']);
-  $el = $form->appendChild($doc->createElement('button'));
-  $el->appendChild($doc->createTextNode('Save'));
-  $inf->appendChild($doc->createElement('hr'));
-  $el = $inf->appendChild($doc->createElement('input'));
-  $el->setAttribute('value','reset password');
-  $el->setAttribute('type','button');
-  $el->setAttribute('onclick','location.href=\'?mypwreset\';');
-  $inf->appendChild($doc->createElement('hr'));
-  $el = $inf->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('You are a member of these groups:'));
-  foreach( list_groups($user) as $grp ){
-    $p1 = $inf->appendChild($doc->createElement('div'));
-    $p1->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode($grp.': '));
-    $grpusers = get_group_users( $grp );
-    sort($grpusers);
-    foreach( $grpusers as $us ){
-      $p1->appendChild($doc->createTextNode($us.' '));
-    }
-  }
-  $inf->appendChild($doc->createElement('hr'));
-  // main group selector:
-  $inp = $inf->appendChild($doc->createElement('label'));
-  $inp->appendChild($doc->createTextNode('Primary group: '));
-  $inp = $inf->appendChild($doc->createElement('select'));
-  $inp->setAttribute('oninput','location.href=\'?setmaingroup=\'+event.target.value;');
-  $opt = $inp->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','');
-  $opt->appendChild($doc->createTextNode(' -- no group -- '));
-  if( $uprop['maingroup'] == '' )
-    $opt->setAttribute('selected','');
-  foreach(list_groups($user) as $us){
-    $opt = $inp->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value',$us);
-    $opt->appendChild($doc->createTextNode($us));
-    if( $uprop['maingroup'] == $us )
-      $opt->setAttribute('selected','');
-  }
-  $inp = $p->appendChild($doc->createElement('input'));
-  // manual device claiming:
-  $inf->appendChild($doc->createElement('hr'));
-  $form = $inf->appendChild($doc->createElement('form'));
-  $form->setAttribute('method','POST');
-  $p = $form->appendChild($doc->createElement('p'));
-  $p->appendChild($doc->createTextNode('If you are missing your device but you know the MAC address or device ID, you may claim it manually. To do so, please power it on and claim it within five minutes using this form.'));
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','claimdevid');
-  $el->appendChild($doc->createTextNode('MAC address / device ID:'));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('name','claimdevid');
-  $el->setAttribute('id','claimdevid');
-  $el = $form->appendChild($doc->createElement('button'));
-  $el->appendChild($doc->createTextNode('Claim this device'));
-  //
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('class','roomsettingstoggle uibutton');
-  $inp->setAttribute('onclick','toggledisplay(\'groupinfo\',\'user profile\');');
-  $inp->setAttribute('value','show user profile');
-  echo $doc->saveHTML() . "\n";
-}
-
 function html_show_device( $user, $device, $devprop )
 {
-  html_device_selector( $user, $device );
+  html_device_selector( $user, $device, $devprop );
   $doc = new DOMDocument('1.0');
   $root = $doc->appendChild($doc->createElement('div'));
-  $devset = $root->appendChild($doc->createElement('div'));
-  $devset->setAttribute('class','devprop');
-  $devset->setAttribute('id','devsettings');
-  $devset->setAttribute('style','display: none;');
-  // preset list:
-  $el = $devset->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('Device setting presets:'));
-  $presets = get_properties( $device, 'devpresets' );
-  unset($presets['now']);
-  $el = $devset->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','presetarea');
-  if( !empty($presets) ){
-    $presets = array_keys($presets);
-    foreach( $presets as $preset ){
-      $xclass = '';
-      if( $preset == $devprop['preset'] )
-        $xclass = ' presetact';
-      $span = $el->appendChild($doc->createElement('span'));
-      $span->setAttribute('class','presetspan'.$xclass);
-      $inp = $span->appendChild($doc->createElement('input'));
-      $inp->setAttribute('class','presetload'.$xclass);
-      $inp->setAttribute('type','button');
-      $inp->setAttribute('value',$preset);
-      $inp->setAttribute('onclick','load_preset(this.value);');
-      $inp = $span->appendChild($doc->createElement('input'));
-      $inp->setAttribute('class','presetrm');
-      $inp->setAttribute('type','button');
-      $inp->setAttribute('value','X');
-      $inp->setAttribute('name',$preset);
-      $inp->setAttribute('onclick','rm_preset(this.name);');
-    }
-  }
-  // settings presets:
-  $span = $el->appendChild($doc->createElement('span'));
-  $span->setAttribute('class','presetspan');
-  $inp = $span->appendChild($doc->createElement('input'));
-  $inp->setAttribute('id','savepresetname');
-  //$inp->setAttribute('class','presetspan');
-  $inp->setAttribute('placeholder','Save current settings as preset');
-  $inp->setAttribute('onchange','create_preset();');
-  //$inp = $span->appendChild($doc->createElement('input'));
-  //$inp->setAttribute('type','button');
-  //$inp->setAttribute('value','Create new');
-  //$inp->setAttribute('onclick','create_preset();');
-  $devset->appendChild($doc->createElement('hr'));
-  // device settings:
-  $form = $devset->appendChild($doc->createElement('form'));
-  $form->setAttribute('method','POST');
-  $inp = $form->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('class','roomsettingstoggle uibutton');
-  $inp->setAttribute('onclick','toggledisplayclass(\'expert\',\'expert settings\');');
-  $inp->setAttribute('value','show expert settings');
-  $el = $form->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('Device settings:'));
-  $span = $el->appendChild($doc->createElement('span'));
-  $span->setAttribute('class','valuechanged important');
-  // device properties:
-  // label:
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','label');
-  $el->appendChild($doc->createTextNode('device label (appears in rooms and the mixer of the others): '));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('id','label');
-  $el->setAttribute('name','label');
-  $el->setAttribute('type','text');
-  $el->setAttribute('pattern','[a-zA-Z0-9-_]*');
-  $el->setAttribute('value',$devprop['label']);
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $form->appendChild($doc->createElement('br'));
-  $form->appendChild($doc->createElement('hr'));
-  // sound card settings:
-  $div = $form->appendChild($doc->createElement('div'));
-  $el = $div->appendChild($doc->createElement('div'));
-  $div->setAttribute('id','sndcardsettings');
-  $div->appendChild($doc->createTextNode('Sound card:'));
-  $div->appendChild($doc->createElement('br'));
-  // jack device:
-  $el = $div->appendChild($doc->createElement('select'));
-  $el->setAttribute('id','jackdevice');
-  $el->setAttribute('name','jackdevice');
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  //
-  $alsadevs = array('highest'=>'use highest device number','manual'=>'jack is started manually','hw:1'=>'device 1 (typically first USB device)');
-  if( is_array($devprop['alsadevs']) )
-    $alsadevs = array_merge( $alsadevs, $devprop['alsadevs']);
-  foreach( $alsadevs as $adev=>$desc ){
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value',$adev);
-    $opt->appendChild($doc->createTextNode($desc . ' ('.$adev.')'));
-    if( $devprop['jackdevice'] == $adev )
-      $opt->setAttribute('selected','');
-  }
-  // use plughw device:
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('type','checkbox');
-  $el->setAttribute('name','jackplugdev');
-  $el->setAttribute('id','jackplugdev');
-  $el->setAttribute('value','jackplugdev');
-  $el->setAttribute('title','activate to use sampling rates not supported by hardware (reduces quality)');
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  if( $devprop['jackplugdev'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('title','activate to use sampling rates not supported by hardware (reduces quality)');
-  $el->setAttribute('for','jackplugdev');
-  $el->appendChild($doc->createTextNode('use plugin device layer'));
-  $div->appendChild($doc->createElement('br'));
-  // end of device.
-  $el = add_input_element( $div, $doc, $devprop, 'jackrate', 'number','Sampling rate in Hz: ',false);
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el = $div->appendChild($doc->createElement('select'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('onchange','update_jack_rate( this.value );');
-  $opts = array('16000','22050','24000','32000','44100','48000');
-  foreach($opts as $o){
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value',$o);
-    if( $o == $devprop['jackrate'] )
-      $opt->setAttribute('selected','');
-    $opt->appendChild($doc->createTextNode($o));
-  }
-  $div->appendChild($doc->createElement('br'));
-  $el = add_input_element( $div, $doc, $devprop, 'jackperiod', 'number','Period size in samples (typically 2ms, i.e. 96 for 48000 Hz Sampling rate): ');
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $divex = add_expert_div($form,$doc);
-  $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number','Number of buffers (typically 2): ');
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('min',2);
-  if( version_compare("ovclient-0.5.11-8cc47fd",$devprop['version'])<0 ){
-    $div->appendChild($doc->createElement('br'));
-    $el = $div->appendChild($doc->createElement('input'));
-    $el->setAttribute('value','restart audio system');
-    $el->setAttribute('type','button');
-    $el->setAttribute('onclick','location.href=\'?jackrestart='.urlencode($device).'\';');
-  }
-  $form->appendChild($doc->createElement('hr'));
-  // Audio settings:
-  $el = $form->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('Audio settings:'));
-  $span = $el->appendChild($doc->createElement('span'));
-  $span->setAttribute('class','valuechanged important');
-  // input port:
-  create_inputportcfg( $doc, $form, $devprop );
-  // output port:
-  $div = add_expert_div($form,$doc);
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','outputport');
-  $el->appendChild($doc->createTextNode('output ports (to which your headphones are connected): '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','outputport1');
-  $el->setAttribute('name','outputport1');
-  $el->setAttribute('type','text');
-  $el->setAttribute('value',$devprop['outputport1']);
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','outputport2');
-  $el->setAttribute('name','outputport2');
-  $el->setAttribute('type','text');
-  $el->setAttribute('value',$devprop['outputport2']);
-  $div->appendChild($doc->createElement('br'));
-  // extra ports:
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','xport');
-  $el->appendChild($doc->createTextNode('extra ports (json expression, e.g., {"Giso:out_1":"ardour:Giso/in"}): '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('size','40');
-  $el->setAttribute('id','xport');
-  $el->setAttribute('name','xport');
-  $el->setAttribute('type','text');
-  $el->setAttribute('value',$devprop['xport']);
-  $div->appendChild($doc->createElement('br'));
-  // receiver type:
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','rectype');
-  $el->appendChild($doc->createTextNode('receiver type: '));
-  $el = $div->appendChild($doc->createElement('select'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','rectype');
-  $el->setAttribute('name','rectype');
-  $recdesc = array('ortf'=>'Commonly used stereo microphone technique','hrtf'=>'Binaural Head Related Transfer Function simulation','itu51'=>'ITU 5.1 rendering, channel order L,R,C,LFE,Ls,Rs','omni'=>'mono');
-  foreach( $recdesc as $rectype=>$desc ){
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value',$rectype);
-    if( $devprop['rectype'] == $rectype )
-      $opt->setAttribute('selected','');
-    $opt->appendChild($doc->createTextNode($rectype.': '.$desc));
-  }
-  $div->appendChild($doc->createElement('br'));
-  // playback gain:
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','playbackgain');
-  $el->appendChild($doc->createTextNode('playback gain in dB (equivalent to changing the input gain): '));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','playbackgain');
-  $el->setAttribute('name','playbackgain');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','-20');
-  $el->setAttribute('max','20');
-  $el->setAttribute('step','0.1');
-  $el->setAttribute('value',$devprop['playbackgain']);
-  $form->appendChild($doc->createElement('br'));
-  // master gain:
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','playbackgain');
-  $el->appendChild($doc->createTextNode('master gain in dB (equivalent to changing the headphone gain): '));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','mastergain');
-  $el->setAttribute('name','mastergain');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','-20');
-  $el->setAttribute('max','20');
-  $el->setAttribute('step','0.1');
-  $el->setAttribute('value',$devprop['mastergain']);
-  $form->appendChild($doc->createElement('br'));
-  // ego monitor:
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','egogain');
-  $el->appendChild($doc->createTextNode('ego monitor gain in dB (how much of your own microphone is added to your headphone): '));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','egogain');
-  $el->setAttribute('name','egogain');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','-30');
-  $el->setAttribute('max','10');
-  $el->setAttribute('step','0.1');
-  $el->setAttribute('value',$devprop['egogain']);
-  $lab = $form->appendChild($doc->createElement('label'));
-  $lab->setAttribute('class','switch');
-  $el = $lab->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','selfmonitor');
-  $el->setAttribute('name','selfmonitor');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['selfmonitor'] )
-    $el->setAttribute('checked','');
-  $el = $lab->appendChild($doc->createElement('span'));
-  $el->setAttribute('class','slider round');
-  $el->appendChild($doc->createTextNode(''));
-  $form->appendChild($doc->createElement('br'));
-  //
-  $div = add_expert_div($form,$doc);
-  // ego monitor delay:
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','selfmonitordelay');
-  $el->appendChild($doc->createTextNode('self monitor delay in milliseconds: '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','selfmonitordelay');
-  $el->setAttribute('name','selfmonitordelay');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','0');
-  $el->setAttribute('max','1000');
-  $el->setAttribute('step','1');
-  $el->setAttribute('value',$devprop['selfmonitordelay']);
-  $div->appendChild($doc->createElement('br'));
-  // reverb:
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','reverb');
-  $el->setAttribute('id','reverb');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['reverb'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','reverb');
-  $el->appendChild($doc->createTextNode('render reverb '));
-  $div->appendChild($doc->createElement('br'));
-  // ism
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','renderism');
-  $el->setAttribute('id','renderism');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['renderism'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','renderism');
-  $el->appendChild($doc->createTextNode('render shoebox ISM '));
-  $div->appendChild($doc->createElement('br'));
-  // reverb gain:
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','devrvbgain');
-  $el->appendChild($doc->createTextNode('extra reverb gain in dB: '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','devrvbgain');
-  $el->setAttribute('name','rvbgain');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','-20');
-  $el->setAttribute('max','20');
-  $el->setAttribute('step','0.1');
-  $el->setAttribute('value',$devprop['rvbgain']);
-  $div->appendChild($doc->createElement('br'));
-  // raw mode:
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','rawmode');
-  $el->setAttribute('id','rawmode');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['rawmode'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','rawmode');
-  $el->appendChild($doc->createTextNode('raw mode - no virtual acoustics '));
-  // head tracking:
-  $div = add_expert_div($form,$doc);
-  $el = $div->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('Head tracking:'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','headtracking');
-  $el->setAttribute('id','headtracking');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['headtracking'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','headtracking');
-  $el->appendChild($doc->createTextNode('load headtracking module '));
-  $div->appendChild($doc->createElement('br'));
-  // apply headtracking:
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','headtrackingrot');
-  $el->setAttribute('id','headtrackingrot');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['headtrackingrot'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','headtrackingrot');
-  $el->appendChild($doc->createTextNode('apply rotation to receiver'));
-  $div->appendChild($doc->createElement('br'));
-  //
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','headtrackingrotsrc');
-  $el->setAttribute('id','headtrackingrotsrc');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['headtrackingrotsrc'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','headtrackingrotsrc');
-  $el->appendChild($doc->createTextNode('apply rotation to source'));
-  $div->appendChild($doc->createElement('br'));
-  // tau auto-reference
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->appendChild($doc->createTextNode('auto-referencing time constant in seconds: '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('value',round($devprop['headtrackingtauref'],1));
-  $el->setAttribute('id','headtrackingtauref');
-  $el->setAttribute('name','headtrackingtauref');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','0');
-  $el->setAttribute('max','500');
-  $el->setAttribute('step','0.1');
-  $div->appendChild($doc->createElement('br'));
-  //
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->appendChild($doc->createTextNode('data logging port: '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('value',$devprop['headtrackingport']);
-  $el->setAttribute('id','headtrackingport');
-  $el->setAttribute('name','headtrackingport');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','0');
-  $el->setAttribute('max','65535');
-  $el->setAttribute('step','1');
-  // network settings:
-  $form->appendChild($doc->createElement('hr'));
-  $el = $form->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('Network settings:'));
-  $span = $el->appendChild($doc->createElement('span'));
-  $span->setAttribute('class','valuechanged important');
-  // jitter (send):
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','jittersend');
-  $el->appendChild($doc->createTextNode('sender jitter (affects buffer length of others): '));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','jittersend');
-  $el->setAttribute('name','jittersend');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','1');
-  $el->setAttribute('max','250');
-  $el->setAttribute('step','1');
-  $el->setAttribute('value',$devprop['jittersend']);
-  $form->appendChild($doc->createElement('br'));
-  // jitter (receive):
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','jitterreceive');
-  $el->appendChild($doc->createTextNode('receiver jitter (affects your own buffer length): '));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','jitterreceive');
-  $el->setAttribute('name','jitterreceive');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','1');
-  $el->setAttribute('max','250');
-  $el->setAttribute('step','1');
-  $el->setAttribute('value',$devprop['jitterreceive']);
-  $form->appendChild($doc->createElement('br'));
-  // peer-to-peer:
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','peer2peer');
-  $el->setAttribute('id','peer2peer');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['peer2peer'] )
-    $el->setAttribute('checked','');
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','peer2peer');
-  $el->appendChild($doc->createTextNode('peer-to-peer mode '));
-  $form->appendChild($doc->createElement('br'));
-  // extra destinations:
-  $div = add_expert_div($form, $doc );
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','sendlocal');
-  $el->setAttribute('id','sendlocal');
-  $el->setAttribute('type','checkbox');
-  if( $devprop['sendlocal'] )
-    $el->setAttribute('checked','');
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','sendlocal');
-  $el->appendChild($doc->createTextNode('send to local IP address if in same network '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','secrec');
-  $el->appendChild($doc->createTextNode('additional local receiver delay for secondary receiver (0 for no secondary receiver): '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','secrec');
-  $el->setAttribute('name','secrec');
-  $el->setAttribute('type','number');
-  $el->setAttribute('min','0');
-  $el->setAttribute('max','100');
-  $el->setAttribute('step','1');
-  $el->setAttribute('value',$devprop['secrec']);
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->setAttribute('for','xrecport');
-  $el->appendChild($doc->createTextNode('additional UDP ports forwarded to other peers (space separated list): '));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('id','xrecport');
-  $el->setAttribute('name','xrecport');
-  $el->setAttribute('type','text');
-  $el->setAttribute('pattern','[0-9 ]*');
-  $el->setAttribute('value',implode(" ",$devprop['xrecport']));
-  $div->appendChild($doc->createElement('br'));
-  // proxy settings
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','rest_setval(\'isproxy\',this.checked);');
-  $el->setAttribute('type','checkbox');
-  $el->setAttribute('id','devisproxy');
-  if( $devprop['isproxy'] )
-    $el->setAttribute('checked','');
-  $div->appendChild($doc->createTextNode('act as proxy'));
-  $div->appendChild($doc->createElement('br'));
-  $el = $div->appendChild($doc->createElement('input'));
-  $el->setAttribute('oninput','rest_setval(\'useproxy\',this.checked);');
-  $el->setAttribute('type','checkbox');
-  $el->setAttribute('id','devuseproxy');
-  if( boolval($devprop['useproxy']))
-    $el->setAttribute('checked','');
-  $div->appendChild($doc->createTextNode(' use an audio proxy if possible'));
-  $div->appendChild($doc->createElement('br'));
-  // frontend:
-  $div->appendChild($doc->createElement('hr'));
-  $el = $div->appendChild($doc->createElement('label'));
-  $el->appendChild($doc->createTextNode('If required change frontend: '));
-  $el = $div->appendChild($doc->createElement('select'));
-  $el->setAttribute('oninput','dispvaluechanged("valuechanged");');
-  $el->setAttribute('name','jsfrontendconfig');
-  $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{}');
-  $opt->appendChild($doc->createTextNode('-- switch frontend --'));
-  $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/","protocol":"ov","ui":"https://box.orlandoviols.com/"}');
-  $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
-  $opt = $el->appendChild($doc->createElement('option'));
-  $opt->setAttribute('value','{"url":"http://dev.ovbox.de/","protocol":"ov","ui":"https://ovbox.de/"}');
-  $opt->appendChild($doc->createTextNode('ovbox.de'));
-  $div->appendChild($doc->createElement('br'));
-  $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
-  $div->appendChild($doc->createTextNode('By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
-  $div->appendChild($doc->createElement('br'));
-  // developer version:
-  $inp = $div->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('onclick','location.href=\'?usedevversion='.$device.'\';');
-  $inp->setAttribute('value','switch to development version');
-  $inp->setAttribute('class','uibutton');
-  $div->appendChild($doc->createElement('br'));
-  $a = $div->appendChild($doc->createElement('a'));
-  $a->setAttribute('href','rest.php?getrawjson=');
-  $a->setAttribute('target','blank');
-  $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
-  // save:
-  $form->appendChild($doc->createElement('hr'));
-  $el = $form->appendChild($doc->createElement('button'));
-  $el->setAttribute('class','uibutton');
-  $el->setAttribute('id','devsettingssave');
-  $el->appendChild($doc->createTextNode('Save'));;
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('name','setdevprop');
-  $el->setAttribute('value',$device);
-  $el->setAttribute('type','hidden');
-  $inp = $form->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('onclick','location.href=\'?\';');
-  $inp->setAttribute('value','Cancel');
-  $inp->setAttribute('class','uibutton');
-  $inp = $form->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('onclick','location.href=\'?devreset\';');
-  $inp->setAttribute('value','Reset settings');
-  $inp->setAttribute('class','uibutton');
-  // firmware update:
-  $devset->appendChild($doc->createElement('hr'));
-  $fname = '../db/clver';
-  $clver = '';
-  if( file_exists( $fname ) )
-    $clver = trim(file_get_contents( $fname ));
-  if( !empty($devprop['version']) ){
-    $el = $devset->appendChild($doc->createElement('div'));
-    $el->setAttribute('class','devproptitle');
-    $el->appendChild($doc->createTextNode('Device version:'));
-    $devset->appendChild($doc->createTextNode($devprop['version']));
-    if( version_compare($clver,$devprop['version'])==0 )
-      $devset->appendChild($doc->createTextNode(' - your device is up to date.'));
-  }
-  if(  !empty($clver) && (substr($devprop['version'],0,9)=='ovclient-') &&
-       (version_compare($clver,$devprop['version'])==1)){
-    $div = $devset->appendChild($doc->createElement('div'));
-    $div->setAttribute('class','devprop');
-    $el = $div->appendChild($doc->createElement('div'));
-    $el->setAttribute('class','devproptitle');
-    $el->appendChild($doc->createTextNode('Firmware update:'));
-    $div->appendChild($doc->createTextNode('Your device is running version '.$devprop['version'].', the latest version is '.$clver.'. '));
-    if( (version_compare($devprop['version'],'ovclient-0.4.41')==1) ){
-      $div->appendChild($doc->createTextNode('Before starting the firmware update, please connect your device with a
-network cable. Once started, do not disconnect your device from the
-power supply or network until the firmware update is completed. The
-update may take up to 30 minutes.'));
-      $div->appendChild($doc->createElement('br'));
-      $bold = $div->appendChild($doc->createElement('b'));
-      $bold->appendChild($doc->createTextNode('Due to a problem with the SSL certificates of github it might not be
-      possible to update via this page. in that case, if you need to
-      update, please re-create your SD card. If in doubt please
-      contact the person who provided you with the ovbox.'));
-      $div->appendChild($doc->createElement('br'));
-      $div->appendChild($doc->createTextNode('In the most recent version 0.6.150 this problem is solved. Version
-0.5.51 is sufficient in most cases.'));
-      $div->appendChild($doc->createElement('br'));
-      if($devprop['age']>=20){
-        $div->appendChild($doc->createTextNode('Please start your device to update the firmware.'));
-        $div->appendChild($doc->createElement('br'));
-      }
-      $a = $div->appendChild($doc->createElement('a'));
-      $a->setAttribute('target','blank');
-      $a->setAttribute('href','https://raw.githubusercontent.com/gisogrimm/ov-client/master/changelog');
-      $a->appendChild($doc->createTextNode('recent changes'));
-      $div->appendChild($doc->createElement('br'));
-      $inp = $div->appendChild($doc->createElement('input'));
-      $inp->setAttribute('type','button');
-      $inp->setAttribute('onclick','location.href=\'?firmwareupdate='.$device.'\';');
-      $inp->setAttribute('value','update now');
-      $inp->setAttribute('class','uibutton');
-    }else{
-      $div->appendChild($doc->createTextNode('To update the firmware, please follow the instructions '));
-      $a = $div->appendChild($doc->createElement('a'));
-      $a->setAttribute('target','blank');
-      $a->setAttribute('href','https://github.com/gisogrimm/ovbox/wiki/Installation');
-      $a->appendChild($doc->createTextNode('here.'));
-    }
-  }
-  // transfer ownership:
-  $devset->appendChild($doc->createElement('hr'));
-  $el = $devset->appendChild($doc->createElement('div'));
-  $el->setAttribute('class','devproptitle');
-  $el->appendChild($doc->createTextNode('Device ownership:'));
-  //
-  $form = $devset->appendChild($doc->createElement('form'));
-  $form->setAttribute('method','POST');
-  $el = $form->appendChild($doc->createElement('label'));
-  $el->appendChild($doc->createTextNode('New owner:'));
-  $form->appendChild($doc->createElement('br'));
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('type','text');
-  $el->setAttribute('name','newowner');
-  $el = $form->appendChild($doc->createElement('input'));
-  $el->setAttribute('name','transferownership');
-  $el->setAttribute('value',$device);
-  $el->setAttribute('type','hidden');
-  $el = $form->appendChild($doc->createElement('button'));
-  $el->setAttribute('class','uibutton');
-  $el->appendChild($doc->createTextNode('transfer ownership'));;
-  // not my device:
-  $inp = $form->appendChild($doc->createElement('input'));
-  $inp->setAttribute('type','button');
-  $inp->setAttribute('class','roomsettingstoggle uibutton');
-  $inp->setAttribute('onclick','location.href=\'?unclaim\';');
-  $inp->setAttribute('value','not my device');
-
   // metronome:
-  if( version_compare("ovclient-0.5.42-656035c",$devprop['version'])<0 ){
+  if( (version_compare("ovclient-0.5.42-656035c",$devprop['version'])<0) && (!empty($device)) ){
     $div = $root->appendChild($doc->createElement('div'));
     $div->setAttribute('id','metronome');
-    $div->setAttribute('style','display: none;');
-    // use IP address for mixer if possible:
     $div->setAttribute('class','mixer');
-    // device is active and we know the host name:
     $div->setAttribute('style','display: block;');
     $inpactive = $div->appendChild($doc->createElement('input'));
     $inpactive->setAttribute('type','checkbox');
@@ -996,7 +277,13 @@ update may take up to 30 minutes.'));
       $inpactive->setAttribute('checked','');
     $inpactive->setAttribute('onchange','setmetro(\'active\',this.checked);');
     $div->appendChild($doc->createTextNode(' metronome '));
-    $div->appendChild($doc->createElement('br'));
+    $div = $div->appendChild($doc->createElement('div'));
+    $div->setAttribute('id','metrocontrols');
+    if( $devprop['metroactive'] )
+      $div->setAttribute('style','display: block;');
+    else
+      $div->setAttribute('style','display: none;');
+    //$div->appendChild($doc->createElement('br'));
     $inpbpm = $div->appendChild($doc->createElement('input'));
     $inpbpm->setAttribute('type','number');
     $inpbpm->setAttribute('min','1');
@@ -1059,6 +346,10 @@ update may take up to 30 minutes.'));
       }
     }
   }
+  $inp = $root->appendChild($doc->createElement('input'));
+  $inp->setAttribute('type','hidden');
+  $inp->setAttribute('id','phpdeviceid');
+  $inp->setAttribute('value',$device);
   echo $doc->saveHTML() . "\n";
 }
 
@@ -1162,20 +453,6 @@ function cleanup_registrations()
   }
 }
 
-function checkPassword($pwd, &$errors) {
-  $errors_init = $errors;
-  if (strlen($pwd) < 6) {
-    $errors[] = "Password too short!";
-  }
-  if (!preg_match("#[0-9]+#", $pwd)) {
-    $errors[] = "Password must include at least one number!";
-  }
-  if (!preg_match("#[a-zA-Z]+#", $pwd)) {
-    $errors[] = "Password must include at least one letter!";
-  }     
-  return ($errors == $errors_init);
-}
-
 function request_passwd_reset( $username )
 {
   cleanup_registrations();
@@ -1247,38 +524,6 @@ function register_new_user( $mail, $username, $password, $group, &$msg )
     mail( $site['mail'], 'ovbox account activation request', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
   else
     mail( $mail, 'ovbox account activation', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
-  return true;
-}
-
-function update_pw( $password, $username, &$msg )
-{
-  if( empty($username) ){
-    $msg = 'No user name was provided.';
-    return false;
-  }
-  if( empty($password) ){
-    $msg = 'No password was provided.';
-    return false;
-  }
-  $errs = array();
-  if( !checkPassword($password,$errs) ){
-    foreach($errs as $err)
-      $msg = $msg . '<br/>'.$err;
-    return false;
-  }
-  $users = list_users();
-  if( !in_array( $username, $users ) ){
-    $msg = 'The user "'.$username.'" does not exist.';
-    return false;
-  }
-  $pwhash = password_hash( $password, PASSWORD_DEFAULT );
-  $fname = '../db/ovpasswd';
-  $pws = array();
-  if( file_exists( $fname ) )
-    $pws = json_decode( file_get_contents( $fname ), true );
-  $pws[$username] = $pwhash;
-  file_put_contents( $fname, json_encode( $pws ));
-  modify_user_prop( $username, 'validpw', true);
   return true;
 }
 
@@ -1355,14 +600,10 @@ function terminate_account( $user )
   if( file_exists( $fname ) )
     unlink($fname);
   cleanup_groups();
-}
-
-function submit_contact( $user, $contact, $msg )
-{
-  $mailmsg = 'From: '.$user.' ('.$contact.")\n\n".$msg."\n";
-  file_put_contents( '../lastmailsg',$mailmsg);
-  $sitecfg = get_properties('site','config');
-  mail( $sitecfg['mail'], 'ovbox contact from '.$user, $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+  session_unset();
+  session_destroy();
+  header( "Location: /" );
+  die();
 }
 
 function claim_device_id( $user, $dev,  &$msg )
@@ -1391,6 +632,125 @@ function claim_device_id( $user, $dev,  &$msg )
     return false;
   }
 }
+
+function html_show_my_pwreset($user, $style, $urlgroup, $userprop){
+  if( !$userprop['validpw'] ){
+    print_head( $user, $style, $urlgroup );
+    $doc = new DOMDocument('1.0');
+    $form = $doc->appendChild($doc->createElement('div'));
+    $form->setAttribute('class','devprop');
+    //$form->setAttribute('method','POST');
+    //$form->setAttribute('action','?grp='.grouphash($urlgroup));
+    //$lab = $form->appendChild($doc->createElement('label'));
+    $form->appendChild($doc->createTextNode('New password (minimum 6 characters, 1 letter, 1 number): '));
+    $form->appendChild($doc->createElement('br'));
+    //echo '<input type="password" name="password"><br>';
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('name','password');
+    $inp->setAttribute('type','password');
+    $inp->setAttribute('id','newpassword');
+    $inp->setAttribute('required','');
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','submit');
+    $inp->setAttribute('value','Submit');
+    $inp->setAttribute('onclick','rest_setval_post_reload( \'updatepassword\', get_value_by_id(\'newpassword\',\'\' ));');
+    echo $doc->saveHTML();
+    print_foot($style);
+    die();
+  }
+}
+
+function print_head( $user = "", $style = "", $urlgroup = "" )
+{
+  $sitecfg = get_properties('site','config');
+  $css = '';
+  $title = $sitecfg['pagetitle'];
+  if( !empty($style) ){
+    $sprop = get_properties( $style, 'style' );
+    $css = $sprop['css'];
+    $title = $sprop['pagetitle'];
+  }
+  echo "<!DOCTYPE html>\n";
+  echo '<html lang="en"><head><title>'.$title;
+  if( !empty($user) ){
+    echo ' - ' . $user;
+  }
+  echo '</title><style>';
+  if( file_exists( '../css/'.$sitecfg['basecss'] ) ){
+    echo file_get_contents( '../css/'.$sitecfg['basecss'] );
+  }
+  if( (!empty($css)) && file_exists( '../css/'.$css ) ){
+    echo file_get_contents( '../css/'.$css );
+  }
+  echo '</style>';
+  echo '<script src="/js/ovbox.js"></script>'."\n";
+  echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
+  echo '</head><body onload="starttimer();">';
+  if( empty($user) ){
+    echo '<div class="ovcontent">'. "\n";
+    echo '<h1>'.$title.'</h1>' . "\n";
+  }else{
+    $isadmin = in_array($user,$sitecfg['admin']);
+    echo '<div class="navbar ovhead">'. "\n";
+    echo '<h1 class="navbar">'.$title.'</h1>' . "\n";
+    echo '<a class="navbar ovnav" href="/?grp='.grouphash($urlgroup).'">Session</a>';
+    echo '<a class="navbar ovnav" href="/device.php?grp='.grouphash($urlgroup).'">Device settings</a>';
+    if( $isadmin ){
+      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=devices">Devices</a>';
+      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=rooms">Rooms</a>';
+      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=users">Users</a>';
+      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=groups">Groups</a>';
+    }
+    echo '<a class="ovlogout" href="/?grp='.grouphash($urlgroup).'&logout"><img src="logout.png" alt="Logout" class="navbaricon"/></a>';
+    echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$user.'</a>' . "\n";
+    echo '</div>'. "\n";
+    echo '<div class="ovcontent">'. "\n";
+    if( isset($_SESSION['usermsg']) ){
+      echo '<div class="deverror">'.$_SESSION['usermsg'].'</div>';
+      unset($_SESSION['usermsg']);
+    }
+  }
+  //echo '<div class="ad">March 26th: <b>ovbox concert</b> <i>Hope of my Heart</i> <a target="blank" href="http://www.orlandoviols.com/">www.orlandoviols.com</a></div>'."\n";
+}
+
+function print_foot($style = '',$show_donate = true)
+{
+  $sitecfg = get_properties('site','config');
+  $credits = $sitecfg['credits'];
+  if( !empty($style) ){
+    $sprop = get_properties( $style, 'style' );
+    $credits = $sprop['credits'];
+    $show_donate = $sprop['showdonate'];
+  }
+  if( $show_donate ){
+    echo '<div class="donate">';
+    echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">';
+    echo '<input type="hidden" name="cmd" value="_s-xclick" />';
+    echo '<input type="hidden" name="hosted_button_id" value="V63WV7SAVQ6EC" />';
+    echo '<input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />';
+    echo '<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />';
+    echo '</form>';
+    echo '</div>';
+  }
+  echo '</div>'. "\n";// ovcontent
+  echo '<div class="ovfoot">'. "\n";
+  echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a> in cooperation with <a target="blank" href="https://digital-stage.org/">Digital Stage</a>.</div>';
+  echo '<div class="foto">'.$credits.'</div>';
+  echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerkärung</a></div>';
+  echo '</div>'. "\n";// ovfoot
+  echo '</body>';
+  echo '</html>';
+}
+
+function create_section( $parent, $doc, $title ){
+  $div = $parent->appendChild($doc->createElement('div'));
+  $div->setAttribute('class','ovsection');
+  $h = $div->appendChild($doc->createElement('h2'));
+  $h->appendChild($doc->createTextNode($title));
+  $h->setAttribute('class','ovsectiontitle');
+  return $div;
+}
+
 
 /*
  * Local Variables:

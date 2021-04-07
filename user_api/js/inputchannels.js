@@ -4,7 +4,7 @@ let hwinputs = JSON.parse(hwinputchannels.value);
 function inputchannels_add() {
     inchannels.push({sourceport:'system:capture_1',position:{x:0,y:0,z:0},gain:1});
     jsinputchannels.value = JSON.stringify(inchannels);
-    dispvaluechanged("valuechanged");
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
 function inputchannels_remove( rk ) {
@@ -16,14 +16,14 @@ function inputchannels_remove( rk ) {
     }
     inchannels = inchannels_;
     jsinputchannels.value = JSON.stringify(inchannels);
-    dispvaluechanged("valuechanged");
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
 function inputchannels_onedit_port( rk, value ) {
     if( value.length > 0 ){
 	inchannels[rk]['sourceport'] = value;
 	jsinputchannels.value = JSON.stringify(inchannels);
-	dispvaluechanged("valuechanged");
+	rest_setval_post( 'jsinputchannels', jsinputchannels.value );
     }
 }
 
@@ -31,7 +31,7 @@ function inputchannels_onedit_directivity( rk, value ) {
     if( value.length > 0 ){
 	inchannels[rk]['directivity'] = value;
 	jsinputchannels.value = JSON.stringify(inchannels);
-	dispvaluechanged("valuechanged");
+	rest_setval_post( 'jsinputchannels', jsinputchannels.value );
     }
 }
 
@@ -44,13 +44,13 @@ function inputchannels_onedit_x( rk, value ) {
 function inputchannels_onedit_y( rk, value ) {
     inchannels[rk]['position']['y'] = value;
     jsinputchannels.value = JSON.stringify(inchannels);
-    dispvaluechanged("valuechanged");
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
 function inputchannels_onedit_z( rk, value ) {
     inchannels[rk]['position']['z'] = value;
     jsinputchannels.value = JSON.stringify(inchannels);
-    dispvaluechanged("valuechanged");
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
 function inputchannels_preset( p ){
@@ -93,6 +93,7 @@ function inputchannels_preset( p ){
 	inchannels = [];
     }
     jsinputchannels.value = JSON.stringify(inchannels);
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
 function inputchannels_createUI( ) {
@@ -106,7 +107,7 @@ function inputchannels_createUI( ) {
     jsinputchannelsdiv.appendChild(document.createElement('br'));
     // preset selector:
     var el = document.createElement('select');
-    el.setAttribute('oninput','dispvaluechanged("valuechanged");');
+    //el.setAttribute('oninput','rest_setval_post( 'jsinputchannels', jsinputchannels.value );');
     el.setAttribute('onchange','{inputchannels_preset(this.value);inputchannels_createUI()}');
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','none');
@@ -163,68 +164,70 @@ function inputchannels_createUI( ) {
     el.appendChild(document.createTextNode(' (positions are relative to the center of your head, in meters)'));
     adiv.appendChild(el);
     adiv.appendChild(document.createElement('br'));
-    var k;
-    for( k = 0; k < inchannels.length; k++ ){
-	var el = document.createElement('input');
-	el.setAttribute('value',inchannels[k]['sourceport']);
-	el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
-	el.setAttribute('title','source port name');
-	adiv.appendChild(el);
-	var el = document.createElement('select');
-	el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
-	var eopt = el.appendChild(document.createElement('option'));
-	eopt.setAttribute('value','');
-	eopt.appendChild(document.createTextNode('- select channel -'));
-	el.appendChild(eopt);
-	function add_opt(optv,ind,options){
-	    var opt = el.appendChild(document.createElement('option'));
-	    opt.setAttribute('value',optv);
-	    opt.appendChild(document.createTextNode(optv));
-	    if( inchannels[k]['sourceport'] == optv )
-		opt.setAttribute('selected','');
-	    el.appendChild(opt);
+    if( inchannels ){
+	var k;
+	for( k = 0; k < inchannels.length; k++ ){
+	    var el = document.createElement('input');
+	    el.setAttribute('value',inchannels[k]['sourceport']);
+	    el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
+	    el.setAttribute('title','source port name');
+	    adiv.appendChild(el);
+	    var el = document.createElement('select');
+	    el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
+	    var eopt = el.appendChild(document.createElement('option'));
+	    eopt.setAttribute('value','');
+	    eopt.appendChild(document.createTextNode('- select channel -'));
+	    el.appendChild(eopt);
+	    function add_opt(optv,ind,options){
+		var opt = el.appendChild(document.createElement('option'));
+		opt.setAttribute('value',optv);
+		opt.appendChild(document.createTextNode(optv));
+		if( inchannels[k]['sourceport'] == optv )
+		    opt.setAttribute('selected','');
+		el.appendChild(opt);
+	    }
+	    if( Array.isArray(hwinputs)) 
+		hwinputs.forEach(add_opt);
+	    adiv.appendChild(el);
+	    var el = document.createElement('input');
+	    el.setAttribute('value',inchannels[k]['position']['x']);
+	    el.setAttribute('onchange','{inputchannels_onedit_x('+k.toString(10)+',this.value);}');
+	    el.setAttribute('size','1');
+	    el.setAttribute('title','x position (positive values are in front of you)');
+	    adiv.appendChild(el);
+	    var el = document.createElement('input');
+	    el.setAttribute('value',inchannels[k]['position']['y']);
+	    el.setAttribute('onchange','{inputchannels_onedit_y('+k.toString(10)+',this.value);}');
+	    el.setAttribute('size','1');
+	    el.setAttribute('title','y position (positive values are to your left)');
+	    adiv.appendChild(el);
+	    var el = document.createElement('input');
+	    el.setAttribute('value',inchannels[k]['position']['z']);
+	    el.setAttribute('onchange','{inputchannels_onedit_z('+k.toString(10)+',this.value);}');
+	    el.setAttribute('size','1');
+	    el.setAttribute('title','z position (positive values are above your ears)');
+	    adiv.appendChild(el);
+	    // source directivity:
+	    var el = document.createElement('select');
+	    el.setAttribute('onchange','{inputchannels_onedit_directivity('+k.toString(10)+',this.value);inputchannels_createUI();}');
+	    function add_opt_dir(optv,ind,options){
+		var opt = el.appendChild(document.createElement('option'));
+		opt.setAttribute('value',optv);
+		opt.appendChild(document.createTextNode(optv));
+		if( inchannels[k]['directivity'] == optv )
+		    opt.setAttribute('selected','');
+		el.appendChild(opt);
+	    }
+	    ['omni','cardioid'].forEach(add_opt_dir);
+	    adiv.appendChild(el);
+	    // end source directivity.
+	    var el = document.createElement('input');
+	    el.setAttribute('value','remove channel');
+	    el.setAttribute('type','button');
+	    el.setAttribute('onclick','{inputchannels_remove('+k.toString(10)+');inputchannels_createUI()}');
+	    adiv.appendChild(el);
+	    adiv.appendChild(document.createElement('br'));
 	}
-	if( Array.isArray(hwinputs)) 
-	    hwinputs.forEach(add_opt);
-	adiv.appendChild(el);
-	var el = document.createElement('input');
-	el.setAttribute('value',inchannels[k]['position']['x']);
-	el.setAttribute('onchange','{inputchannels_onedit_x('+k.toString(10)+',this.value);}');
-	el.setAttribute('size','1');
-	el.setAttribute('title','x position (positive values are in front of you)');
-	adiv.appendChild(el);
-	var el = document.createElement('input');
-	el.setAttribute('value',inchannels[k]['position']['y']);
-	el.setAttribute('onchange','{inputchannels_onedit_y('+k.toString(10)+',this.value);}');
-	el.setAttribute('size','1');
-	el.setAttribute('title','y position (positive values are to your left)');
-	adiv.appendChild(el);
-	var el = document.createElement('input');
-	el.setAttribute('value',inchannels[k]['position']['z']);
-	el.setAttribute('onchange','{inputchannels_onedit_z('+k.toString(10)+',this.value);}');
-	el.setAttribute('size','1');
-	el.setAttribute('title','z position (positive values are above your ears)');
-	adiv.appendChild(el);
-	// source directivity:
-	var el = document.createElement('select');
-	el.setAttribute('onchange','{inputchannels_onedit_directivity('+k.toString(10)+',this.value);inputchannels_createUI();}');
-	function add_opt_dir(optv,ind,options){
-	    var opt = el.appendChild(document.createElement('option'));
-	    opt.setAttribute('value',optv);
-	    opt.appendChild(document.createTextNode(optv));
-	    if( inchannels[k]['directivity'] == optv )
-		opt.setAttribute('selected','');
-	    el.appendChild(opt);
-	}
-	['omni','cardioid'].forEach(add_opt_dir);
-	adiv.appendChild(el);
-	// end source directivity.
-	var el = document.createElement('input');
-	el.setAttribute('value','remove channel');
-	el.setAttribute('type','button');
-	el.setAttribute('onclick','{inputchannels_remove('+k.toString(10)+');inputchannels_createUI()}');
-	adiv.appendChild(el);
-	adiv.appendChild(document.createElement('br'));
     }
 }
 

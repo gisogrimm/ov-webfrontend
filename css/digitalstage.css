@@ -43,7 +43,7 @@ body {
     border-radius: 12px;
 }
 a {
-    color: #b5b5b5;
+    color: #656565;
 }
 a:hover {
     color: #ffffff;
@@ -64,9 +64,4 @@ a:hover {
     background: #60606090;
     border-color: #909090;
     overflow: clip;
-}
-.adminarea {
-    background-color: #a02020;
-    border: 1px solid #edddddd0;
-    padding: 20px;
 }

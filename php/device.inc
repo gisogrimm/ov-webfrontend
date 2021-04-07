@@ -169,7 +169,6 @@ function get_room_session( $device, $devhash )
     // - directly connected to the internet or in same network
     // devices of same session
     foreach( $roomdev as $rdev ){
-      error_log('candidate '.$rdev['deviceid'].' localip: '.$rdev['localip']);
       if( $rdev['isproxy'] && !empty($rdev['localip']) && !empty($rdev['externalip']) ){
         // offers proxy service and has a configured IP address
         if( ($rdev['localip']==$rdev['externalip'])||($rdev['externalip']==$devprop['externalip']) ){
