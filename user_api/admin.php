@@ -118,6 +118,18 @@ if( isset($_GET['rmroom']) ){
     die();
 }
 print_head( $user, $style, $urlgroup );
+
+$loadavg = sys_getloadavg();
+$cpuload = getServerLoad();
+if( $loadavg || $cpuload ){
+    echo '<p>';
+    if( $cpuload )
+        echo 'Server CPU load: '.round($cpuload,1).'% ';
+    if( $loadavg )
+        echo 'Load average: '.$loadavg[0].'/'.$loadavg[1].'/'.$loadavg[2];
+    echo '</p>';
+}
+
 rm_old_unclaimed_devices();
 $adm = 'devices';
 if( isset($_GET['adm']) ){

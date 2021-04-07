@@ -11,6 +11,17 @@ function toggledisplay(id,msg){
     }
 }
 
+function toggle_ovnavh(){
+    var x=document.getElementById("ovnavh");
+    if( x ){
+	if((x.style.display.length==0) || (x.style.display==="none")){
+	    x.style.display="block";
+	}else{
+	    x.style.display="none";
+	}
+    }
+}
+
 function toggledisplayclass(id,msg){
     var x=document.getElementsByClassName(id);
     for(var k=0;k<x.length;k++){

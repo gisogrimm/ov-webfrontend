@@ -692,7 +692,17 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   }else{
     $isadmin = in_array($user,$sitecfg['admin']);
     echo '<div class="navbar ovhead">'. "\n";
-    echo '<h1 class="navbar">'.$title.'</h1>' . "\n";
+    echo '<button type="button"  onclick="toggle_ovnavh();" class="navbar-toggle">';
+    echo '<span class="sr-only">Toggle navigation</span>';
+    echo '<span class="icon-bar"></span>';
+    echo '<span class="icon-bar"></span>';
+    echo '<span class="icon-bar"></span>';
+    echo '</button>';
+    echo '<span class="ovnavnh">';
+    echo '<h1 class="navbar" onclick="location.href=\'/\';">'.$title.'</h1>' . "\n";
+    echo '<a class="ovlogout" href="/?grp='.grouphash($urlgroup).'&logout"><img src="logout.png" alt="Logout" class="navbaricon"/></a>';
+    echo '</span>';
+    echo '<span class="ovnavh" id="ovnavh">';
     echo '<a class="navbar ovnav" href="/?grp='.grouphash($urlgroup).'">Session</a>';
     echo '<a class="navbar ovnav" href="/device.php?grp='.grouphash($urlgroup).'">Device settings</a>';
     if( $isadmin ){
@@ -701,8 +711,8 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
       echo '<a class="navbar ovnav adminarea" href="admin.php?adm=users">Users</a>';
       echo '<a class="navbar ovnav adminarea" href="admin.php?adm=groups">Groups</a>';
     }
-    echo '<a class="ovlogout" href="/?grp='.grouphash($urlgroup).'&logout"><img src="logout.png" alt="Logout" class="navbaricon"/></a>';
     echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$user.'</a>' . "\n";
+    echo '</span>';
     echo '</div>'. "\n";
     echo '<div class="ovcontent">'. "\n";
     if( isset($_SESSION['usermsg']) ){
