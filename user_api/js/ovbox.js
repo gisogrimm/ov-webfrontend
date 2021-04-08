@@ -881,8 +881,13 @@ function switch_to_frontend( js ){
     if( js && (js.length>0)){
 	frontend = JSON.parse(js);
 	console.log(frontend);
-	rest_setval_post('jsfrontendconfig',js);
-	//location.href = frontend.ui;
+	let request = new XMLHttpRequest();
+	request.onload = function() {
+	    location.href = frontend.ui;
+	}
+	request.open('POST', '/rest.php', true);
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.send('jsfrontendconfig='+js);
     }
 }
 /*
