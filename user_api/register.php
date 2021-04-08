@@ -24,7 +24,7 @@ if( !empty($urlgroup) ){
 $site = get_properties('site','config');
 
 $title = 'Register as new user:';
-if($size['moderation'])
+if($site['moderation'])
     $title = 'Request registration from moderator:';
 
 print_head('',$style);
