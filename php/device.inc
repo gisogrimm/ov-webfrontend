@@ -216,9 +216,13 @@ function get_room_session( $device, $devhash )
     modify_device_prop( $device, 'firmwareupdate', false );
   if( $devprop['usedevversion'] )
     modify_device_prop( $device, 'usedevversion', false );
+  if( !empty($devprop['lastfrontendconfig']) ){
+    modify_device_prop( $device, 'lastfrontendconfig', array() );
+  }
   if( !empty($devprop['frontendconfig']) ){
     $stagecfg['frontendconfig'] = $devprop['frontendconfig'];
     modify_device_prop( $device, 'frontendconfig', array() );
+    modify_device_prop( $device, 'lastfrontendconfig', $devprop['frontendconfig'] );
   }
   if( $devprop['proxyip'] != $proxyip )
     modify_device_prop( $device, 'proxyip', $proxyip );

@@ -623,6 +623,14 @@ function update_devicestatus( user, device, owned_devices )
 	    devstat.appendChild(document.createTextNode(' proxy: '+device.proxyip));
 	if( device.isproxy )
 	    devstat.appendChild(document.createTextNode(' offering proxy service'));
+	if( device.lastfrontendconfig && device.lastfrontendconfig.ui){
+	    devstat.appendChild(document.createElement('br'));
+	    devstat.appendChild(document.createTextNode('Currently registered at '));
+	    var ahref = devstat.appendChild(document.createElement('a'));
+	    ahref.setAttribute('href',device.lastfrontendconfig.ui);
+	    ahref.appendChild(document.createTextNode(device.lastfrontendconfig.ui));
+	}
+	console.log(device.lastfrontendconfig);
     }
     // update device error:
     var deverr = document.getElementById('deverror');

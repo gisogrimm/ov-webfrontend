@@ -86,6 +86,7 @@ function defaults( $type )
     'firmwareupdate'=>false,
     'usedevversion'=>false,
     'isovbox'=>true,
+    'lastfrontendconfig', array(),
     'frontendconfig', array(),
     'message'=>'',
     'metrobpm'=>120,
