@@ -21,10 +21,16 @@ if( !empty($urlgroup) ){
     $style = $gprop['style'];
 }
 
+$site = get_properties('site','config');
+
+$title = 'Register as new user:';
+if($size['moderation'])
+    $title = 'Request registration from moderator:';
+
 print_head('',$style);
 // display registration box: username, username, password
 echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
-echo '<h2>Register as new user:</h2>'."\n";
+echo '<h2>'.$title.'</h2>'."\n";
 echo '<form name="register" class="login" action="/login.php?grp='.grouphash($urlgroup).'" method="POST">'."\n";
 echo '<label>e-mail address:</label><br>';
 echo '<input type="text" name="mail" required><br>';
