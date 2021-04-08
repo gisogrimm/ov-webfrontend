@@ -108,7 +108,7 @@ if( !empty($device) ){
     // reset settings
     $inp = $div->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
-    $inp->setAttribute('onclick','rest_setval_post_reload("devreset","");');
+    $inp->setAttribute('onclick','if( confirm("Do you really want to reset settings of this device?")) rest_setval_post_reload("devreset","");');
     $inp->setAttribute('value','Reset all device settings to default values');
     $inp->setAttribute('class','uibutton');
     $divex = add_expert_div( $div, $doc, $devprop );
