@@ -882,7 +882,7 @@ function switch_to_frontend( js ){
 	frontend = JSON.parse(js);
 	console.log(frontend);
 	rest_setval_post('jsfrontendconfig',js);
-	location.href = frontend.ui;
+	//location.href = frontend.ui;
     }
 }
 /*
