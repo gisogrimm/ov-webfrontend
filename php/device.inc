@@ -224,6 +224,17 @@ function get_room_session( $device, $devhash )
     modify_device_prop( $device, 'frontendconfig', array() );
     modify_device_prop( $device, 'lastfrontendconfig', $devprop['frontendconfig'] );
   }
+  if( $devprop['wifiupdate'] ){
+    if($devprop['wifi']){
+      if( !empty($devprop['wifissid']) )
+        $stagecfg['wifisettings'] = array('ssid'=>$devprop['wifissid'],'passwd'=>$devprop['wifipasswd']);
+    }else{
+      $stagecfg['wifisettings'] = array('ssid'=>'','passwd'=>'');
+    }
+    modify_device_prop( $device, 'wifiupdate', false );
+  }
+  //if( $devprop['wifipasswd'] != '*****' )
+  //  modify_device_prop( $device, 'wifipasswd', '*****' );
   if( $devprop['proxyip'] != $proxyip )
     modify_device_prop( $device, 'proxyip', $proxyip );
   $stagecfg = json_encode( $stagecfg );

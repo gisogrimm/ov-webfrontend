@@ -187,9 +187,9 @@ function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false )
     $el->setAttribute('checked','');
   $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);');
   if( !$styled ){
-    $el = $div->appendChild($doc->createElement('label'));
-    $el->setAttribute('for',$id);
-    $el->appendChild($doc->createTextNode($msg));
+    $ellab = $div->appendChild($doc->createElement('label'));
+    $ellab->setAttribute('for',$id);
+    $ellab->appendChild($doc->createTextNode($msg));
   }
   $div->appendChild($doc->createElement('br'));
   return $el;
@@ -600,10 +600,6 @@ function terminate_account( $user )
   if( file_exists( $fname ) )
     unlink($fname);
   cleanup_groups();
-  session_unset();
-  session_destroy();
-  header( "Location: /" );
-  die();
 }
 
 function claim_device_id( $user, $dev,  &$msg )

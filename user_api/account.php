@@ -31,8 +31,12 @@ if( isset($_POST['claimdevid']) ){
   die();
 }
 if( isset($_POST['terminateaccount']) ){
-    flock($fp_user, LOCK_EX );
-    terminate_account( $user );
+  flock($fp_user, LOCK_EX );
+  terminate_account( $user );
+  session_unset();
+  session_destroy();
+  header( "Location: /" );
+  die();
 }
 if( isset($_POST['contact']) ){
   submit_contact( $user, $_POST['contact'], $_POST['message'] );

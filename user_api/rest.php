@@ -202,5 +202,13 @@ if( isset($_POST['unclaimdevice']) ){
     if( $devprop['owner'] = $user )
         rm_device( $device );
 }
+if( isset($_POST['wifi']) && isset($_POST['wifissid'])  && isset($_POST['wifipasswd']) ){
+    $devprop = get_properties($device,'device');
+    $devprop['wifi'] = $_POST['wifi'] == 'true';
+    $devprop['wifissid'] = $_POST['wifissid'];
+    $devprop['wifipasswd'] = $_POST['wifipasswd'];
+    $devprop['wifiupdate'] = true;
+    set_properties( $device, 'device', $devprop );
+}
 
 ?>

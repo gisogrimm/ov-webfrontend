@@ -103,6 +103,9 @@ table {
 tr {
     background-color: #b7cef1;
 }
+.admintable {
+    font-size: 80%;
+}
 .actmember {
     background-color: #dcc378;
     padding: 5px;

@@ -99,6 +99,10 @@ function defaults( $type )
     'useproxy'=>false,
     'proxyip'=>'',
     'showexpertsettings'=>false,
+    'wifi'=>false,
+    'wifissid'=>'',
+    'wifipasswd'=>'',
+    'wifiupdate'=>false,
   );
   $defaults['room'] = array(
     'access'=>0,

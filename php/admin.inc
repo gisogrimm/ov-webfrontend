@@ -5,7 +5,7 @@ function table_add_header( &$tr, $field, $sortkey, &$doc, $type )
   $th = $tr->appendChild($doc->createElement('th'));
   if( $field == $sortkey ){
     $th->appendChild($doc->createTextNode('['.$field.']'));
-}else{
+  }else{
     $a = $th->appendChild($doc->createElement('a'));
     $a->setAttribute('href','?sortby='.$field.'&category='.$type);
     $a->appendChild($doc->createTextNode($field));
@@ -198,7 +198,7 @@ function html_admin_users()
     $tr = $tab->appendChild($doc->createElement('tr'));
     if( $uprop['agreedterms'] ){
       if( (($uprop['numdev']==0) && ($uprop['age']>60*24*3600)) ||
-      ((($uprop['numdev']>0) && (($uprop['devage']>240*24*3600) && $uprop['age']>240*24*3600))) ){
+          ((($uprop['numdev']>0) && (($uprop['devage']>240*24*3600) && $uprop['age']>240*24*3600))) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
       }
     }else{
@@ -290,6 +290,7 @@ function html_admin_rooms()
   $s->setAttribute('style','font-size: small;');
   $s->appendChild($doc->createTextNode('('.count($rooms).')'));
   $tab = $root->appendChild($doc->createElement('table'));
+  $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   // room id:
   $headerfields = array_merge(array('id','age','deventer'),$showfields,array('owner','group','label'));
@@ -401,6 +402,7 @@ function html_admin_groups()
   $el = $form->appendChild($doc->createElement('button'));
   $el->appendChild($doc->createTextNode('add group'));
   $tab = $root->appendChild($doc->createElement('table'));
+  $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   $th = $tr->appendChild($doc->createElement('th'));
   $th->appendChild($doc->createTextNode('group'));
@@ -501,6 +503,7 @@ function html_admin_db($type, $showfields = array())
   $s->setAttribute('style','font-size: small;');
   $s->appendChild($doc->createTextNode('('.count($devs).')'));
   $tab = $root->appendChild($doc->createElement('table'));
+  $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('owner','label'));
   foreach( $headerfields as $field ){
@@ -579,100 +582,100 @@ function add_group( $group )
 
 function _getServerLoadLinuxData()
 {
-    if (is_readable("/proc/stat"))
+  if (is_readable("/proc/stat"))
+  {
+    $stats = @file_get_contents("/proc/stat");
+
+    if ($stats !== false)
     {
-        $stats = @file_get_contents("/proc/stat");
+      // Remove double spaces to make it easier to extract values with explode()
+      $stats = preg_replace("/[[:blank:]]+/", " ", $stats);
 
-        if ($stats !== false)
+      // Separate lines
+      $stats = str_replace(array("\r\n", "\n\r", "\r"), "\n", $stats);
+      $stats = explode("\n", $stats);
+
+      // Separate values and find line for main CPU load
+      foreach ($stats as $statLine)
+      {
+        $statLineData = explode(" ", trim($statLine));
+
+        // Found!
+        if
+          (
+            (count($statLineData) >= 5) &&
+            ($statLineData[0] == "cpu")
+          )
         {
-            // Remove double spaces to make it easier to extract values with explode()
-            $stats = preg_replace("/[[:blank:]]+/", " ", $stats);
-
-            // Separate lines
-            $stats = str_replace(array("\r\n", "\n\r", "\r"), "\n", $stats);
-            $stats = explode("\n", $stats);
-
-            // Separate values and find line for main CPU load
-            foreach ($stats as $statLine)
-            {
-                $statLineData = explode(" ", trim($statLine));
-
-                // Found!
-                if
-                    (
-                        (count($statLineData) >= 5) &&
-                        ($statLineData[0] == "cpu")
-                    )
-                {
-                    return array(
-                        $statLineData[1],
-                        $statLineData[2],
-                        $statLineData[3],
-                        $statLineData[4],
-                    );
-                }
-            }
+          return array(
+            $statLineData[1],
+            $statLineData[2],
+            $statLineData[3],
+            $statLineData[4],
+          );
         }
+      }
     }
+  }
 
-    return null;
+  return null;
 }
 
 // Returns server load in percent (just number, without percent sign)
 function getServerLoad()
 {
-    $load = null;
+  $load = null;
 
-    if (stristr(PHP_OS, "win"))
+  if (stristr(PHP_OS, "win"))
+  {
+    $cmd = "wmic cpu get loadpercentage /all";
+    @exec($cmd, $output);
+
+    if ($output)
     {
-        $cmd = "wmic cpu get loadpercentage /all";
-        @exec($cmd, $output);
-
-        if ($output)
+      foreach ($output as $line)
+      {
+        if ($line && preg_match("/^[0-9]+\$/", $line))
         {
-            foreach ($output as $line)
-            {
-                if ($line && preg_match("/^[0-9]+\$/", $line))
-                {
-                    $load = $line;
-                    break;
-                }
-            }
+          $load = $line;
+          break;
         }
+      }
     }
-    else
+  }
+  else
+  {
+    if (is_readable("/proc/stat"))
     {
-        if (is_readable("/proc/stat"))
-        {
-            // Collect 2 samples - each with 1 second period
-            // See: https://de.wikipedia.org/wiki/Load#Der_Load_Average_auf_Unix-Systemen
-            $statData1 = _getServerLoadLinuxData();
-            sleep(1);
-            $statData2 = _getServerLoadLinuxData();
+      // Collect 2 samples - each with 1 second period
+      // See: https://de.wikipedia.org/wiki/Load#Der_Load_Average_auf_Unix-Systemen
+      $statData1 = _getServerLoadLinuxData();
+      sleep(1);
+      $statData2 = _getServerLoadLinuxData();
 
-            if
-                (
-                    (!is_null($statData1)) &&
-                    (!is_null($statData2))
-                )
-            {
-                // Get difference
-                $statData2[0] -= $statData1[0];
-                $statData2[1] -= $statData1[1];
-                $statData2[2] -= $statData1[2];
-                $statData2[3] -= $statData1[3];
+      if
+        (
+          (!is_null($statData1)) &&
+          (!is_null($statData2))
+        )
+      {
+        // Get difference
+        $statData2[0] -= $statData1[0];
+        $statData2[1] -= $statData1[1];
+        $statData2[2] -= $statData1[2];
+        $statData2[3] -= $statData1[3];
 
-                // Sum up the 4 values for User, Nice, System and Idle and calculate
-                // the percentage of idle time (which is part of the 4 values!)
-                $cpuTime = $statData2[0] + $statData2[1] + $statData2[2] + $statData2[3];
+        // Sum up the 4 values for User, Nice, System and Idle and calculate
+        // the percentage of idle time (which is part of the 4 values!)
+        $cpuTime = $statData2[0] + $statData2[1] + $statData2[2] + $statData2[3];
 
-                // Invert percentage to get CPU time, not idle time
-                $load = 100 - ($statData2[3] * 100 / $cpuTime);
-            }
-        }
+        // Invert percentage to get CPU time, not idle time
+        $load = 100 - ($statData2[3] * 100 / $cpuTime);
+      }
     }
+  }
 
-    return $load;
+  return $load;
 }
 
 /*

@@ -14,26 +14,34 @@ include '../php/rest.inc';
 include '../php/session.inc';
 
 if( isset($_POST['transferownership']) ){
-    $device = $_POST['transferownership'];
-    flock($fp_user, LOCK_EX );
-    $newowner = $_POST['newowner'];
-    $users = list_users();
-    if( !in_array( $newowner, $users ) ){
-        print_head( $user, $style, $urlgroup );
-        echo '<div class="deverror">The new owner "'.$newowner.'" is not registered as a user. The ownership of device "'.$device.'" was not transferred.</div>';
-        $alink = 'https://' . $_SERVER['HTTP_HOST'];
-        if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )== 0)
-            $alink = 'http://' . $_SERVER['HTTP_HOST'];
-        echo '<p><a href="'.$alink.'/device.php">Continue</a></p>' . "\n";
-        print_foot($style);
-    }else{
-        modify_device_prop( $device, 'owner', $newowner );
-        $fname = '../'.$user.'.userdevice';
-        if( file_exists( $fname ) )
-          unlink($fname);
-        header( "Refresh:0" );
-    }
-    die();
+  $device = $_POST['transferownership'];
+  flock($fp_user, LOCK_EX );
+  $newowner = $_POST['newowner'];
+  $users = list_users();
+  if( !in_array( $newowner, $users ) ){
+    print_head( $user, $style, $urlgroup );
+    echo '<div class="deverror">The new owner "'.$newowner.'" is not registered as a user. The ownership of device "'.$device.'" was not transferred.</div>';
+    $alink = 'https://' . $_SERVER['HTTP_HOST'];
+    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )== 0)
+      $alink = 'http://' . $_SERVER['HTTP_HOST'];
+    echo '<p><a href="'.$alink.'/device.php">Continue</a></p>' . "\n";
+    print_foot($style);
+  }else{
+    modify_device_prop( $device, 'owner', $newowner );
+    $fname = '../'.$user.'.userdevice';
+    if( file_exists( $fname ) )
+      unlink($fname);
+    header( "Refresh:0" );
+  }
+  die();
+}
+
+if( isset($_GET['claim']) ){
+  $devs = list_unclaimed_devices();
+  if( in_array( $_GET['claim'], $devs ) )
+    modify_device_prop( $_GET['claim'], 'owner', $user );
+  header( "Location: /device.php" );
+  die();
 }
 
 print_head( $user, $style, $urlgroup );
@@ -311,6 +319,25 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     // peer-to-peer:
     xml_add_checkbox( 'peer2peer', 'peer-to-peer mode', $div, $doc, $devprop );
+    // wifi
+    if( $devprop['isovbox'] ){
+      if( version_compare("ovclient-0.6.151",$devprop['version'])<0 ){
+        $divex = add_expert_div($div, $doc, $devprop );
+        $el = xml_add_checkbox( 'wifi', 'use WiFi (not for installation and updates)', $divex, $doc, $devprop );
+        $el->setAttribute('id','wifi');
+        $el->setAttribute('onchange','update_wifi();');
+        $el = xml_add_input_generic( 'wifissid','WiFi SSID:',$divex,$doc,$devprop);
+        $el->setAttribute('id','wifissid');
+        $el->setAttribute('name','wifissid');
+        $el->setAttribute('onchange','update_wifi();');
+        $el = xml_add_input_generic( 'wifipasswd','WiFi passphrase (Warning: will be stored on server):',$divex,$doc,$devprop);
+        $el->setAttribute('id','wifipasswd');
+        $el->setAttribute('name','wifipasswd');
+        //$el->setAttribute('type','password');
+        //$el->setAttribute('autocomplete','off');
+        $el->setAttribute('onchange','update_wifi();');
+      }
+    }
     // extra destinations:
     $divex = add_expert_div($div, $doc, $devprop );
     xml_add_checkbox( 'sendlocal', 'send to local IP address if in same network', $divex, $doc, $devprop );
@@ -370,48 +397,55 @@ if( !empty($device) ){
       $div->appendChild($doc->createTextNode($devprop['version']));
       if( version_compare($clver,$devprop['version'])==0 )
         $div->appendChild($doc->createTextNode(' - your device is up to date.'));
+      if( version_compare("ovclient-0.5.50",$devprop['version'])>0 ){
+        $div->appendChild($doc->createTextNode(' - update is recommended.'));
+      }
     }
-    if(  !empty($clver) && (substr($devprop['version'],0,9)=='ovclient-') &&
-         (version_compare($clver,$devprop['version'])==1)){
-      $el = $div->appendChild($doc->createElement('div'));
-      $el->setAttribute('class','devproptitle');
-      $el->appendChild($doc->createTextNode('Firmware update:'));
-      $div->appendChild($doc->createTextNode('Your device is running version '.$devprop['version'].', the latest version is '.$clver.'. '));
-      if( (version_compare($devprop['version'],'ovclient-0.4.41')==1) ){
-        $div->appendChild($doc->createTextNode('Before starting the firmware update, please connect your device with a
+    if( $devprop['isovbox'] ){
+      if(  !empty($clver) && (substr($devprop['version'],0,9)=='ovclient-') &&
+           (version_compare($clver,$devprop['version'])==1)){
+        $el = $div->appendChild($doc->createElement('div'));
+        $el->setAttribute('class','devproptitle');
+        $el->appendChild($doc->createTextNode('Firmware update:'));
+        $div->appendChild($doc->createTextNode('Your device is running version '.$devprop['version'].', the latest version is '.$clver.'. '));
+        if( (version_compare($devprop['version'],'ovclient-0.4.41')==1) ){
+          $div->appendChild($doc->createTextNode('Before starting the firmware update, please connect your device with a
 network cable. Once started, do not disconnect your device from the
 power supply or network until the firmware update is completed. The
 update may take up to 30 minutes.'));
-        $div->appendChild($doc->createElement('br'));
-        $bold = $div->appendChild($doc->createElement('b'));
-        $bold->appendChild($doc->createTextNode('Due to a problem with the SSL certificates of github it might not be
+          $div->appendChild($doc->createElement('br'));
+          if( version_compare("ovclient-0.6.141",$devprop['version'])>0 ){
+            $bold = $div->appendChild($doc->createElement('b'));
+            $bold->appendChild($doc->createTextNode('Due to a problem with the SSL certificates of github it might not be
       possible to update via this page. in that case, if you need to
       update, please re-create your SD card. If in doubt please
       contact the person who provided you with the ovbox.'));
-        $div->appendChild($doc->createElement('br'));
-        $div->appendChild($doc->createTextNode('In the most recent version 0.6.150 this problem is solved. Version
+            $div->appendChild($doc->createElement('br'));
+            $div->appendChild($doc->createTextNode('In the most recent version this problem is solved. Version
 0.5.51 is sufficient in most cases.'));
-        $div->appendChild($doc->createElement('br'));
-        if($devprop['age']>=20){
-          $div->appendChild($doc->createTextNode('Please start your device to update the firmware.'));
+            $div->appendChild($doc->createElement('br'));
+          }
+          if($devprop['age']>=20){
+            $div->appendChild($doc->createTextNode('Please start your device to update the firmware.'));
+            $div->appendChild($doc->createElement('br'));
+          }
+          $a = $div->appendChild($doc->createElement('a'));
+          $a->setAttribute('target','blank');
+          $a->setAttribute('href','https://raw.githubusercontent.com/gisogrimm/ov-client/master/changelog');
+          $a->appendChild($doc->createTextNode('recent changes'));
           $div->appendChild($doc->createElement('br'));
+          $inp = $div->appendChild($doc->createElement('input'));
+          $inp->setAttribute('type','button');
+          $inp->setAttribute('onclick','rest_set_devprop("firmwareupdate",true);');
+          $inp->setAttribute('value','update now');
+          $inp->setAttribute('class','uibutton');
+        }else{
+          $div->appendChild($doc->createTextNode('To update the firmware, please follow the instructions '));
+          $a = $div->appendChild($doc->createElement('a'));
+          $a->setAttribute('target','blank');
+          $a->setAttribute('href','https://github.com/gisogrimm/ovbox/wiki/Installation');
+          $a->appendChild($doc->createTextNode('here.'));
         }
-        $a = $div->appendChild($doc->createElement('a'));
-        $a->setAttribute('target','blank');
-        $a->setAttribute('href','https://raw.githubusercontent.com/gisogrimm/ov-client/master/changelog');
-        $a->appendChild($doc->createTextNode('recent changes'));
-        $div->appendChild($doc->createElement('br'));
-        $inp = $div->appendChild($doc->createElement('input'));
-        $inp->setAttribute('type','button');
-        $inp->setAttribute('onclick','rest_set_devprop("firmwareupdate",true);');
-        $inp->setAttribute('value','update now');
-        $inp->setAttribute('class','uibutton');
-      }else{
-        $div->appendChild($doc->createTextNode('To update the firmware, please follow the instructions '));
-        $a = $div->appendChild($doc->createElement('a'));
-        $a->setAttribute('target','blank');
-        $a->setAttribute('href','https://github.com/gisogrimm/ovbox/wiki/Installation');
-        $a->appendChild($doc->createTextNode('here.'));
       }
     }
   }

@@ -630,7 +630,7 @@ function update_devicestatus( user, device, owned_devices )
 	    ahref.setAttribute('href',device.lastfrontendconfig.ui);
 	    ahref.appendChild(document.createTextNode(device.lastfrontendconfig.ui));
 	}
-	console.log(device.lastfrontendconfig);
+	//console.log(device.lastfrontendconfig);
     }
     // update device error:
     var deverr = document.getElementById('deverror');
@@ -882,13 +882,11 @@ function apply_jack_settings(){
 	'&jackperiod='+get_value_by_id('jackperiod') +
 	'&jackbuffers='+get_value_by_id('jackbuffers');    
     request.send(data);
-    console.log(data);
 }
 
 function switch_to_frontend( js ){
     if( js && (js.length>0)){
 	frontend = JSON.parse(js);
-	console.log(frontend);
 	let request = new XMLHttpRequest();
 	request.onload = function() {
 	    location.href = frontend.ui;
@@ -898,6 +896,20 @@ function switch_to_frontend( js ){
 	request.send('jsfrontendconfig='+js);
     }
 }
+
+function update_wifi(){
+    var inp_wificb = document.getElementById('wifi');
+    var inp_wifissid = document.getElementById('wifissid');
+    var inp_wifipasswd = document.getElementById('wifipasswd');
+    if( inp_wificb && inp_wifissid && inp_wifipasswd ){
+	let request = new XMLHttpRequest();
+	request.open('POST', '/rest.php', true);
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	var data = 'wifi='+inp_wificb.checked+'&wifissid='+inp_wifissid.value+'&wifipasswd='+inp_wifipasswd.value;
+	request.send(data);
+    }
+}
+
 /*
  * Local Variables:
  * c-basic-offset: 2
