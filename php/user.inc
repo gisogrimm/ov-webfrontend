@@ -624,7 +624,7 @@ function claim_device_id( $user, $dev,  &$msg )
     modify_device_prop( $device, 'onlineaccess', $dprop['onlineaccess']);
     return true;
   }else{
-    $msg = 'No device with MAC address or device ID '.$dev.' found in the data base. You may use the contact form to send date and time of installation, to ask for a manual identification.';
+    $msg = 'No device with MAC address or device ID '.$dev.' found in the data base. Probably the installation of the device failed, it has no network connection or is blocked by a firewall.';
     return false;
   }
 }
@@ -757,6 +757,32 @@ function create_section( $parent, $doc, $title ){
   return $div;
 }
 
+function clean_userdb(){
+  $rmusers = array();
+  $users = list_users();
+  $udb = array();
+  $alldev = list_devices();
+  foreach($users as $us){
+    $uprop = get_properties($us,'user');
+    $uprop['owneddev'] = owned_devices( $us, $alldev );
+    $uprop['numdev'] = count($uprop['owneddev']);
+    $devage = 3600*24*365*40*2;
+    foreach($uprop['owneddev'] as $d=>$dprop){
+      $devage = min($devage,$dprop['age']);
+    }
+    $uprop['devage'] = $devage;
+    $udb[$us] = $uprop;
+  }
+  foreach($udb as $us=>$uprop){
+    if( (($uprop['numdev']==0) && ($uprop['age']>31*24*3600)) ||
+        ((($uprop['numdev']>0) && (($uprop['devage']>181*24*3600) && $uprop['age']>181*24*3600))) ){
+      $rmusers[] = $us;
+    }
+  }
+  foreach( $rmusers as $us ){
+    terminate_account( $us );
+  }
+}
 
 /*
  * Local Variables:

@@ -26,6 +26,8 @@ flock($fp_dev, LOCK_EX );
 flock($fp_user, LOCK_EX );
 if( isset($_GET['adminterminateaccount']) ){
     terminate_account( $_GET['adminterminateaccount'] );
+    header( "Location: /admin.php?adm=users" );
+    die();
 }
 if( isset($_GET['addgroup']) ){
     add_group($_GET['addgroup']);

@@ -59,6 +59,7 @@ if( !empty($device) ){
     // presets:
     $div = create_section($root, $doc,'Presets');
     $presets = get_properties( $device, 'devpresets' );
+    $div_presets = $div->appendChild($doc->createElement('div'));
     unset($presets['now']);
     if( !empty($presets) ){
       $presets = array_keys($presets);
@@ -66,7 +67,7 @@ if( !empty($device) ){
         $xclass = '';
         if( $preset == $devprop['preset'] )
           $xclass = ' presetact';
-        $span = $div->appendChild($doc->createElement('span'));
+        $span = $div_presets->appendChild($doc->createElement('span'));
         $span->setAttribute('class','presetspan'.$xclass);
         $inp = $span->appendChild($doc->createElement('input'));
         $inp->setAttribute('class','presetload'.$xclass);
@@ -81,14 +82,15 @@ if( !empty($device) ){
         $inp->setAttribute('onclick','rm_preset(this.name);');
       }
     }
+    $div_save = $div->appendChild($doc->createElement('div'));
     // settings presets:
-    $span = $div->appendChild($doc->createElement('span'));
-    $span->setAttribute('class','presetspan');
-    $inp = $span->appendChild($doc->createElement('input'));
+    //$span = $div_save->appendChild($doc->createElement('span'));
+    //$span->setAttribute('class','presetspan');
+    $inp = $div_save->appendChild($doc->createElement('input'));
     $inp->setAttribute('id','savepresetname');
     //$inp->setAttribute('class','presetspan');
     $inp->setAttribute('placeholder','Save current settings as preset');
-    $inp = $span->appendChild($doc->createElement('input'));
+    $inp = $div_save->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
     $inp->setAttribute('value','Store preset');
     $inp->setAttribute('onclick','create_preset();');

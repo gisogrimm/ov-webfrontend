@@ -187,6 +187,7 @@ function html_admin_users()
   $s->setAttribute('style','font-size: small;');
   $s->appendChild($doc->createTextNode('('.count($users).')'));
   $tab = $root->appendChild($doc->createElement('table'));
+  $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   //
   $headerfields = array('id','age','devage','numdev','numgrp','maingroup');
@@ -197,13 +198,13 @@ function html_admin_users()
   foreach($udb as $us=>$uprop){
     $tr = $tab->appendChild($doc->createElement('tr'));
     if( $uprop['agreedterms'] ){
-      if( (($uprop['numdev']==0) && ($uprop['age']>60*24*3600)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>240*24*3600) && $uprop['age']>240*24*3600))) ){
+      if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600)) ||
+          ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600))) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
       }
     }else{
-      if( (($uprop['numdev']==0) && ($uprop['age']>60*24*3600) && ($uprop['age']<3600*24*365*40)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>240*24*3600) && $uprop['age']>240*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
+      if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600) && ($uprop['age']<3600*24*365*40)) ||
+          ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
         $tr->setAttribute('style','background-color: #ccaaaa;');
       }else{
         $tr->setAttribute('style','background-color: #aaaaaa;');

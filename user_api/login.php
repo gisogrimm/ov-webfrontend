@@ -134,6 +134,7 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         die();
     }
     // if we are here this means login data was entered:
+    clean_userdb();
     flock($fp_authfail, LOCK_EX );
     if( !auth($_POST['username'], $_POST['password']) ) {
         flock($fp_user, LOCK_UN );
