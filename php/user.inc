@@ -107,6 +107,7 @@ function html_device_selector( $user, $currentdevice, $dprop )
     $opt->appendChild($doc->createTextNode($dev.' ('.$sdprop['label'].')'.$active));
   }
   $pres = $div->appendChild($doc->createElement('span'));
+  $pres->setAttribute('id','presetindicator');
   if(!empty($dprop['preset'])){
     $pres->appendChild($doc->createTextNode($dprop['preset']));
     $pres->setAttribute('class','presetspan presetact');
@@ -716,7 +717,7 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
       unset($_SESSION['usermsg']);
     }
   }
-  //echo '<div class="ad">March 26th: <b>ovbox concert</b> <i>Hope of my Heart</i> <a target="blank" href="http://www.orlandoviols.com/">www.orlandoviols.com</a></div>'."\n";
+  //echo '<div class="deverror"><b>Planned service downtime</b> (server maintenance): Thursday April 22nd 8pm - Friday April 23rd 9am<br/><b>Server-Wartung</b>: Von Donnerstag 22.4. 20 Uhr bis vorraussichtlich Freitag 23.4. 9 Uhr steht diese Seite nicht zur Verfügung.</div>'."\n";
 }
 
 function print_foot($style = '',$show_donate = true)
@@ -742,7 +743,7 @@ function print_foot($style = '',$show_donate = true)
   echo '<div class="ovfoot">'. "\n";
   echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a> in cooperation with <a target="blank" href="https://digital-stage.org/">Digital Stage</a>.</div>';
   echo '<div class="foto">'.$credits.'</div>';
-  echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerkärung</a></div>';
+  echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerklärung</a></div>';
   echo '</div>'. "\n";// ovfoot
   echo '</body>';
   echo '</html>';

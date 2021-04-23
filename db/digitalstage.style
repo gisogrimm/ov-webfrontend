@@ -1,6 +1,6 @@
 {
-  "pagetitle": "Digital Stage ov-box prototype",
-  "credits": "This site is hosted by ORLANDOviols. Donations help us to invest into new technology.",
-  "css": "digitalstage.css",
+  "pagetitle": "ovbox prototype system",
+  "credits": "Made by ORLANDOviols for early testers of Digital Stage. Donations to ORLANDOviols help us to invest into new technology.",
+  "css": "ovbox.css",
   "showdonate": true
 }

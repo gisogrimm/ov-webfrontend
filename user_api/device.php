@@ -239,6 +239,10 @@ if( !empty($device) ){
     $el->setAttribute('step','0.1');
     // ego monitor:
     $el = xml_add_input_generic( 'egogain', 'ego monitor gain in dB (how much of your own microphone is added to your headphone):', $div, $doc, $devprop, false );
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','-20');
+    $el->setAttribute('max','20');
+    $el->setAttribute('step','0.1');
     // switch egomonitor
     xml_add_checkbox( 'selfmonitor', 'enable self monitoring', $div, $doc, $devprop, true );
     $divex = add_expert_div($div,$doc,$devprop);

@@ -358,6 +358,8 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
                       'jittersend'=>floatval($prop['jittersend']),
                       'jitterreceive'=>floatval($prop['jitterreceive']),
                       'jackrate'=>floatval($prop['jackrate']),
+                      'jackperiod'=>floatval($prop['jackperiod']),
+                      'version'=>$prop['version'],
                       'numchannels'=>count($prop['inputchannels']),
                       'peer2peer'=>boolval($prop['peer2peer']));
     if( ($room == $prop['room']) && ((!$senderonly) || issender($prop)) ){

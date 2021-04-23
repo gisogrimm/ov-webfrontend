@@ -478,6 +478,10 @@ function update_room( device, room, droom )
 		a.setAttribute('href','?lockroom='+encodeURI(room.id)+'&lck=1');
 		a.appendChild(document.createTextNode('lock room'));
 	    }
+	    ctl.appendChild(document.createTextNode(' '));
+	    a = ctl.appendChild(document.createElement('a'));
+	    a.setAttribute('href','sessionstat.php');
+	    a.appendChild(document.createTextNode('stats'));
 	} else {
 	    if( room.lock ){
 		ctl.appendChild(document.createTextNode('room is locked.'));
@@ -492,7 +496,10 @@ function update_room( device, room, droom )
 	// my room, provide settings box:
 	ctl.appendChild(document.createTextNode(' '));
 	if( device.owner == room.owner ){
-	    if( room.roomdev.length>0 ){
+	    var numdevs = 0;
+	    for( const dev in room.roomdev)
+		numdevs++;
+	    if( numdevs>0 ){
 		var a = ctl.appendChild(document.createElement('a'));
 		a.setAttribute('href','?clearroom='+encodeURI(room.id));
 		a.appendChild(document.createTextNode('kick all'));
@@ -697,6 +704,27 @@ function update_devicestatus( user, device, owned_devices )
             webm.setAttribute('style','display: none;');
 	}
     }
+    var presetindicator = document.getElementById('presetindicator');
+    if( presetindicator ){
+	while( presetindicator.firstChild ) presetindicator.removeChild(presetindicator.firstChild);
+	if( device.preset.length > 0 ){
+	    presetindicator.appendChild(document.createTextNode(device.preset));
+	    presetindicator.setAttribute('class','presetspan presetact');
+	}else{
+	    presetindicator.setAttribute('class','');
+	    var els=document.getElementsByClassName("presetact");
+	    for( const el in els ){
+		if( els.item(el) ){
+		    var cl = els.item(el).getAttribute('class');
+		    els.item(el).setAttribute('class',cl.replace('presetact',''));
+		}
+	    }
+	}
+    }
+    //if(!empty($dprop['preset'])){
+    //	$pres->appendChild($doc->createTextNode($dprop['preset']));
+    //	$pres->setAttribute('class','presetspan presetact');
+    //}
 }
 
 function update_unclaimed( user, unclaimed_devices )
@@ -733,6 +761,299 @@ function everysecond(){
     }
 }
 
+function hexval(c){
+    if( c < 0 )
+	return '00';
+    if( c < 16 )
+	return '0'+c.toString(16);
+    if( c < 256 )
+	return c.toString(16);
+    return 'ff';
+}
+
+function lat2rgb(lat,good,bad){
+    const delta=bad-good;
+    const r=Math.round(220*(2*lat/delta));
+    const g=Math.round(200*(2*(bad-lat)/delta));
+    return "#"+hexval(r)+hexval(g)+'00';
+}
+
+function tab_header( tab, data ){
+    var tr=tab.appendChild(document.createElement('tr'));
+    var td=tr.appendChild(document.createElement('td'));
+    td=tr.appendChild(document.createElement('td'));
+    var numch = 0;
+    for( const chair in data.chairs )
+	numch++;
+    td.setAttribute('colspan',numch);
+    td.setAttribute('class','statcell statcellsend');
+    td.appendChild(document.createTextNode('sender'));
+    tr=tab.appendChild(document.createElement('tr'));
+    td=tr.appendChild(document.createElement('td'));
+    td.appendChild(document.createTextNode('receiver'));
+    td.setAttribute('class','statcellrec');
+    for( const chair in data.chairs ){
+	const dev=data.chairs[chair];
+	if( dev && data.stats[dev] ){
+	    var td=tr.appendChild(document.createElement('td'));
+	    td.setAttribute('class','statcell statcellsend');
+	    if( data.versions[dev] < 0 )
+		td.appendChild(document.createTextNode('('+chair+')'));
+	    else
+		td.appendChild(document.createTextNode(chair));
+	}
+    }
+}
+
+function create_tab_stat(div,title,data,header=true){
+    var sec_ping=div.appendChild(document.createElement('div'));
+    sec_ping.setAttribute('class','ovsection');
+    var h_ping=sec_ping.appendChild(document.createElement('div'));
+    h_ping.setAttribute('class','ovsectiontitle devproptitle');
+    h_ping.appendChild(document.createTextNode(title));
+    var tab = sec_ping.appendChild(document.createElement('table'));
+    if( header )
+	tab_header( tab, data );
+    return tab;
+}
+
+function create_row_stat(tab,chair,data){
+    const dev=data.chairs[chair];
+    var tr=tab.appendChild(document.createElement('tr'));
+    var td=tr.appendChild(document.createElement('td'));
+    if( data.versions[dev] < 0 )
+	td.appendChild(document.createTextNode('('+chair+' '+data.names[dev]+')'));
+    else
+	td.appendChild(document.createTextNode(chair+' '+data.names[dev]));
+    td.setAttribute('class','statcellrec');
+    return tr;
+}
+
+function data2mat( data, category, measure )
+{
+    var mat = [];
+    for( const chair in data.chairs ){
+	const dev=data.chairs[chair];
+	if( dev && data.stats[dev] ){
+	    for( const chx in data.chairs ){
+		if( data.stats[dev][chx] ){
+		    mat.push(data.stats[dev][chx][category][measure]);
+		}else{
+		    mat.push(NaN);
+		}
+	    }
+	}
+    }
+    return mat;
+}
+
+function matelem(mat,x,y,n)
+{
+    return mat[x+n*y];
+}
+
+function sqr(x)
+{
+    return x*x;
+}
+
+function get_optimal_receiver_jitter( data, category )
+{
+    var chidx = new Object();
+    var idx = 0;
+    var chairidx = new Object();
+    for( const chair in data.chairs ){
+	chidx[chair] = idx;
+	chairidx[idx] = chair;
+	idx++;
+    }
+    const dp99 = data2mat(data,category,'p99');
+    const dmin = data2mat(data,category,'min');
+    const mat_jitter = dp99.map(function (num,idx) { return num-dmin[idx];});
+    var vjitrec = {};
+    for( const chair in data.chairs ){
+	var jitrec = 1000;
+	for( var k=data.n*chidx[chair]; k<data.n*(chidx[chair]+1);k++){
+	    if( mat_jitter[k] > 0 )
+		jitrec = Math.min(jitrec,mat_jitter[k]);
+	}
+	vjitrec[chair] = jitrec;
+    }
+    var vjitsend = {};
+    for( const chair in data.chairs ){
+	var jitsend = 0;
+	for( var k=0;k<data.n;k++){
+	    if( matelem(mat_jitter,chidx[chair],k,data.n) > 0 ){
+		var sq = Math.sqrt(sqr(matelem(mat_jitter,chidx[chair],k,data.n))-sqr(vjitrec[chairidx[k]]));
+		jitsend = Math.max(jitsend,sq);
+	    }
+	}
+	vjitsend[chair] = Math.ceil(Math.sqrt(sqr(jitsend)+sqr(data.fragsize[data.chairs[chair]])));
+    }
+    for( const chair in vjitsend ){
+	vjitrec[chair] = Math.ceil(Math.sqrt(sqr(vjitrec[chair])+sqr(data.fragsize[data.chairs[chair]])));
+    }
+    return {'rec':vjitrec,'send':vjitsend};
+}
+
+function update_sessionstat(div)
+{
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	var data = JSON.parse(request.response, (key,value)=>
+			      {
+				  if( value == "0" ) return 0;
+				  return value;
+			      }
+			     );
+	while( div.firstChild ) div.removeChild(div.firstChild);
+	if( data && data.stats && (data.room.length>0)){
+	    var h=div.appendChild(document.createElement('h3'));
+	    h.appendChild(document.createTextNode('Session '+data.room));
+	    const modes = ['cur','p2p','srv','loc']
+	    for( const mode in modes){
+		var show = false;
+		for( const chair in data.chairs ){
+		    const dev=data.chairs[chair];
+		    if( dev && data.stats[dev] ){
+			for( const chx in data.chairs ){
+			    if( data.stats[dev][chx] && data.stats[dev][chx][modes[mode]])
+				if( data.stats[dev][chx][modes[mode]].received > 0 )
+				    show = true;
+			}
+		    }
+		}
+		if(show){
+		    {
+			var tab = create_tab_stat(div,'Suggestions '+modes[mode],data,false);
+			const suggest = get_optimal_receiver_jitter(data,modes[mode]);
+			var tr = tab.appendChild(document.createElement('tr'));
+			td = tr.appendChild(document.createElement('td'));
+			td = tr.appendChild(document.createElement('td'));
+			td.setAttribute('class','statcell');
+			td.appendChild(document.createTextNode('rec'));
+			td = tr.appendChild(document.createElement('td'));
+			td.appendChild(document.createTextNode('send'));
+			td.setAttribute('class','statcell');
+			for( const chair in data.chairs ){
+			    var tr=create_row_stat(tab,chair,data);
+			    td = tr.appendChild(document.createElement('td'));
+			    td.setAttribute('class','statcell');
+			    td.appendChild(document.createTextNode(suggest.rec[chair]));
+			    td = tr.appendChild(document.createElement('td'));
+			    td.setAttribute('class','statcell');
+			    td.appendChild(document.createTextNode(suggest.send[chair]));
+			    td = tr.appendChild(document.createElement('td'));
+			    td.setAttribute('class','statcell');
+			    if( data.p2p[data.chairs[chair]] )
+				td.appendChild(document.createTextNode('p2p'));
+			    else
+				td.appendChild(document.createTextNode('srv'));
+			}
+		    }
+		    var tab_ping=create_tab_stat(div,'Median ping times '+modes[mode], data);
+		    var tab_jitter=create_tab_stat(div,'Jitter '+modes[mode], data);
+		    for( const chair in data.chairs ){
+			const dev=data.chairs[chair];
+			if( dev && data.stats[dev] ){
+			    // ping:
+			    var tr=create_row_stat(tab_ping,chair,data);
+			    for( const chx in data.chairs ){
+				var pt=-1;
+				if( data.stats[dev][chx] )
+				    pt=data.stats[dev][chx][modes[mode]].median;
+				var td=tr.appendChild(document.createElement('td'));
+				td.setAttribute('class','statcell');
+				if( pt > 0){
+				    td.appendChild(document.createTextNode(pt.toFixed(1)+'ms'));
+				    td.setAttribute('style','background-color:'+lat2rgb(pt,0,60));
+				}else{
+				    //td.appendChild(document.createTextNode('---'));
+				    td.setAttribute('style','background-color: #AAAAAA');
+				}
+			    }
+			    // jitter:
+			    var tr=create_row_stat(tab_jitter,chair,data);
+			    for( const chx in data.chairs ){
+				var pt=-1;
+				if( data.stats[dev][chx] )
+				    pt=data.stats[dev][chx][modes[mode]].p99-
+				    data.stats[dev][chx][modes[mode]].min;
+				var td=tr.appendChild(document.createElement('td'));
+				td.setAttribute('class','statcell');
+				if( pt > 0){
+				    td.appendChild(document.createTextNode(pt.toFixed(1)+'ms'));
+				    td.setAttribute('style','background-color:'+lat2rgb(pt,0,15));
+				}else{
+				    //td.appendChild(document.createTextNode('---'));
+				    td.setAttribute('style','background-color: #AAAAAA');
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    var tab=create_tab_stat(div,'Package loss', data);
+	    for( const chair in data.chairs ){
+		const dev=data.chairs[chair];
+		if( dev && data.stats[dev] ){
+		    // ping:
+		    var tr=create_row_stat(tab,chair,data);
+		    for( const chx in data.chairs ){
+			var pt=-1;
+			if( data.stats[dev][chx] && data.stats[dev][chx].packages ){
+			    const p = data.stats[dev][chx].packages;
+			    if( p.received+p.lost>0 ){
+				pt=100.0*p.lost/(p.received+p.lost);
+			    }
+			}
+			var td=tr.appendChild(document.createElement('td'));
+			td.setAttribute('class','statcell');
+			if( pt >= 0){
+			    td.appendChild(document.createTextNode(pt.toFixed(2)+'%'));
+			    td.setAttribute('style','background-color:'+lat2rgb(pt,0,0.2));
+			}else{
+			    //td.appendChild(document.createTextNode('---'));
+			    td.setAttribute('style','background-color: #AAAAAA');
+			}
+		    }
+		}
+	    }
+	    var tab=create_tab_stat(div,'Sequence error/corrected', data);
+	    for( const chair in data.chairs ){
+		const dev=data.chairs[chair];
+		if( dev && data.stats[dev] ){
+		    var tr=create_row_stat(tab,chair,data);
+		    for( const chx in data.chairs ){
+			var pt=-1;
+			var pt2=-1;
+			if( data.stats[dev][chx] && data.stats[dev][chx].packages ){
+			    const p = data.stats[dev][chx].packages;
+			    if( p.received+p.lost>0 ){
+				pt = p.seqerr;
+				pt2 = p.seqrecovered;
+			    }
+			}
+			var td=tr.appendChild(document.createElement('td'));
+			td.setAttribute('class','statcell');
+			if( pt >= 0){
+			    td.appendChild(document.createTextNode(pt + '/' + pt2));
+			    td.setAttribute('style','background-color:'+lat2rgb(pt,0,2));
+			}else{
+			    td.setAttribute('style','background-color: #AAAAAA');
+			}
+		    }
+		}
+	    }
+	}else{
+	    div.appendChild(document.createTextNode('No data available.'));
+	}
+    }
+    request.open('GET', 'rest.php?getsessionstat');
+    request.reponseType = 'json';
+    request.send();
+}
+
 function everytenseconds()
 {
     var droom=document.getElementById('roomlist');
@@ -740,6 +1061,7 @@ function everytenseconds()
     var devstat = document.getElementById('devstatus');
     var devclaim = document.getElementById('devclaim');
     var phpdeviceid = document.getElementById('phpdeviceid');
+    var sessionstat = document.getElementById('sessionstat');
     if( droom || devstat || devclaim ){
 	if( droomrm )
 	    droomrm.remove(droomrm);
@@ -777,6 +1099,8 @@ function everytenseconds()
 		    update_room( device, rooms[k], droom );
 		}
 	    }
+	    if( sessionstat )
+		update_sessionstat(sessionstat);
 	}
 	request.open('GET', 'rest.php?getrooms');
 	request.reponseType = 'json';

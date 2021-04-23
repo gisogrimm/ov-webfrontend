@@ -78,35 +78,46 @@ if( isset($_GET['getrooms']) ){
                      'unclaimed_devices'=>list_unclaimed_devices());
     echo(json_encode($jsrooms));
 }
+$presetkeys = ['label',
+               'selfmonitor',
+               'egogain',
+               'inputchannels',
+               'jitterreceive',
+               'jittersend',
+               'outputport1',
+               'outputport2',
+               'xport',
+               'peer2peer',
+               'secrec',
+               'xrecport',
+               'rawmode',
+               'reverb',
+               'renderism',
+               'rvbgain',
+               'mastergain',
+               'playbackgain',
+               'rectype',
+               'isproxy',
+               'useproxy',
+               'jackdevice',
+               'jackplugdev',
+               'jackrate',
+               'jackperiod',
+               'jackbuffers',
+               'headtracking',
+               'headtrackingrot',
+               'headtrackingrotsrc',
+               'headtrackingport',
+               'headtrackingtauref',
+               'sendlocal',
+               'isproxy',
+               'useproxy',
+               'showexpertsettings'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
         $presets = get_properties( $device, 'devpresets' );
         $preset = array();
-        foreach( array('selfmonitor',
-                       'egogain',
-                       'inputchannels',
-                       'jitterreceive',
-                       'jittersend',
-                       'outputport1',
-                       'outputport2',
-                       'xport',
-                       'peer2peer',
-                       'secrec',
-                       'xrecport',
-                       'rawmode',
-                       'reverb',
-                       'renderism',
-                       'rvbgain',
-                       'mastergain',
-                       'playbackgain',
-                       'rectype',
-                       'isproxy',
-                       'useproxy',
-                       'jackdevice',
-                       'jackplugdev',
-                       'jackrate',
-                       'jackperiod',
-                       'jackbuffers') as $key )
+        foreach( $presetkeys as $key )
             $preset[$key] = $dprop[$key];
         $presets[$_GET['devpresetsave']] = $preset;
         set_properties( $device, 'devpresets', $presets );
@@ -177,25 +188,31 @@ if( isset($_POST['setdevprop']) ){
         else
             modify_device_prop($device,$_POST['setdevprop'],$_POST[$_POST['setdevprop']]);
     }
+    if( in_array($_POST['setdevprop'],$presetkeys) )
+        modify_device_prop($device,'preset','');
 }
 if( isset($_POST['setdevpropfloat']) ){
     if( isset($_POST[$_POST['setdevpropfloat']]))
         modify_device_prop($device,$_POST['setdevpropfloat'],floatval($_POST[$_POST['setdevpropfloat']]));
+    if( in_array($_POST['setdevpropfloat'],$presetkeys) )
+        modify_device_prop($device,'preset','');
 }
 if( isset($_POST['setdevpropbool']) ){
     if( isset($_POST[$_POST['setdevpropbool']]))
         modify_device_prop($device,$_POST['setdevpropbool'],$_POST[$_POST['setdevpropbool']]=='true');
+    if( in_array($_POST['setdevpropbool'],$presetkeys) )
+    modify_device_prop($device,'preset','');
 }
-if( isset($_POST['jsinputchannels']) )
+if( isset($_POST['jsinputchannels']) ){
     modify_device_prop($device,'inputchannels',json_decode($_POST['jsinputchannels']));
+    modify_device_prop($device,'preset','');
+}
 if( isset($_POST['jsfrontendconfig']) )
     modify_device_prop($device,'frontendconfig',json_decode($_POST['jsfrontendconfig']));
 if( isset($_POST['devreset']) ){
-    if( $devprop['owner'] = $user ){
+    if( $dprop['owner'] = $user ){
         rm_device( $device );
         modify_device_prop( $device, 'owner', $user);
-        modify_device_prop( $device, 'label', $devprop['label']);
-        modify_device_prop( $device, 'version', $devprop['version']);
     }
 }
 if( isset($_POST['unclaimdevice']) ){
@@ -209,6 +226,65 @@ if( isset($_POST['wifi']) && isset($_POST['wifissid'])  && isset($_POST['wifipas
     $devprop['wifipasswd'] = $_POST['wifipasswd'];
     $devprop['wifiupdate'] = true;
     set_properties( $device, 'device', $devprop );
+}
+
+if( isset($_GET['getsessionstat']) ){
+    $roomdevs = array();
+    if(!empty($dprop['room']))
+        $roomdevs = get_devices_in_room( $dprop['room'], false, true);
+    $stats = array();
+    $names = array();
+    $chairs = array();
+    $versions = array();
+    $fragsize = array();
+    $p2p = array();
+    $rprop = get_properties($dprop['room'],'room');
+    $nullstat = array('lost'=>0,'mean'=>-1,'median'=>-1,'min'=>-1,'p99'=>-1,'received'=>0);
+    foreach( $roomdevs as $chair=>$rdprop ){
+        $dev = $rdprop['id'];
+        //$rdprop = get_properties($dev,'device');
+        $pingstat = get_properties($dev.'_'.$dprop['room'],'pingstats');
+        unset($pingstat['now']);
+        if( empty($pingstat) ){
+            // try to get value from room:
+            foreach( $roomdevs as $schair=>$srdprop ){
+                if( isset($rprop['lat'][$schair.'-'.$chair]) ){
+                    $pingstat[$schair] = array('loc'=>$nullstat,'p2p'=>$nullstat,'srv'=>$nullstat,'cur'=>$nullstat);
+                    $pingstat[$schair]['packages'] = array('lost'=>0,'received'=>0,'seqerr'=>0,'seqrecovered'=>0);
+                    $tmp = $rprop['lat'][$schair.'-'.$chair];
+                    if( isset($tmp) ){
+                        $pingstat[$schair]['p2p']['median'] = floatval($tmp['lat']);
+                        $pingstat[$schair]['p2p']['min'] = floatval($tmp['lat']-0.5*$tmp['jit']);
+                        $pingstat[$schair]['p2p']['p99'] = floatval($tmp['lat']+0.5*$tmp['jit']);
+                    }
+                    if( isset($rprop['lat'][$schair.'-200']) && isset($rprop['lat']['200-'.$chair]) ){
+                        $tmp1 = $rprop['lat'][$schair.'-200'];
+                        $tmp2 = $rprop['lat']['200-'.$chair];
+                        $pingstat[$schair]['srv']['median'] = floatval($tmp1['lat']+$tmp2['lat']);
+                        $pingstat[$schair]['srv']['min'] = floatval($tmp1['lat']+$tmp2['lat']-0.5*($tmp1['jit']-$tmp2['jit']));
+                        $pingstat[$schair]['srv']['p99'] = floatval($tmp1['lat']+$tmp2['lat']+0.5*($tmp1['jit']-$tmp2['jit']));
+                    }
+                }
+            }
+        }
+        foreach( $roomdevs as $schair=>$srdprop ){
+            if( !isset($pingstat[$schair]) ){
+                $pingstat[$schair] = array('loc'=>$nullstat,'p2p'=>$nullstat,'srv'=>$nullstat,'cur'=>$nullstat);
+            }
+            if( $srdprop['peer2peer'] && $rdprop['peer2peer'] )
+                $pingstat[$schair]['cur'] = $pingstat[$schair]['p2p'];
+            else
+                $pingstat[$schair]['cur'] = $pingstat[$schair]['srv'];
+        }
+        $stats[$dev] = $pingstat;
+        $names[$dev] = $rdprop['label'];
+        $chairs[$chair] = $dev;
+        $versions[$dev] = intval(version_compare($rdprop['version'],'ovclient-0.6.179-8f84f14'));
+        $p2p[$dev] = boolval($rdprop['peer2peer']);
+        $fragsize[$dev] = floatval(1000.0*$rdprop['jackperiod']/$rdprop['jackrate']);
+    }
+    echo(json_encode(array('room'=>$rprop['label'],'names'=>$names,'stats'=>$stats,'chairs'=>$chairs,'versions'=>$versions,
+                           'fragsize'=>$fragsize,'n'=>count($roomdevs),'p2p'=>$p2p)));
 }
 
 ?>
