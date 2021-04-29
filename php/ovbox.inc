@@ -354,6 +354,8 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
                       'label'=>strval($prop['label']),
                       'owner'=>strval($prop['owner']),
                       'isactive'=>$prop['age']<20,
+                      'position'=>$prop['position'],
+                      'orientation'=>$prop['orientation'],
                       'issender'=>issender($prop),
                       'jittersend'=>floatval($prop['jittersend']),
                       'jitterreceive'=>floatval($prop['jitterreceive']),
@@ -361,6 +363,7 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
                       'jackperiod'=>floatval($prop['jackperiod']),
                       'version'=>$prop['version'],
                       'numchannels'=>count($prop['inputchannels']),
+                      'inputchannels'=>$prop['inputchannels'],
                       'peer2peer'=>boolval($prop['peer2peer']));
     if( ($room == $prop['room']) && ((!$senderonly) || issender($prop)) ){
       if( array_key_exists( 'chair', $prop ) )

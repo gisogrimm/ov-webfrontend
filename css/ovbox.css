@@ -10,6 +10,22 @@ input {
 input[type="button"]:hover {
     background: #aaa;
 }
+.roomctl {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    padding: 5px;
+    border-radius: 7px;
+    background: #eeeeee90;
+    color: #000;
+    font-size: 80%;
+    display:  inline-block;
+    text-decoration:none;
+}
+.roomctl:hover {
+    background: #aaa;
+}
 html {
     background: url(houseofconsort.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -110,7 +126,7 @@ tr {
     font-size: 80%;
 }
 .actmember {
-    background-color: #dcc378;
+    background-color: #ecc348;
     padding: 5px;
     border-radius: 7px;
     color: #000000;
