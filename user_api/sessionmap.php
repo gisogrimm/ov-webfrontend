@@ -15,7 +15,7 @@ include '../php/session.inc';
 
 print_head( $user, $style, $urlgroup );
 
-echo '<div><span class="ovtitle">Session statistics</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
+echo '<div><span class="ovtitle">Session map</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
 
 echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
 
