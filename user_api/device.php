@@ -283,6 +283,34 @@ if( !empty($device) ){
     xml_add_checkbox( 'renderism', 'render shoebox ISM', $divex, $doc, $devprop );
     // raw mode:
     xml_add_checkbox( 'rawmode', 'raw mode - no virtual acoustics', $divex, $doc, $devprop );
+    // level metering:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('Level metering:'));
+    // level meter time constant:
+    $el = xml_add_input_generic( 'lmetertc','level meter time constant in s:',$divex,$doc,$devprop,false);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0.1');
+    $el->setAttribute('max','60');
+    $el->setAttribute('step','0.1');
+    $divex->appendChild($doc->createElement('br'));
+    // level meter mode:
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->setAttribute('for','lmeterfw');
+    $el->appendChild($doc->createTextNode('level meter frequency weighting: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("lmeterfw",event.target.value);');
+    $el->setAttribute('id','lmeterfw');
+    $recdesc = array('Z'=>'unweighted','C'=>'C weighting','A'=>'A weighting');
+    foreach( $recdesc as $fweight=>$desc ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$fweight);
+      if( $devprop['lmeterfw'] == $fweight )
+        $opt->setAttribute('selected','');
+      $opt->appendChild($doc->createTextNode($fweight.': '.$desc));
+    }
+    $divex->appendChild($doc->createElement('br'));
     // head tracking:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));

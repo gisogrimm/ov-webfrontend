@@ -124,6 +124,8 @@ function get_room_session( $device, $devhash )
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
   $rendersettings['headtrackingrotsrc'] = boolval($devprop['headtrackingrotsrc']);
   $rendersettings['headtrackingport'] = intval($devprop['headtrackingport']);
+  $rendersettings['lmetertc'] = floatval($devprop['lmetertc']);
+  $rendersettings['lmeterfw'] = strval($devprop['lmeterfw']);
   $rendersettings['stagedevid'] = 0;
   $audio = array();
   $audio['driver'] = 'jack';

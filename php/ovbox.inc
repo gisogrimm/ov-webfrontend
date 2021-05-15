@@ -76,6 +76,8 @@ function defaults( $type )
     'alsadevs'=>array(),
     'bandwidth'=>array('tx'=>0,'rx'=>0),
     'cpuload'=>0,
+    'lmetertc'=>0.5,
+    'lmeterfw'=>'Z',
     'headtracking'=>false,
     'headtrackingrot'=>true,
     'headtrackingrotsrc'=>true,
