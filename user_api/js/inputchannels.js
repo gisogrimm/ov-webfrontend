@@ -118,16 +118,16 @@ function inputchannels_createUI( ) {
     opt.appendChild(document.createTextNode('send first input, vocals'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','p1');
-    opt.appendChild(document.createTextNode('send first input, violoncello/guitar'));
+    opt.appendChild(document.createTextNode('send first input, gamba/guitar'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','p1violin');
     opt.appendChild(document.createTextNode('send first input, violin/trumpet'));
     //var opt = el.appendChild(document.createElement('option'));
     //opt.setAttribute('value','p2');
-    //opt.appendChild(document.createTextNode('send second input, violoncello/guitar'));
+    //opt.appendChild(document.createTextNode('send second input, gamba/guitar'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','p12dual');
-    opt.appendChild(document.createTextNode('send both inputs, violoncello/guitar'));
+    opt.appendChild(document.createTextNode('send both inputs, gamba/guitar'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','p12dualviolin');
     opt.appendChild(document.createTextNode('send both inputs, violin/trumpet'));
@@ -136,7 +136,7 @@ function inputchannels_createUI( ) {
     opt.appendChild(document.createTextNode('send both inputs, vocals + guitar'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','p12single');
-    opt.appendChild(document.createTextNode('send both inputs downmixed, violoncello/guitar'));
+    opt.appendChild(document.createTextNode('send both inputs downmixed, gamba/guitar'));
     var opt = el.appendChild(document.createElement('option'));
     opt.setAttribute('value','listen');
     opt.appendChild(document.createTextNode('listening only'));

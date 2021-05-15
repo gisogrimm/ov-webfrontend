@@ -89,10 +89,10 @@ if( !empty($device) ){
     $inp = $div_save->appendChild($doc->createElement('input'));
     $inp->setAttribute('id','savepresetname');
     //$inp->setAttribute('class','presetspan');
-    $inp->setAttribute('placeholder','Save current settings as preset');
+    $inp->setAttribute('placeholder','write your preset name here');
     $inp = $div_save->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
-    $inp->setAttribute('value','Store preset');
+    $inp->setAttribute('value','Save preset');
     $inp->setAttribute('onclick','create_preset();');
   }
   {
@@ -195,7 +195,7 @@ if( !empty($device) ){
   }
   {
     // connections
-    $div = create_section($root, $doc,'Connections');
+    $div = create_section($root, $doc,'Input connections');
     create_inputportcfg( $doc, $div, $devprop );
     $divex = add_expert_div($div, $doc, $devprop);
     $el = $divex->appendChild($doc->createElement('label'));
