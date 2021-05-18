@@ -422,10 +422,10 @@ if( !empty($device) ){
     $inp->setAttribute('value','switch to development version');
     $inp->setAttribute('class','uibutton');
     $divex->appendChild($doc->createElement('br'));
-    $a = $divex->appendChild($doc->createElement('a'));
-    $a->setAttribute('href','rest.php?getrawjson=');
-    $a->setAttribute('target','blank');
-    $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
+    //$a = $divex->appendChild($doc->createElement('a'));
+    //$a->setAttribute('href','rest.php?getrawjson=');
+    //$a->setAttribute('target','blank');
+    //$a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
   }
   {
     // Firmware
