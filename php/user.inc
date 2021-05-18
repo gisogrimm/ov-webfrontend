@@ -741,7 +741,7 @@ function print_foot($style = '',$show_donate = true)
   }
   echo '</div>'. "\n";// ovcontent
   echo '<div class="ovfoot">'. "\n";
-  echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a>.</div>';
+  echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a> in cooperation with <a target="blank" href="https://digital-stage.org/">Digital Stage</a>.</div>';
   echo '<div class="foto">'.$credits.'</div>';
   echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerklärung</a></div>';
   echo '</div>'. "\n";// ovfoot
