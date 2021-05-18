@@ -281,6 +281,13 @@ if( !empty($device) ){
     xml_add_checkbox( 'reverb', 'render reverb', $divex, $doc, $devprop, true );
     // ism
     xml_add_checkbox( 'renderism', 'render shoebox ISM', $divex, $doc, $devprop );
+    xml_add_checkbox( 'distancelaw', 'apply distance law for gain', $divex, $doc, $devprop );
+    $el = xml_add_input_generic( 'delaycomp','delay compensation distance in m:',$divex,$doc,$devprop,false);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','20');
+    $el->setAttribute('step','0.1');
+    $divex->appendChild($doc->createElement('br'));
     // raw mode:
     xml_add_checkbox( 'rawmode', 'raw mode - no virtual acoustics', $divex, $doc, $devprop );
     // level metering:
