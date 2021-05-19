@@ -146,22 +146,26 @@ if( !empty($device) ){
       if( $devprop['jackdevice'] == $adev )
         $opt->setAttribute('selected','');
     }
+    $div->appendChild($doc->createElement('br'));
+    // end of alsa device.
+    $divex = add_expert_div( $div, $doc, $devprop );
+    $el = add_input_element( $divex, $doc, $devprop, 'jackrate', 'number','Sampling rate in Hz: ',false);
+    $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     // use plughw device:
-    $el = $div->appendChild($doc->createElement('input'));
+    $el = $divex->appendChild($doc->createElement('input'));
     $el->setAttribute('type','checkbox');
     $el->setAttribute('id','jackplugdev');
     $el->setAttribute('title','activate to use sampling rates not supported by hardware (reduces quality)');
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     if( $devprop['jackplugdev'] )
       $el->setAttribute('checked','');
-    $el = $div->appendChild($doc->createElement('label'));
+    $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('title','activate to use sampling rates not supported by hardware (reduces quality)');
     $el->setAttribute('for','jackplugdev');
     $el->appendChild($doc->createTextNode('use plugin device layer'));
-    $div->appendChild($doc->createElement('br'));
-    // end of alsa device.
-    $el = add_input_element( $div, $doc, $devprop, 'jackrate', 'number','Sampling rate in Hz: ',false);
-    $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
+    // sampling rate list:
+    $el = $div->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('Sampling rate: '));
     $el = $div->appendChild($doc->createElement('select'));
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el->setAttribute('onchange','update_jack_rate( this.value );');
@@ -171,10 +175,10 @@ if( !empty($device) ){
       $opt->setAttribute('value',$o);
       if( $o == $devprop['jackrate'] )
         $opt->setAttribute('selected','');
-      $opt->appendChild($doc->createTextNode($o));
+      $opt->appendChild($doc->createTextNode($o.' Hz'));
     }
     $div->appendChild($doc->createElement('br'));
-    $el = add_input_element( $div, $doc, $devprop, 'jackperiod', 'number','Period size in samples (typically 2ms, i.e. 96 for 48000 Hz Sampling rate): ');
+    $el = add_input_element( $div, $doc, $devprop, 'jackperiod', 'number','Period size in samples: (typically 2ms, i.e. 96 for 48000 Hz Sampling rate)');
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $divex = add_expert_div( $div, $doc, $devprop );
     $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number','Number of buffers (typically 2): ');
