@@ -12,11 +12,17 @@ include '../php/ovbox.inc';
 include '../php/rest.inc';
 include '../php/user.inc';
 
+$gprop = array('preamble'=>'<div>The <em>ovbox</em> is a remote collaboration system developed by
+the ORLANDOviols ensemble during the Covid19 pandemic. Our primary
+goal is to enable freelance musicians to rehearse and amateur
+musicians to reduce the effects of social isolation.</div>'."\n");
+
 // style settings:
 $urlgroup = '';
 if( isset($_GET['grp'] ) )
     $urlgroup = get_group_by_hash($_GET['grp']);
 $style = '';
+
 if( !empty($urlgroup) ){
     $gprop = get_properties( $urlgroup, 'group' );
     $style = $gprop['style'];
@@ -87,10 +93,7 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         print_head('',$style,$urlgroup);
         // display login box: username, password
         echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
-        echo '<div>The <em>ovbox</em> is a remote collaboration system developed by
-the ORLANDOviols ensemble during the Covid19 pandemic. Our primary
-goal is to enable freelance musicians to rehearse and amateur
-musicians to reduce the effects of social isolation.</div>'."\n";
+        echo $gprop['preamble'];
         if( isset($_GET['fail']) )
             echo '<div class="failure">Sorry, invalid user name or password.</div>';
         echo '<h2>Login:</h2>';
