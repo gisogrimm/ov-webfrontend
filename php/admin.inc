@@ -479,7 +479,7 @@ function html_admin_groups()
     $tab->appendChild($doc->createTextNode("\n"));
     $td = $tr->appendChild($doc->createElement('td'));
     $a = $td->appendChild($doc->createElement('a'));
-    $a->setAttribute('href','https://box.orlandoviols.com/?grp='.grouphash( $group ));
+    $a->setAttribute('href','/login.php?grp='.grouphash( $group ));
     $a->appendChild($doc->createTextNode(grouphash( $group )));
   }
   echo $doc->saveHTML() . "\n";
