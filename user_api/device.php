@@ -285,6 +285,7 @@ if( !empty($device) ){
     xml_add_checkbox( 'reverb', 'render reverb', $divex, $doc, $devprop, true );
     // ism
     xml_add_checkbox( 'renderism', 'render shoebox ISM', $divex, $doc, $devprop );
+    xml_add_checkbox( 'rendersoundscape', 'render sound scapes', $divex, $doc, $devprop );
     xml_add_checkbox( 'distancelaw', 'apply distance law for gain', $divex, $doc, $devprop );
     $el = xml_add_input_generic( 'delaycomp','delay compensation distance in m:',$divex,$doc,$devprop,false);
     $el->setAttribute('type','number');

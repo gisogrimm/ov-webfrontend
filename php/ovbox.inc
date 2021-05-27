@@ -61,6 +61,7 @@ function defaults( $type )
     'rawmode'=>false,
     'reverb'=>true,
     'renderism'=>false,
+    'rendersoundscape'=>true,
     'distancelaw'=>false,
     'delaycomp'=>2.4,
     'rvbgain'=>0,
