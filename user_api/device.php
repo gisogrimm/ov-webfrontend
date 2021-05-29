@@ -194,7 +194,7 @@ if( !empty($device) ){
       $el = $div->appendChild($doc->createElement('input'));
       $el->setAttribute('value','restart audio system');
       $el->setAttribute('type','button');
-      $el->setAttribute('onclick','location.href=\'?jackrestart='.urlencode($device).'\';');
+      $el->setAttribute('onclick','rest_set_devprop("jackrestart",true);');
     }
   }
   {

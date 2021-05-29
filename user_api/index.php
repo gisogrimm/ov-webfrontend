@@ -99,15 +99,6 @@ if( isset($_GET['kick']) ){
     die();
 }
 
-if( isset($_GET['jackrestart']) ){
-    $device = $_GET['jackrestart'];
-    if( !empty( $device ) ){
-        modify_device_prop( $device, 'jackrestart', true );
-    }
-    header( "Location: /" );
-    die();
-}
-
 if( isset($_POST['setdevprop']) ){
     $device = $_POST['setdevprop'];
     if( !empty( $device ) ){
