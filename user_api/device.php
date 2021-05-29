@@ -494,6 +494,8 @@ update may take up to 30 minutes.'));
         }
       }
     }
+    $divex = add_expert_div( $div, $doc, $devprop );
+    xml_add_checkbox( 'firmwareupdate', 'force firmware and system update', $divex, $doc, $devprop );
   }
   {
     // device ownership:
