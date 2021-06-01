@@ -49,6 +49,7 @@ function defaults( $type )
     )),
     'jitterreceive'=>5,
     'jittersend'=>5,
+    'expeditedforwarding'=>false,
     'outputport1'=>'system:playback_1',
     'outputport2'=>'system:playback_2',
     'xport'=>'{}',

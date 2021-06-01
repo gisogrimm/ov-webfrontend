@@ -395,6 +395,7 @@ if( !empty($device) ){
     $el = xml_add_input_generic( 'xrecport','additional UDP ports forwarded to other peers (space separated list):',$divex,$doc,$devprop);
     $el->setAttribute('type','text');
     $el->setAttribute('pattern','[0-9 ]*');
+    xml_add_checkbox( 'expeditedforwarding', 'activate expedited forwarding PHB (RFC2598)', $divex, $doc, $devprop );
     // proxy settings
     if( version_compare("ovclient-0.6.120",$devprop['version'])<0 ){
       xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $div, $doc, $devprop );
