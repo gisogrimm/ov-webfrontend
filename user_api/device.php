@@ -422,6 +422,7 @@ if( !empty($device) ){
     $divex->appendChild($doc->createTextNode('Before switching a frontend make sure you have access to the new website. By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
     $divex->appendChild($doc->createElement('br'));
     // developer version:
+    $divex = add_expert_div($div, $doc, $devprop );
     $inp = $divex->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
     $inp->setAttribute('onclick','rest_set_devprop("usedevversion",true);');
