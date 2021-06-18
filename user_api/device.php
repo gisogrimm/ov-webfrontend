@@ -421,14 +421,6 @@ if( !empty($device) ){
     $divex->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
     $divex->appendChild($doc->createTextNode('Before switching a frontend make sure you have access to the new website. By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
     $divex->appendChild($doc->createElement('br'));
-    // developer version:
-    $divex = add_expert_div($div, $doc, $devprop );
-    $inp = $divex->appendChild($doc->createElement('input'));
-    $inp->setAttribute('type','button');
-    $inp->setAttribute('onclick','rest_set_devprop("usedevversion",true);');
-    $inp->setAttribute('value','switch to development version');
-    $inp->setAttribute('class','uibutton');
-    $divex->appendChild($doc->createElement('br'));
     //$a = $divex->appendChild($doc->createElement('a'));
     //$a->setAttribute('href','rest.php?getrawjson=');
     //$a->setAttribute('target','blank');
@@ -498,6 +490,15 @@ update may take up to 30 minutes.'));
     }
     $divex = add_expert_div( $div, $doc, $devprop );
     xml_add_checkbox( 'firmwareupdate', 'force firmware and system update', $divex, $doc, $devprop );
+    // developer version:
+    //$divex = add_expert_div($div, $doc, $devprop );
+    $inp = $divex->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','button');
+    $inp->setAttribute('onclick','rest_set_devprop("usedevversion",true);');
+    $inp->setAttribute('value','switch to development version');
+    $inp->setAttribute('class','uibutton');
+    $divex->appendChild($doc->createTextNode(' Development version will be used until next reboot. Switching takes about 2 minutes.'));
+    $divex->appendChild($doc->createElement('br'));
   }
   {
     // device ownership:
