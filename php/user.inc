@@ -686,7 +686,7 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    echo '<div class="ad"><b>Concert</b> June 23rd, 20:15h CEST: <em>Royal Coronation Consort</em> with ORLANDOviols - <a href="https://www.kultur-vor-ort.com/veranstaltungen/royal-coronation-consort/" style="font-family: Helvetica;">kultur|vor|ort</a> </div>'."\n";
+    //echo '<div class="ad"><b>Concert</b> June 23rd, 20:15h CEST: <em>Royal Coronation Consort</em> with ORLANDOviols - <a href="https://www.kultur-vor-ort.com/veranstaltungen/royal-coronation-consort/" style="font-family: Helvetica;">kultur|vor|ort</a> </div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
@@ -715,6 +715,9 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
     echo '</span>';
     echo '</div>'. "\n";
     echo '<div class="ovcontent">'. "\n";
+    //// start ad:
+    //echo '<div class="ad"><b>Concert</b> June 23rd, 20:15h CEST: <em>Royal Coronation Consort</em> with ORLANDOviols - <a href="https://www.kultur-vor-ort.com/veranstaltungen/royal-coronation-consort/" style="font-family: Helvetica;">kultur|vor|ort</a> </div>'."\n";
+    //// end ad.
     if( isset($_SESSION['usermsg']) ){
       echo '<div class="deverror">'.$_SESSION['usermsg'].'</div>';
       unset($_SESSION['usermsg']);
