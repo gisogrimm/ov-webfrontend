@@ -611,7 +611,7 @@ function update_devicestatus( user, device, owned_devices )
 		    oact = true;
 	    }
 	    if( oact )
-		otherdev = ' You own active devices - please check the device selector below to access them.';
+		otherdev = ' You own active devices - please check the device selector above to access them.';
 	}
 	devstat.appendChild(document.createTextNode(lastseen+otherdev));
 	if( device.age < 20 ){
@@ -909,6 +909,13 @@ function update_sessionmap(div)
 	var svg = request.responseXML;
 	while( div.firstChild ) div.removeChild(div.firstChild);
 	var img = div.appendChild(svg.rootElement.cloneNode(true));
+        var maxw = div.clientWidth;
+        if( 0.6*top.innerHeight < maxw ){
+            maxw = 0.6*top.innerHeight;
+            div.setAttribute('style','width:'+maxw.toString()+'px;');
+        }else{
+            div.removeAttribute('style');
+        }
     }
     request.open('GET', 'sessionsvg.php');
     request.reponseType = 'svg';

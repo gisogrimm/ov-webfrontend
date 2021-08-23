@@ -118,7 +118,6 @@ if( !empty($dprop['room']) ){
     $rprop = get_properties($dprop['room'],'room');
     $roomdev = get_devices_in_room( $dprop['room'], false, true );
     svgtext( -198, -180, 20, $rprop['label']);
-    //echo '<rect fill="none" stroke="#000" x="-299" y="-299" width="598" height="598" stroke-width="1"/>';
     foreach( $roomdev as $dev=>$prop )
         svgdevice($dev, $prop, $device );
 }
