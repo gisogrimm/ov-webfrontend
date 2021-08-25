@@ -293,6 +293,12 @@ if( !empty($device) ){
     $el->setAttribute('max','20');
     $el->setAttribute('step','0.1');
     $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'decorr','decorrelation filter length in milliseconds:',$divex,$doc,$devprop,false);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','50');
+    $el->setAttribute('step','1');
+    $divex->appendChild($doc->createElement('br'));
     // raw mode:
     xml_add_checkbox( 'rawmode', 'raw mode - no virtual acoustics', $divex, $doc, $devprop );
     // level metering:

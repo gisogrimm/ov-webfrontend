@@ -71,6 +71,7 @@ function defaults( $type )
     'room'=>'',
     'roomenter'=>0,
     'rectype'=>'hrtf',
+    'decorr'=>0,
     'jackdevice'=>'highest',
     'jackplugdev'=>false,
     'jackrate'=>48000,
