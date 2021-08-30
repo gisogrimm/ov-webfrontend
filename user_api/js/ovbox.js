@@ -375,7 +375,7 @@ function update_room( device, room, droom )
     for( const chair in room.roomdev ){
 	var dev = room.roomdev[chair];
 	var mem = document.createElement('span');
-	if( dev.issender ){
+	if( dev.issender && (!dev.send_downmix) ){
 	    senders.appendChild(mem);
 	    senders.appendChild(document.createTextNode(' '));
 	}else{
@@ -385,6 +385,8 @@ function update_room( device, room, droom )
 	var tagsuffix = 'member';
 	if( !dev.issender )
 	    tagsuffix = 'listener';
+        if( dev.senddownmix )
+            tagsuffix = 'downmix';
 	var bclass = 'psv';
 	if( dev.isactive )
 	    bclass = 'act';
@@ -417,7 +419,7 @@ function update_room( device, room, droom )
 	}
 	//mem.appendChild(document.createTextNode(device.chair));
 	var mtype = 'span';
-	if( (dev.id != device.id) && room.entered && dev.issender && device.issender )
+	if( (dev.id != device.id) && room.entered && dev.issender && device.issender && (!dev.senddownmix) )
 	    mtype = 'a';
 	if ( dev.id == device.id ){
 	    if( device.issender )
@@ -434,13 +436,15 @@ function update_room( device, room, droom )
 	    lab = dev.id;
 	memlink.appendChild(document.createTextNode( escapeHtml(lab) ));
 	if( room.entered ){
-	    if( dev.numchannels > 1 )
+	    if( (dev.numchannels > 1) && (!dev.senddownmix) )
 		latdisp = dev.numchannels + 'c ' + latdisp;
 	    latdisp = (dev.jackrate*0.001).toFixed(0) + 'k ' + latdisp;
-	    if( dev.peer2peer )
-		latdisp = 'p2p ' + latdisp;
-	    else
-		latdisp = 'srv ' + latdisp;
+            if( !dev.senddownmix ){
+	        if( dev.peer2peer )
+		    latdisp = 'p2p ' + latdisp;
+	        else
+		    latdisp = 'srv ' + latdisp;
+            }
 	}
 	if( latdisp.length > 0 ){
 	    var span = mem.appendChild(document.createElement('span'));
