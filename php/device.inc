@@ -122,6 +122,8 @@ function get_room_session( $device, $devhash )
   $rendersettings['distancelaw'] = boolval($devprop['distancelaw']);
   $rendersettings['delaycomp'] = floatval($devprop['delaycomp']);
   $rendersettings['xrecport'] = $devprop['xrecport'];
+  $rendersettings['receivedownmix'] = boolval($devprop['receivedownmix']);
+  $rendersettings['senddownmix'] = boolval($devprop['senddownmix']);
   // old headtracking interface:
   $rendersettings['headtracking'] = boolval($devprop['headtracking']);
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);

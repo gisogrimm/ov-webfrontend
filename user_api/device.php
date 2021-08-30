@@ -353,6 +353,13 @@ if( !empty($device) ){
     $el->setAttribute('min','0');
     $el->setAttribute('max','65535');
     $el->setAttribute('step','1');
+    // downmix:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('Downmix:'));
+    xml_add_checkbox( 'receivedownmix', 'Receive downmix instead of individual channels', $divex, $doc, $devprop );
+    xml_add_checkbox( 'senddownmix', 'Send downmix instead of physical inputs', $divex, $doc, $devprop );
   }
   {
     // network settings

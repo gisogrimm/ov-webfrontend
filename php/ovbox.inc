@@ -110,6 +110,8 @@ function defaults( $type )
     'wifissid'=>'',
     'wifipasswd'=>'',
     'wifiupdate'=>false,
+    'receivedownmix'=>false,
+    'senddownmix'=>false,
   );
   $defaults['room'] = array(
     'access'=>0,
