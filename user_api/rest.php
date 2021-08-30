@@ -112,6 +112,9 @@ $presetkeys = ['label',
                'sendlocal',
                'isproxy',
                'useproxy',
+               'decorr',
+               'receivedownmix',
+               'senddownmix',
                'showexpertsettings'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){

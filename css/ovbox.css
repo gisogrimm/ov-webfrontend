@@ -180,6 +180,9 @@ tr {
     white-space: nowrap;
     font-size: small;
 }
+.roomlistener {
+    float: right;
+}
 .roomsettingstoggle {
     float: right;
 }

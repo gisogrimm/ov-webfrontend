@@ -375,7 +375,7 @@ function update_room( device, room, droom )
     for( const chair in room.roomdev ){
 	var dev = room.roomdev[chair];
 	var mem = document.createElement('span');
-	if( dev.issender && (!dev.send_downmix) ){
+	if( dev.issender && (!dev.senddownmix) ){
 	    senders.appendChild(mem);
 	    senders.appendChild(document.createTextNode(' '));
 	}else{
