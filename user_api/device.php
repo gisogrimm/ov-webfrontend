@@ -136,7 +136,7 @@ if( !empty($device) ){
     $el->setAttribute('id','jackdevice');
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     //
-    $alsadevs = array('highest'=>'use highest device number','manual'=>'jack is started manually','hw:1'=>'device 1 (typically first USB device)');
+    $alsadevs = array('highest'=>'use highest device number','manual'=>'jack is started manually','dummy'=>'use virtual device (no audio i/o)','hw:1'=>'device 1 (typically first USB device)');
     if( is_array($devprop['alsadevs']) )
       $alsadevs = array_merge( $alsadevs, $devprop['alsadevs']);
     foreach( $alsadevs as $adev=>$desc ){
