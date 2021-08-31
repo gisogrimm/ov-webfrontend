@@ -26,6 +26,8 @@ function get_dev_stage_settings( $device )
   $d['isproxy'] = boolval($dprop['isproxy']);
   $d['localip'] = $dprop['localip'];
   $d['externalip'] = $dprop['externalip'];
+  $d['receivedownmix'] = boolval($dprop['receivedownmix']);
+  $d['senddownmix'] = boolval($dprop['senddownmix']);
   return $d;
 }
 
@@ -122,8 +124,6 @@ function get_room_session( $device, $devhash )
   $rendersettings['distancelaw'] = boolval($devprop['distancelaw']);
   $rendersettings['delaycomp'] = floatval($devprop['delaycomp']);
   $rendersettings['xrecport'] = $devprop['xrecport'];
-  $rendersettings['receivedownmix'] = boolval($devprop['receivedownmix']);
-  $rendersettings['senddownmix'] = boolval($devprop['senddownmix']);
   // old headtracking interface:
   $rendersettings['headtracking'] = boolval($devprop['headtracking']);
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
