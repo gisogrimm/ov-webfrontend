@@ -432,7 +432,7 @@ if( !empty($device) ){
     $opt->appendChild($doc->createTextNode('ovbox.de'));
     $divex->appendChild($doc->createElement('br'));
     $divex->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
-    $divex->appendChild($doc->createTextNode('Before switching a frontend make sure you have access to the new website. By selecting a frontend you may lock your device. In that case please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
+    $divex->appendChild($doc->createTextNode('Before changing the frontend, make sure you have access to the new website. By selecting a frontend, you can lock your device. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
     $divex->appendChild($doc->createElement('br'));
     //$a = $divex->appendChild($doc->createElement('a'));
     //$a->setAttribute('href','rest.php?getrawjson=');
@@ -451,7 +451,7 @@ if( !empty($device) ){
       if( version_compare($clver,$devprop['version'])==0 )
         $div->appendChild($doc->createTextNode(' - your device is up to date.'));
       if( version_compare("ovclient-0.5.50",$devprop['version'])>0 ){
-        $div->appendChild($doc->createTextNode(' - update is recommended.'));
+        $div->appendChild($doc->createTextNode(' - update is highly recommended.'));
       }
     }
     if( $devprop['isovbox'] ){
@@ -461,18 +461,18 @@ if( !empty($device) ){
         $el->setAttribute('class','devproptitle');
         $el->appendChild($doc->createTextNode('Firmware update:'));
         $div->appendChild($doc->createTextNode('Your device is running version '.$devprop['version'].', the latest version is '.$clver.'. '));
-        if( (version_compare($devprop['version'],'ovclient-0.4.41')==1) ){
+        if( (version_compare($devprop['version'],'ovclient-0.7.6')==1) ){
           $div->appendChild($doc->createTextNode('Before starting the firmware update, please connect your device with a
 network cable. Once started, do not disconnect your device from the
-power supply or network until the firmware update is completed. The
+power supply or network until the firmware update is complete. The
 update may take up to 30 minutes.'));
           $div->appendChild($doc->createElement('br'));
           if( version_compare("ovclient-0.6.141",$devprop['version'])>0 ){
             $bold = $div->appendChild($doc->createElement('b'));
-            $bold->appendChild($doc->createTextNode('Due to a problem with the SSL certificates of github it might not be
-      possible to update via this page. in that case, if you need to
-      update, please re-create your SD card. If in doubt please
-      contact the person who provided you with the ovbox.'));
+            $bold->appendChild($doc->createTextNode('Due to a problem with github\'s SSL certificates, it may not be
+possible to update via this page. In this case please recreate your SD
+card (see wiki pages). If in doubt, please contact the person you received the ovbox
+from.'));
             $div->appendChild($doc->createElement('br'));
             $div->appendChild($doc->createTextNode('In the most recent version this problem is solved. Version
 0.5.51 is sufficient in most cases.'));
