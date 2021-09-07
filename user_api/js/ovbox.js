@@ -612,8 +612,10 @@ function update_devicestatus( user, device, owned_devices )
             }
         }
         var devver = document.getElementById('devfirmwareversion');
-        while( devver.firstChild ) devver.removeChild(devver.firstChild);
-        devver.appendChild(document.createTextNode(device.version+lastseen));
+        if( devver ){
+            while( devver.firstChild ) devver.removeChild(devver.firstChild);
+            devver.appendChild(document.createTextNode(device.version+lastseen));
+        }
 	if( device.age < 20 ){
 	    dclass = 'actmember';
 	    //state = 'active';
