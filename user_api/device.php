@@ -447,7 +447,9 @@ if( !empty($device) ){
       $clver = trim(file_get_contents( $fname ));
     $div = create_section($root, $doc,'Firmware version');
     if( !empty($devprop['version']) ){
-      $div->appendChild($doc->createTextNode($devprop['version']));
+      $span = $div->appendChild($doc->createElement('span'));
+      $span->setAttribute('id','devfirmwareversion');
+      $span->appendChild($doc->createTextNode($devprop['version']));
       if( version_compare($clver,$devprop['version'])==0 )
         $div->appendChild($doc->createTextNode(' - your device is up to date.'));
       if( version_compare("ovclient-0.5.50",$devprop['version'])>0 ){

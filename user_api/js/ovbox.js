@@ -604,11 +604,21 @@ function update_devicestatus( user, device, owned_devices )
 	//var state = '';
 	var lastseen = '';
 	var otherdev = '';
+        if( device.firmwareupdate ){
+	    if( device.age > 1800 ){
+                lastseen = ' Firmware update pending. ';
+            }else{
+                lastseen = ' Firmware updating - please do not disconnect from power or internet. ';
+            }
+        }
+        var devver = document.getElementById('devfirmwareversion');
+        while( devver.firstChild ) devver.removeChild(devver.firstChild);
+        devver.appendChild(document.createTextNode(device.version+lastseen));
 	if( device.age < 20 ){
 	    dclass = 'actmember';
 	    //state = 'active';
 	}else{
-	    lastseen = ' inactive since '+numage2str(device.age)+'.';
+	    lastseen = lastseen+' inactive since '+numage2str(device.age)+'.';
 	    var oact = false;
 	    for( const od in owned_devices){
 		if( owned_devices[od].age<20 )
