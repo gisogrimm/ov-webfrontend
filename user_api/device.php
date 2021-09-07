@@ -489,7 +489,7 @@ from.'));
           $div->appendChild($doc->createElement('br'));
           $inp = $div->appendChild($doc->createElement('input'));
           $inp->setAttribute('type','button');
-          $inp->setAttribute('onclick','rest_set_devprop("firmwareupdate",true);');
+          $inp->setAttribute('onclick','if( confirm("Do you really want to update? This may take a long time. Please do not disconnect from power or internet until the device appears active again (typically 10-30 minuts).")){ rest_set_devprop("firmwareupdate",true); location.href="/";}');
           $inp->setAttribute('value','update now');
           $inp->setAttribute('class','uibutton');
         }else{
