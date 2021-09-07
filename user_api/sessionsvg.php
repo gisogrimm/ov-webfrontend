@@ -116,7 +116,7 @@ header('Content-Type: image/svg+xml');
 echo '<?xml version="1.0" standalone="no"?><svg width="100%" height="100%" version="1.1" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">';
 if( !empty($dprop['room']) ){
     $rprop = get_properties($dprop['room'],'room');
-    $roomdev = get_devices_in_room( $dprop['room'], false, true );
+    $roomdev = get_devices_in_room( $dprop['room'], true, true );
     svgtext( -198, -180, 20, $rprop['label']);
     foreach( $roomdev as $dev=>$prop )
         svgdevice($dev, $prop, $device );
