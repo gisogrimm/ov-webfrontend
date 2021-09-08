@@ -221,8 +221,12 @@ function get_room_session( $device, $devhash )
                     'roomdev'=>$roomdev,
                     'firmwareupdate'=>$devprop['firmwareupdate'],
                     'usedevversion'=>$devprop['usedevversion']);
-  if( $devprop['firmwareupdate'] )
+  if( $devprop['firmwareupdate'] ){
     modify_device_prop( $device, 'firmwareupdate', false );
+    modify_device_prop( $device, 'isupdating', true );
+  }else
+    if( $devprop['isupdating'] )
+      modify_device_prop( $device, 'isupdating', false );
   if( $devprop['usedevversion'] )
     modify_device_prop( $device, 'usedevversion', false );
   if( !empty($devprop['lastfrontendconfig']) ){

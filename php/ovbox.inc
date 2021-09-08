@@ -91,6 +91,7 @@ function defaults( $type )
     'sendlocal'=>true,
     'hwinputchannels'=>array('system:capture_1','system:capture_2'),
     'firmwareupdate'=>false,
+    'isupdating'=>false,
     'usedevversion'=>false,
     'isovbox'=>true,
     'lastfrontendconfig', array(),
@@ -380,6 +381,7 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
                       'numchannels'=>count($prop['inputchannels']),
                       'inputchannels'=>$prop['inputchannels'],
                       'senddownmix'=>boolval($prop['senddownmix']),
+                      'receivedownmix'=>boolval($prop['receivedownmix']),
                       'peer2peer'=>boolval($prop['peer2peer']));
     if( ($room == $prop['room']) && ((!$senderonly) || (issender($prop) && (!$prop['senddownmix']))) ){
       if( array_key_exists( 'chair', $prop ) )

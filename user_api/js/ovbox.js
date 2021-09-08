@@ -444,6 +444,8 @@ function update_room( device, room, droom )
 		    latdisp = 'p2p ' + latdisp;
 	        else
 		    latdisp = 'srv ' + latdisp;
+	        if( dev.receivedownmix )
+		    latdisp = 'dm ' + latdisp;
             }
 	}
 	if( latdisp.length > 0 ){
@@ -604,12 +606,13 @@ function update_devicestatus( user, device, owned_devices )
 	//var state = '';
 	var lastseen = '';
 	var otherdev = '';
-        if( device.firmwareupdate ){
-	    if( device.age > 1800 ){
-                lastseen = ' Firmware update pending. ';
-            }else{
-                lastseen = ' Firmware updating - please do not disconnect from power or internet. ';
-            }
+        if( device.firmwareupdate )
+            lastseen = ' Firmware update pending. ';
+        if( device.isupdating ){
+            if( device.age < 2000 )
+                lastseen = ' Updating firmware - please do not disconnect from power or internet. ';
+            else
+                lastseen = ' Firmware update possibly failed. You may need to re-install your SD-card. ';
         }
         var devver = document.getElementById('devfirmwareversion');
         if( devver ){
