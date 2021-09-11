@@ -686,7 +686,7 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    echo '<div class="ad"><b>Concert</b> 10 September, 19:00h CEST: <em>Sound out my voice!</em> Italian madrigals with diminutions <a href="https://orlandoviols.de/">orlandoviols.de</a> </div>'."\n";
+    #echo '<div class="ad"><b>Concert</b> 10 September, 19:00h CEST: <em>Sound out my voice!</em> Italian madrigals with diminutions <a href="https://orlandoviols.de/">orlandoviols.de</a> </div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
