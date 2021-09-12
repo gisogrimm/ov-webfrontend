@@ -428,8 +428,11 @@ if( !empty($device) ){
     $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/","protocol":"ov","ui":"https://box.orlandoviols.com/"}');
     $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
     $opt = $el->appendChild($doc->createElement('option'));
+    $opt->setAttribute('value','{"url":"http://digital-stage-device.ovbox.de/","protocol":"ov","ui":"https://digital-stage.ovbox.de/"}');
+    $opt->appendChild($doc->createTextNode('digital-stage.ovbox.de'));
+    $opt = $el->appendChild($doc->createElement('option'));
     $opt->setAttribute('value','{"url":"http://dev.ovbox.de/","protocol":"ov","ui":"https://ovbox.de/"}');
-    $opt->appendChild($doc->createTextNode('ovbox.de'));
+    $opt->appendChild($doc->createTextNode('ovbox.de (private)'));
     $divex->appendChild($doc->createElement('br'));
     $divex->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
     $divex->appendChild($doc->createTextNode('Before changing the frontend, make sure you have access to the new website. By selecting a frontend, you can lock your device. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
