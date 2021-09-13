@@ -1,4 +1,5 @@
 <?php
+include "mail.inc";
 
 /*
  * This file is included from rest.php and user-pages
@@ -118,7 +119,7 @@ function submit_contact( $user, $contact, $msg )
   $mailmsg = 'From: '.$user.' ('.$contact.")\n\n".$msg."\n";
   file_put_contents( '../lastmailsg',$mailmsg);
   $sitecfg = get_properties('site','config');
-  mail( $sitecfg['mail'], 'ovbox contact from '.$user, $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+  sendmail( $sitecfg['mail'], 'ovbox contact from '.$user, $mailmsg );
 }
 
 function set_getprop_post( &$prop, $key )
