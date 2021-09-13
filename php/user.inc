@@ -1,5 +1,5 @@
 <?php
-include "mail.inc";
+include_once "mail.inc";
 
 /*
  * This file is included from user and admin pages
