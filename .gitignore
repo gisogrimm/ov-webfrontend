@@ -1,2 +1,5 @@
 *~
 .htaccess
+composer.lock
+/vendor
+/.idea
