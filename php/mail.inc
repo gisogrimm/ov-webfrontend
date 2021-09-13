@@ -1,4 +1,6 @@
 <?php
+require_once "./../vendor/autoload.php";
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -25,10 +27,10 @@ function sendmail($to, $subject, $message)
             // Specify the SMTP settings.
             $mail->isSMTP();
             $mail->setFrom($GLOBALS["smtpConfig"]["sender"], $GLOBALS["smtpConfig"]["senderName"]);
-            $mail->Username = $GLOBALS["smtpConfig"]["usernameSmtp"];
-            $mail->Password = $GLOBALS["smtpConfig"]["passwordSmtp"];
-            $mail->Host = $GLOBALS["smtpConfig"]["host"];
-            $mail->Port = $GLOBALS["smtpConfig"]["port"];
+            $mail->Username = $GLOBALS["externalSMTP"]["usernameSmtp"];
+            $mail->Password = $GLOBALS["externalSMTP"]["passwordSmtp"];
+            $mail->Host = $GLOBALS["externalSMTP"]["host"];
+            $mail->Port = $GLOBALS["externalSMTP"]["port"];
             $mail->SMTPAuth = true;
             $mail->SMTPSecure = 'tls';
 
