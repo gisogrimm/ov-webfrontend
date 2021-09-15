@@ -662,6 +662,8 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   $sitecfg = get_properties('site','config');
   $css = '';
   $title = $sitecfg['pagetitle'];
+  if( empty($style) )
+    $style = 'default';
   if( !empty($style) ){
     $sprop = get_properties( $style, 'style' );
     $css = $sprop['css'];
@@ -730,6 +732,8 @@ function print_foot($style = '',$show_donate = true)
 {
   $sitecfg = get_properties('site','config');
   $credits = $sitecfg['credits'];
+  if( empty($style) )
+    $style = 'default';
   if( !empty($style) ){
     $sprop = get_properties( $style, 'style' );
     $credits = $sprop['credits'];
