@@ -110,6 +110,35 @@ function rest_set_devprop( name, value )
 	request.send('setdevprop='+name+'&'+name+'='+value);
 }
 
+function rest_admusrprop( usr, name, value, reload = false )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    if( reload ){
+        request.onload = function() {
+	    location.reload();
+        }
+    }
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    if( typeof value === "boolean" )
+	request.send('admusrprop='+name+'&'+name+'='+value+'&type=bool&admusr='+usr);
+    else if( typeof value === "number" )
+	request.send('admusrprop='+name+'&'+name+'='+value+'&type=float&admusr='+usr);
+    else
+	request.send('admusrprop='+name+'&'+name+'='+value+'&admusr='+usr);
+}
+
+function rest_addpayment( usr, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    request.onload = function() {
+	location.reload();
+    }
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send('addpayment='+value+'&admusr='+usr);
+}
+
 function escapeHtml(text) {
     var map = {
 	'&': '&amp;',

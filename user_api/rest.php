@@ -290,4 +290,25 @@ if( isset($_GET['getsessionstat']) ){
                            'fragsize'=>$fragsize,'n'=>count($roomdevs),'p2p'=>$p2p)));
 }
 
+$site = get_properties('site','config');
+if( in_array($user,$site['admin']) ){
+    // below this point only admin functions are available:
+    // modify properties of other users defined in 'admusr':
+    if( isset($_POST['admusrprop']) && isset($_POST['admusr']) && isset($_POST[$_POST['admusrprop']]) && in_array(isset($_POST['admusr']),list_users()) ){
+        $value = $_POST[$_POST['admusrprop']];
+        if( isset($_POST['type']) ){
+            if( $_POST['type']=='bool' )
+                $value = $value == 'true';
+            if( $_POST['type']=='float' )
+                $value = floatval($value);
+        }
+        modify_user_prop($_POST['admusr'],$_POST['admusrprop'],$value);
+    }
+    if( isset($_POST['addpayment']) && isset($_POST['admusr']) && in_array(isset($_POST['admusr']),list_users()) ){
+        $upr = get_properties($_POST['admusr'],'user');
+        $starttime = max($upr['subscriptionend'],time());
+        modify_user_prop($_POST['admusr'],'subscriptionend',$starttime+floatval($_POST['addpayment'])/floatval($site['subscriptionrate'])*30.5*24*3600);
+    }
+}
+
 ?>

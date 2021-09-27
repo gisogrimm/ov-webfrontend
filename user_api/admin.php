@@ -21,6 +21,8 @@ if( !in_array($user,$site['admin']) ){
     die();
 }
 
+$subscriptionadmin = in_array($user,$site['subscriptionadmin']);
+
 // get exclusive lock on database and users:
 flock($fp_dev, LOCK_EX );
 flock($fp_user, LOCK_EX );
@@ -148,6 +150,13 @@ if( $adm == 'users' ){
 }
 if( $adm == 'groups' ){
     html_admin_groups();
+}
+if( $adm == 'edituser' ){
+    $usr = '';
+    if( isset($_GET['admusr']) ){
+        $usr = $_GET['admusr'];
+        html_admin_edituser($usr, $site);
+    }
 }
 flock($fp_dev, LOCK_UN );
 flock($fp_user, LOCK_UN );

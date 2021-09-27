@@ -16,10 +16,12 @@ function defaults( $type )
   $defaults['config'] = array(
     'mail'=>'',
     'admin'=>array(),
+    'subscriptionadmin'=>array(),
     'pagetitle'=>'House of Consort',
     'basecss'=>'ovbox.css',
     'credits'=>'Background image by Johannes Gontarski.',
     'moderation'=>false,
+    'subscriptionrate'=>3.0,
   );
   $defaults['style'] = array(
     'credits'=>'',
@@ -135,6 +137,7 @@ function defaults( $type )
     'ambientsound'=>'',
     'ambientlevel'=>50,
     'bulletinboard'=>'',
+    'subscriptionlevel'=>0,
   );
   $defaults['user'] = array(
     'group'=>'',
@@ -146,6 +149,8 @@ function defaults( $type )
     'validpw'=>true,
     'mail'=>'',
     'devverwarn'=>0,
+    'subscription'=>false,
+    'subscriptionend'=>0,
   );
   $defaults['group'] = array(
     'style'=>'default',
