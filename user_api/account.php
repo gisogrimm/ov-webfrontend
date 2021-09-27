@@ -104,7 +104,7 @@ $root->setAttribute('class','userarea');
     $inp->setAttribute('height','1');
     $supp = $div->appendChild($doc->createElement('div'));
     $supp->setAttribute('class','foto');
-    $supp->appendChild($doc->createTextNode('Donations are processed manually. After a donation, it may take a few days for us to update your account status.'));
+    $supp->appendChild($doc->createTextNode('Donations are processed manually. After a donation, it may take a few days for us to update your account status. If you think we missed your donation, please use the contact form below and provide the date and amount of your donation.'));
   }
 }
 {
