@@ -137,7 +137,7 @@ function defaults( $type )
     'ambientsound'=>'',
     'ambientlevel'=>50,
     'bulletinboard'=>'',
-    'subscriptionlevel'=>0,
+    'premium'=>false,
   );
   $defaults['user'] = array(
     'group'=>'',
@@ -266,6 +266,9 @@ function postproc_prop( &$prop, $type )
     $prop['sy'] = $rs_y;
     $prop['sz'] = $rs_z;
   }
+  if( $type == 'user' ){
+    $prop['validsubscription'] = validsubscription( $prop );
+  }
 }
 
 function get_properties( $id, $type )
@@ -360,6 +363,13 @@ function modify_room_prop( $room, $key, $value )
 function issender( $devprop )
 {
   return !empty($devprop['inputchannels']);
+}
+
+function validsubscription( $userprop )
+{
+  if( $userprop['subscription'] )
+    return true;
+  return $userprop['subscriptionend'] > $userprop['now'];
 }
 
 // return a list of all devices (or sending devices only) in a room:

@@ -72,6 +72,7 @@ if( isset($_GET['getrooms']) ){
     $dprop['issender'] = issender($dprop);
     $dprop['usergroups'] = $usergroups;
     $jsrooms = array('user'=>$user,
+                     'userprop'=>$uprop,
                      'device'=>$dprop,
                      'owned_devices'=>owned_devices($user),
                      'rooms'=>get_rooms_user( $user, $uprop, $usergroups, $dprop['room'] ),
@@ -308,6 +309,16 @@ if( in_array($user,$site['admin']) ){
         $upr = get_properties($_POST['admusr'],'user');
         $starttime = max($upr['subscriptionend'],time());
         modify_user_prop($_POST['admusr'],'subscriptionend',$starttime+floatval($_POST['addpayment'])/floatval($site['subscriptionrate'])*30.5*24*3600);
+    }
+    if( isset($_POST['admroomprop']) && isset($_POST['admroom']) && isset($_POST[$_POST['admroomprop']]) ){
+        $value = $_POST[$_POST['admroomprop']];
+        if( isset($_POST['type']) ){
+            if( $_POST['type']=='bool' )
+                $value = $value == 'true';
+            if( $_POST['type']=='float' )
+                $value = floatval($value);
+        }
+        modify_room_prop($_POST['admroom'],$_POST['admroomprop'],$value);
     }
 }
 

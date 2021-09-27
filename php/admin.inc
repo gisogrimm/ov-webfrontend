@@ -281,7 +281,7 @@ function html_admin_rooms()
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   // room id:
-  $headerfields = array_merge(array('id','age','deventer'),$showfields,array('owner','group','label'));
+  $headerfields = array_merge(array('id','age','deventer'),$showfields,array('premium','owner','group','label'));
   foreach( $headerfields as $field )
     table_add_header($tr,$field,$sortkey,$doc,'room');
   $users = list_users();
@@ -302,6 +302,13 @@ function html_admin_rooms()
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($deventer));
     foreach( $showfields as $field )
       $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dprop[$field]));
+    // premium:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $inp = $td->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','checkbox');
+    if( $dprop['premium'] )
+      $inp->setAttribute('checked','');
+    $inp->setAttribute('oninput','rest_admroomprop("'.$dev.'","premium",event.target.checked);');
     // user:
     $td = $tr->appendChild($doc->createElement('td'));
     $inp = $td->appendChild($doc->createElement('select'));

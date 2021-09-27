@@ -68,6 +68,44 @@ $root->setAttribute('class','userarea');
   $el->setAttribute('value','reset password');
   $el->setAttribute('type','button');
   $el->setAttribute('onclick','rest_setval_post_reload( \'mypwreset\',\'\');;');
+  $supp = $div->appendChild($doc->createElement('div'));
+  if( $userprop['subscription'] )
+    $msg = 'You are a permanent supporter.';
+  else if( validsubscription($userprop) )
+    $msg = 'Your support level is valid until '.date('Y-m-d',floatval($userprop['subscriptionend'])).' (yyyy-mm-dd).';
+  else
+    $msg = 'You do have not have Premium access. Please consider a donation; your donation of '.$site['subscriptionrate'].' €/month allows us to rent a powerful server.';
+  $supp->appendChild($doc->createTextNode($msg));
+  if( !$userprop['subscription'] ){
+    $form = $div->appendChild($doc->createElement('form'));
+    $form->setAttribute('action','https://www.paypal.com/donate');
+    $form->setAttribute('method','post');
+    $form->setAttribute('target','_top');
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','hosted_button_id');
+    $inp->setAttribute('value','7FETYJ93A7KWC');
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','item_name');
+    $inp->setAttribute('value','House of Consort - '.$user);
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','image');
+    $inp->setAttribute('src','https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif');
+    $inp->setAttribute('border','0');
+    $inp->setAttribute('name','submit');
+    $inp->setAttribute('title','PayPal - The safer, easier way to pay online!');
+    $inp->setAttribute('alt','Donate with PayPal button');
+    $inp = $form->appendChild($doc->createElement('img'));
+    $inp->setAttribute('alt','');
+    $inp->setAttribute('border','0');
+    $inp->setAttribute('src','https://www.paypal.com/en_DE/i/scr/pixel.gif');
+    $inp->setAttribute('width','1');
+    $inp->setAttribute('height','1');
+    $supp = $div->appendChild($doc->createElement('div'));
+    $supp->setAttribute('class','foto');
+    $supp->appendChild($doc->createTextNode('Donations are processed manually. After a donation, it may take a few days for us to update your account status.'));
+  }
 }
 {
   // personal info:

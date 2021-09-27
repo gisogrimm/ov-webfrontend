@@ -128,6 +128,24 @@ function rest_admusrprop( usr, name, value, reload = false )
 	request.send('admusrprop='+name+'&'+name+'='+value+'&admusr='+usr);
 }
 
+function rest_admroomprop( room, name, value, reload = false )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    if( reload ){
+        request.onload = function() {
+	    location.reload();
+        }
+    }
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    if( typeof value === "boolean" )
+	request.send('admroomprop='+name+'&'+name+'='+value+'&type=bool&admroom='+room);
+    else if( typeof value === "number" )
+	request.send('admroomprop='+name+'&'+name+'='+value+'&type=float&admroom='+room);
+    else
+	request.send('admroomprop='+name+'&'+name+'='+value+'&admroom='+room);
+}
+
 function rest_addpayment( usr, value )
 {
     let request = new XMLHttpRequest();
@@ -323,7 +341,7 @@ function create_room_div( device, room )
     return eroom;
 }
 
-function update_room( device, room, droom )
+function update_room( user, device, room, droom )
 {
     room.lock = Number(room.lock);
     var eroom = document.getElementById(room.id);
@@ -523,14 +541,22 @@ function update_room( device, room, droom )
 	    a.setAttribute('href','sessionstat.php');
 	    a.appendChild(document.createTextNode('statistics'));
 	} else {
-	    if( room.lock ){
-		ctl.appendChild(document.createTextNode('room is locked.'));
-	    }else{
+            if( room.premium && (!user.validsubscription)){
+		ctl.appendChild(document.createTextNode('Premium room, available only for donors. '));
 		var a = ctl.appendChild(document.createElement('a'));
 		a.setAttribute('class','roomctl');
-		a.setAttribute('href','?enterroom='+encodeURI(room.id));
-		a.appendChild(document.createTextNode('enter'));
-	    }
+		a.setAttribute('href','account.php');
+		a.appendChild(document.createTextNode('check account'));
+            }else{
+	        if( room.lock ){
+		    ctl.appendChild(document.createTextNode('room is locked.'));
+	        }else{
+		    var a = ctl.appendChild(document.createElement('a'));
+		    a.setAttribute('class','roomctl');
+		    a.setAttribute('href','?enterroom='+encodeURI(room.id));
+		    a.appendChild(document.createTextNode('enter'));
+	        }
+            }
 	}
     }
     if( (device.owner == room.owner)||(room.editable && room.entered) ){
@@ -1150,6 +1176,7 @@ function everytenseconds()
 				  }
 				 );
 	    var user = data.user;
+	    var userprop = data.userprop;
 	    var rooms = data.rooms;
 	    var device = data.device;
 	    var owned_devices = data.owned_devices;
@@ -1171,7 +1198,7 @@ function everytenseconds()
 		}
 		for( var k=0;k<rooms.length;k++){
 		    // room div:
-		    update_room( device, rooms[k], droom );
+		    update_room( userprop, device, rooms[k], droom );
 		}
 	    }
 	    if( sessionstat )
