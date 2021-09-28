@@ -384,14 +384,17 @@ function update_room( user, device, room, droom )
     var srvjit = Number(room['srvjit']);
     if( srvjit>0 ){
 	var sjspan = span.appendChild(document.createElement('span'));
-	sjspan.setAttribute('class','srvjit');
+        if( room.premium )
+	    sjspan.setAttribute('class','srvjit premium');
+        else
+	    sjspan.setAttribute('class','srvjit');
 	if( srvjit<1 ){
-	    sjspan.appendChild(document.createTextNode('***'));
+	    sjspan.appendChild(document.createTextNode('★★★'));
 	}else{
 	    if( srvjit<5 ){
-		sjspan.appendChild(document.createTextNode('**'));
+		sjspan.appendChild(document.createTextNode('★★☆'));
 	    }else{
-		sjspan.appendChild(document.createTextNode('*'));
+		sjspan.appendChild(document.createTextNode('★☆☆'));
 	    }       
 	}
 	span.appendChild(document.createTextNode('(jitter '+srvjit.toFixed(1)+' ms)'));

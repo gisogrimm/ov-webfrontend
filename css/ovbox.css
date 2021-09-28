@@ -254,8 +254,12 @@ div.mixer {
 .srvjit {
     font-size: 150%;
     font-weight: bold;
-		margin-left: 3px;
-		margin-right: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+.premium {
+    color: #bf8613;
+    font-size: 160%;
 }
 /* Hide default HTML checkbox */
 .switch input {
