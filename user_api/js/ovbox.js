@@ -382,12 +382,14 @@ function update_room( user, device, room, droom )
     if( room['editable'] )
 	span.appendChild(document.createTextNode(', acoustics can be changed'));
     var srvjit = Number(room['srvjit']);
-    if( srvjit>0 ){
-	var sjspan = span.appendChild(document.createElement('span'));
-        if( room.premium )
-	    sjspan.setAttribute('class','srvjit premium');
-        else
-	    sjspan.setAttribute('class','srvjit');
+    var sjspan = span.appendChild(document.createElement('span'));
+    if( room.premium )
+	sjspan.setAttribute('class','srvjit premium');
+    else
+	sjspan.setAttribute('class','srvjit');
+    if( srvjit<=0 ){
+	sjspan.appendChild(document.createTextNode('☆☆☆'));
+    }else{
 	if( srvjit<1 ){
 	    sjspan.appendChild(document.createTextNode('★★★'));
 	}else{
@@ -397,8 +399,8 @@ function update_room( user, device, room, droom )
 		sjspan.appendChild(document.createTextNode('★☆☆'));
 	    }       
 	}
-	span.appendChild(document.createTextNode('(jitter '+srvjit.toFixed(1)+' ms)'));
     }
+    span.appendChild(document.createTextNode('(jitter '+srvjit.toFixed(1)+' ms)'));
     // bulletin board:
     if( room.entered ){
 	var tog = tit.appendChild(document.createElement('input'));
