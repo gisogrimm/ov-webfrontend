@@ -70,9 +70,9 @@ $root->setAttribute('class','userarea');
   $el->setAttribute('onclick','rest_setval_post_reload( \'mypwreset\',\'\');;');
   $supp = $div->appendChild($doc->createElement('div'));
   if( $userprop['subscription'] )
-    $msg = 'You are a permanent supporter.';
+    $msg = 'As a permanent supporter you have Premium access.';
   else if( validsubscription($userprop) )
-    $msg = 'Your support level is valid until '.date('Y-m-d',floatval($userprop['subscriptionend'])).' (yyyy-mm-dd).';
+    $msg = 'You have Premium access until '.date('Y-m-d',floatval($userprop['subscriptionend'])).' (yyyy-mm-dd).';
   else
     $msg = 'You do have not have Premium access. Please consider a donation; your donation of '.$site['subscriptionrate'].' €/month allows us to rent a powerful server.';
   $supp->appendChild($doc->createTextNode($msg));
