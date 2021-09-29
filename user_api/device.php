@@ -409,6 +409,11 @@ if( !empty($device) ){
     $el->setAttribute('type','text');
     $el->setAttribute('pattern','[0-9 ]*');
     xml_add_checkbox( 'expeditedforwarding', 'activate expedited forwarding PHB (RFC2598)', $divex, $doc, $devprop );
+    $el = xml_add_input_generic( 'sessionportoffset','session-wide port offset to allow multiple instances on same host:',$divex,$doc,$devprop);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','10000');
+    $el->setAttribute('step','1');
     // proxy settings
     if( version_compare("ovclient-0.6.120",$devprop['version'])<0 ){
       xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $div, $doc, $devprop );

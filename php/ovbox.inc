@@ -58,6 +58,7 @@ function defaults( $type )
     'peer2peer'=>true,
     'secrec'=>0,
     'xrecport'=>array(),
+    'sessionportoffset'=>0,
     'position'=>array('x'=>0,'y'=>0,'z'=>0),
     'orientation'=>array('z'=>0,'y'=>0,'x'=>0),
     'srcshiftxyz'=>'0 0 0',
