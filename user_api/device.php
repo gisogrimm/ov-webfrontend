@@ -360,6 +360,25 @@ if( !empty($device) ){
     $el->appendChild($doc->createTextNode('Downmix:'));
     xml_add_checkbox( 'receivedownmix', 'Receive downmix instead of individual channels', $divex, $doc, $devprop );
     xml_add_checkbox( 'senddownmix', 'Send downmix instead of physical inputs', $divex, $doc, $devprop );
+    // tscinclude:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('User provided TASCAR configuration:'));
+    $form = $divex->appendChild($doc->createElement('div'));
+    $el = $form->appendChild($doc->createElement('textarea'));
+    $el->setAttribute('name','tscinclude');
+    $el->setAttribute('rows','8');
+    $el->setAttribute('cols','60');
+    $el->setAttribute('id','tscinclude');
+    $el->appendChild($doc->createTextNode($devprop['tscinclude']));
+    $form->appendChild($doc->createElement('br'));
+    $el = $form->appendChild($doc->createElement('button'));
+    $el->appendChild($doc->createTextNode('Clear'));
+    $el->setAttribute('onclick','document.getElementById("tscinclude").value="";rest_set_devprop("tscinclude","");');
+    $el = $form->appendChild($doc->createElement('button'));
+    $el->appendChild($doc->createTextNode('Save'));
+    $el->setAttribute('onclick','rest_set_devprop("tscinclude",document.getElementById("tscinclude").value);');
   }
   {
     // network settings

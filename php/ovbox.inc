@@ -116,6 +116,7 @@ function defaults( $type )
     'wifiupdate'=>false,
     'receivedownmix'=>false,
     'senddownmix'=>false,
+    'tscinclude'=>'',
   );
   $defaults['room'] = array(
     'access'=>0,

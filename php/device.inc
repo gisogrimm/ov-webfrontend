@@ -209,6 +209,7 @@ function get_room_session( $device, $devhash )
                                                          'bpb'=>intval($devprop['metrobpb']),
                                                          'level'=>floatval($devprop['metrolevel']),
                                                          'delay'=>floatval($devprop['metrodelay'])),
+                                      'tscinclude'=>$devprop['tscinclude'],
                                       'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding']),
                                                        'sessionportoffset'=>intval($devprop['sessionportoffset'])),
                                       'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),

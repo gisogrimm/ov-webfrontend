@@ -116,6 +116,7 @@ $presetkeys = ['label',
                'decorr',
                'receivedownmix',
                'senddownmix',
+               'tscinclude',
                'showexpertsettings'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
