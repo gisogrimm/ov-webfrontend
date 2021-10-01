@@ -63,6 +63,7 @@ function defaults( $type )
     'orientation'=>array('z'=>0,'y'=>0,'x'=>0),
     'srcshiftxyz'=>'0 0 0',
     'rawmode'=>false,
+    'receive'=>true,
     'reverb'=>true,
     'renderism'=>false,
     'rendersoundscape'=>true,

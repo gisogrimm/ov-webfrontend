@@ -229,7 +229,11 @@ if( !empty($device) ){
   {
     // gains
     $div = create_section($root, $doc,'Gains and acoustic rendering');
-    $dsl = $div->appendChild($doc->createElement('div'));
+    if( version_compare("ovclient-0.9.6",$devprop['version'])<0 ){
+      $dsl = $div->appendChild($doc->createElement('p'));
+      $dsl->appendChild($doc->createTextNode('Output: '));
+      xml_add_checkbox( 'receive', 'Receive audio from other members', $dsl, $doc, $devprop, true );
+    }
     $el = xml_add_input_generic( 'playbackgain', 'playback gain in dB (equivalent to changing the input gain): ', $div, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','-20');
