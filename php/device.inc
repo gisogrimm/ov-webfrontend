@@ -121,6 +121,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['decorr'] = floatval($devprop['decorr']);
   $rendersettings['secrec'] = floatval($devprop['secrec']);
   $rendersettings['rawmode'] = boolval($devprop['rawmode']);
+  $rendersettings['receive'] = boolval($devprop['receive']);
   $rendersettings['distancelaw'] = boolval($devprop['distancelaw']);
   $rendersettings['delaycomp'] = floatval($devprop['delaycomp']);
   $rendersettings['xrecport'] = $devprop['xrecport'];
