@@ -400,6 +400,8 @@ function get_devices_in_room( $room, $senderonly = false, $getprop = false )
                       'inputchannels'=>$prop['inputchannels'],
                       'senddownmix'=>boolval($prop['senddownmix']),
                       'receivedownmix'=>boolval($prop['receivedownmix']),
+                      'isproxy'=>boolval($prop['isproxy']),
+                      'useproxy'=>boolval($prop['useproxy']),
                       'peer2peer'=>boolval($prop['peer2peer']));
     if( ($room == $prop['room']) && ((!$senderonly) || (issender($prop) && (!$prop['senddownmix']))) ){
       if( array_key_exists( 'chair', $prop ) )

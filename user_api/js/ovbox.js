@@ -498,6 +498,8 @@ function update_room( user, device, room, droom )
 		    latdisp = 'srv ' + latdisp;
 	        if( dev.receivedownmix )
 		    latdisp = 'dm ' + latdisp;
+	        if( dev.isproxy )
+		    latdisp = 'P ' + latdisp;
             }
 	}
 	if( latdisp.length > 0 ){
