@@ -499,7 +499,9 @@ function update_room( user, device, room, droom )
 	        if( dev.receivedownmix )
 		    latdisp = 'dm ' + latdisp;
 	        if( dev.isproxy )
-		    latdisp = 'P ' + latdisp;
+		    latdisp = ':P: ' + latdisp;
+	        if( dev.useproxy )
+		    latdisp = 'p-' + latdisp;
             }
 	}
 	if( latdisp.length > 0 ){
