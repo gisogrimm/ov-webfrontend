@@ -392,11 +392,14 @@ function update_room( user, device, room, droom )
     }else{
 	if( srvjit<1 ){
 	    sjspan.appendChild(document.createTextNode('★★★'));
+            sjspan.setAttribute('title','perfect for server mode');
 	}else{
 	    if( srvjit<5 ){
 		sjspan.appendChild(document.createTextNode('★★☆'));
+                sjspan.setAttribute('title','works for any mode');
 	    }else{
 		sjspan.appendChild(document.createTextNode('★☆☆'));
+                sjspan.setAttribute('title','best in peer2peer mode');
 	    }       
 	}
     }
