@@ -437,6 +437,8 @@ function device_enter_room( $device, $room )
     set_properties( $device, 'device', $dprop );
     set_dev_room_pos( $room );
     modify_room_prop( $room, 'deventer', time() );
+    array_map('unlink', glob('../db/'.$device.'_*.pingstats'));
+    array_map('unlink', glob('../db/*_'.$room.'.pingstats'));
   }
 }
 
