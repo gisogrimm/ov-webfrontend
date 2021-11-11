@@ -1051,10 +1051,16 @@ function update_sessionstat(div)
 			    var tr=create_row_stat(tab,chair,data);
 			    td = tr.appendChild(document.createElement('td'));
 			    td.setAttribute('class','statcell');
-			    td.appendChild(document.createTextNode(suggest.rec[chair]));
+                            if( suggest.rec[chair] < 1000 )
+			        td.appendChild(document.createTextNode(suggest.rec[chair]));
+                            else
+                                td.appendChild(document.createTextNode('--'));
 			    td = tr.appendChild(document.createElement('td'));
 			    td.setAttribute('class','statcell');
-			    td.appendChild(document.createTextNode(suggest.send[chair]));
+                            if( suggest.send[chair] < 1000 )
+			        td.appendChild(document.createTextNode(suggest.send[chair]));
+                            else
+                                td.appendChild(document.createTextNode('--'));
 			    td = tr.appendChild(document.createElement('td'));
 			    td.setAttribute('class','statcell');
 			    if( data.p2p[data.chairs[chair]] )
