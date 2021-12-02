@@ -322,6 +322,12 @@ if( in_array($user,$site['admin']) ){
         }
         modify_room_prop($_POST['admroom'],$_POST['admroomprop'],$value);
     }
+    if( isset($_POST['admaddusertogroup']) && isset($_POST['admaddusertogroupgroup']) && isset($_POST['admaddusertogroupval']) ){
+        if( $_POST['admaddusertogroupval'] == 'true' )
+            add_user_to_group( $_POST['admaddusertogroup'], $_POST['admaddusertogroupgroup'] );
+        else
+            remove_user_from_group( $_POST['admaddusertogroup'], $_POST['admaddusertogroupgroup'] );
+    }
 }
 
 ?>

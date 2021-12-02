@@ -401,24 +401,6 @@ function auth( $username, $password )
   return password_verify( $password, $pws[$username] );
 }
 
-function add_user_to_group( $user, $group )
-{
-  if( !(empty($group)||empty($user)) ){
-    $fname = '../db/groups';
-    if( file_exists( $fname ) ){
-      $groups = json_decode( file_get_contents( $fname ), true );
-      if( array_key_exists( $group, $groups ) ){
-        $users = $groups[$group];
-        if( !in_array( $user, $users ) ){
-          $users[] = $user;
-          $groups[$group] = $users;
-          file_put_contents( $fname, json_encode( $groups ));
-        }
-      }
-    }
-  }
-}
-
 function device_enter_room( $device, $room )
 {
   $othersinroom = get_devices_in_room( $room );

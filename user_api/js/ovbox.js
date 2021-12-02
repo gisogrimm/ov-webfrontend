@@ -1356,6 +1356,18 @@ function update_wifi(){
     }
 }
 
+function rest_admusergroup( user, group, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    request.onload = function() {
+	location.reload();
+    }
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send('admaddusertogroup='+user+'&admaddusertogroupgroup='+group+'&admaddusertogroupval='+value);
+}
+
+
 /*
  * Local Variables:
  * c-basic-offset: 2

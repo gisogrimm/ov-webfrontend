@@ -539,6 +539,43 @@ function select_userdev( $user, $dev )
   }
 }
 
+function add_user_to_group( $user, $group )
+{
+  if( !(empty($group)||empty($user)) ){
+    $fname = '../db/groups';
+    if( file_exists( $fname ) ){
+      $groups = json_decode( file_get_contents( $fname ), true );
+      if( array_key_exists( $group, $groups ) ){
+        $users = $groups[$group];
+        if( !in_array( $user, $users ) ){
+          $users[] = $user;
+          $groups[$group] = $users;
+          file_put_contents( $fname, json_encode( $groups ));
+        }
+      }
+    }
+  }
+}
+
+function remove_user_from_group( $user, $group )
+{
+  if( !(empty($group)||empty($user)) ){
+    $fname = '../db/groups';
+    if( file_exists( $fname ) ){
+      $groups = json_decode( file_get_contents( $fname ), true );
+      if( array_key_exists( $group, $groups ) ){
+        $users = $groups[$group];
+        $us = array_search( $user, $users );
+        if( $us !== false ){
+          unset($users[$us]);
+          $groups[$group] = $users;
+          file_put_contents( $fname, json_encode( $groups ));
+        }
+      }
+    }
+  }
+}
+
 
 /*
  * Local Variables:

@@ -92,25 +92,6 @@ function rm_group( $group )
   }
 }
 
-function remove_user_from_group( $user, $group )
-{
-  if( !(empty($group)||empty($user)) ){
-    $fname = '../db/groups';
-    if( file_exists( $fname ) ){
-      $groups = json_decode( file_get_contents( $fname ), true );
-      if( array_key_exists( $group, $groups ) ){
-        $users = $groups[$group];
-        $us = array_search( $user, $users );
-        if( $us !== false ){
-          unset($users[$us]);
-          $groups[$group] = $users;
-          file_put_contents( $fname, json_encode( $groups ));
-        }
-      }
-    }
-  }
-}
-
 function modify_group_prop( $group, $key, $value )
 {
   $dprop = get_properties( $group, 'group' );
@@ -742,10 +723,11 @@ function html_admin_edituser( $usr, $siteconfig )
   $div = create_section($root,$doc,$usr);
   xml_add_usr_checkbox('seesall','Sees public rooms',$div,$doc,$auprop,$usr);
   $usergroups = list_groups($usr);
-  if(!empty($usergroups) ){
+  {
+    // group settings:
     $div = create_section($root,$doc,'Groups');
     $grplist = $div->appendChild($doc->createElement('div'));
-    foreach( list_groups($usr) as $grp ){
+    foreach( $usergroups as $grp ){
       $p1 = $grplist->appendChild($doc->createElement('span'));
       $p1->appendChild($doc->createTextNode($grp.' '));
     }
@@ -753,6 +735,20 @@ function html_admin_edituser( $usr, $siteconfig )
     $el = xml_add_usr_select('maingroup','Primary group:',$div,$doc,$auprop,$usr,
                              array_merge(array(''),$usergroups),
                              array_merge(array(' -- no group -- '),$usergroups));
+    $grplist = $div->appendChild($doc->createElement('div'));
+    $allgroups = list_groups();
+    foreach( $allgroups as $grp ){
+      $el = $div->appendChild($doc->createElement('input'));
+      $el->setAttribute('type','checkbox');
+      if( in_array( $grp, $usergroups ) )
+        $el->setAttribute('checked','');
+      $el->setAttribute('onchange','rest_admusergroup( "'.$usr.'", "'.$grp.'", event.target.checked );');
+      $ellab = $div->appendChild($doc->createElement('label'));
+      $ellab->appendChild($doc->createTextNode($grp));
+      $div->appendChild($doc->createElement('br'));
+      
+    }
+    // end of group settings
   }
   $div = create_section($root,$doc,'Subscription');
   $el = xml_add_usr_checkbox('subscription','Permanent subscriber',$div,$doc,$auprop,$usr);
