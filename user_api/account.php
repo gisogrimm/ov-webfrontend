@@ -71,7 +71,7 @@ $root->setAttribute('class','userarea');
   $supp = $div->appendChild($doc->createElement('div'));
   if( $userprop['subscription'] )
     $msg = 'As a permanent supporter you have premium access.';
-  else if( validsubscription($userprop) )
+  else if( $userprop['validsubscription'] )
     $msg = 'You have premium access until '.date('Y-m-d',floatval($userprop['subscriptionend'])).' (yyyy-mm-dd).';
   else
     $msg = 'You do not have premium access. Please consider a donation; your donation of '.$site['subscriptionrate'].' €/month allows us to rent a powerful server.';

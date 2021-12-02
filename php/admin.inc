@@ -206,6 +206,8 @@ function html_admin_users()
           ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600))) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
       }
+      if( $uprop['validsubscription'] )
+        $tr->setAttribute('style','background-color: #ffd072;');
     }else{
       if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600) && ($uprop['age']<3600*24*365*40)) ||
           ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
