@@ -118,6 +118,8 @@ function defaults( $type )
     'receivedownmix'=>false,
     'senddownmix'=>false,
     'tscinclude'=>'',
+    'jackrecsampleformat'=>'PCM_16',
+    'jackrecfileformat'=>'WAV',
   );
   $defaults['room'] = array(
     'access'=>0,

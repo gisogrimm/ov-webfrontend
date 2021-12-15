@@ -217,6 +217,8 @@ function get_room_session( $device, $devhash )
                                                      'useproxy'=>!empty($proxyip),
                                                      'proxyip'=>$proxyip,
                                                      'clients'=>$proxyclients),
+                                      'jackrec'=>array('sampleformat'=>$devprop['jackrecsampleformat'],
+                                                       'fileformat'=>$devprop['jackrecfileformat']),
                                       'render'=>array('soundscape'=>boolval($devprop['rendersoundscape'])));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,

@@ -333,6 +333,54 @@ if( !empty($device) ){
       $opt->appendChild($doc->createTextNode($fweight.': '.$desc));
     }
     $divex->appendChild($doc->createElement('br'));
+    // jack recorder:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('Audio recorder:'));
+    // file format:
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->setAttribute('for','jackrecfileformat');
+    $el->appendChild($doc->createTextNode('File format: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("jackrecfileformat",event.target.value);');
+    $el->setAttribute('id','jackrecfileformat');
+    $recdesc = array('WAV'=>'Microsoft WAV',
+                     'AIFF'=>'SGI/Apple AIFF',
+                     'W64'=>'Sound forge W64',
+                     'MAT5'=>'GNU Octave mat',
+                     'FLAC'=>'Free Lossless Audio Codec',
+                     'CAF'=>'Apple CAF');
+    error_log('fmt: '.$devprop['jackrecfileformat']);
+    foreach( $recdesc as $smpfmt=>$desc ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$smpfmt);
+      if( $devprop['jackrecfileformat'] == $smpfmt )
+        $opt->setAttribute('selected','');
+      $opt->appendChild($doc->createTextNode($smpfmt.': '.$desc));
+    }
+    $divex->appendChild($doc->createElement('br'));
+    // sample format:
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->setAttribute('for','jackrecsampleformat');
+    $el->appendChild($doc->createTextNode('Sample format: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("jackrecsampleformat",event.target.value);');
+    $el->setAttribute('id','jackrecsampleformat');
+    $recdesc = array('PCM_16'=>'16 Bit signed integer',
+                     'PCM_24'=>'24 bit signed integer',
+                     'PCM_32'=>'32 bit signed integer',
+                     'FLOAT'=>'32 Bit floating point (not for FLAC)',
+                     'DOUBLE'=>'64 Bit floating point (not for FLAC)');
+    error_log('fmt: '.$devprop['jackrecsampleformat']);
+    foreach( $recdesc as $smpfmt=>$desc ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$smpfmt);
+      if( $devprop['jackrecsampleformat'] == $smpfmt )
+        $opt->setAttribute('selected','');
+      $opt->appendChild($doc->createTextNode($smpfmt.': '.$desc));
+    }
+    $divex->appendChild($doc->createElement('br'));
     // head tracking:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
