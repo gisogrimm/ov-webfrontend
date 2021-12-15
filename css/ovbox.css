@@ -368,6 +368,8 @@ input:checked + .slider:before {
     padding: 1px;
     padding-left: 3px;
     padding-right: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
     color: #700000;
     font-weight: bold;
 }
