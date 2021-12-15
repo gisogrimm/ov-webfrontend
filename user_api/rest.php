@@ -118,7 +118,9 @@ $presetkeys = ['label',
                'receivedownmix',
                'senddownmix',
                'tscinclude',
-               'showexpertsettings'];
+               'showexpertsettings',
+               'jackrecfileformat',
+               'jackrecsampleformat'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
         $presets = get_properties( $device, 'devpresets' );
