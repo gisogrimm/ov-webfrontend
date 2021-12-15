@@ -1280,10 +1280,21 @@ function create_preset(){
     request.send();
 }
 
+function save_preset( preset ){
+    if( confirm('Really save to "'+preset+'"?') ){
+    let request = new XMLHttpRequest();
+    request.onload = function() {
+	      location.reload();
+    }
+    request.open('GET', 'rest.php?devpresetsave=' + preset);
+        request.send();
+    }
+}
+
 function load_preset( preset ){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload();
+	      location.reload();
     }
     request.open('GET', 'rest.php?devpresetload=' + preset);
     request.send();

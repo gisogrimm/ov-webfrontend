@@ -77,6 +77,12 @@ if( !empty($device) ){
         $inp = $span->appendChild($doc->createElement('input'));
         $inp->setAttribute('class','presetrm');
         $inp->setAttribute('type','button');
+        $inp->setAttribute('value','S');
+        $inp->setAttribute('name',$preset);
+        $inp->setAttribute('onclick','save_preset(this.name);');
+        $inp = $span->appendChild($doc->createElement('input'));
+        $inp->setAttribute('class','presetrm');
+        $inp->setAttribute('type','button');
         $inp->setAttribute('value','X');
         $inp->setAttribute('name',$preset);
         $inp->setAttribute('onclick','rm_preset(this.name);');
