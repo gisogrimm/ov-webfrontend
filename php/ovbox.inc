@@ -40,6 +40,7 @@ function defaults( $type )
     'selfmonitor'=>true,
     'egogain'=>0,
     'selfmonitordelay'=>0,
+    'selfmonitoronlyreverb'=>false,
     'host'=>'',
     'localip'=>'',
     'externalip'=>'',

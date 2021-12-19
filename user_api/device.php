@@ -259,6 +259,9 @@ if( !empty($device) ){
     $el->setAttribute('step','0.1');
     // switch egomonitor
     xml_add_checkbox( 'selfmonitor', 'enable self monitoring', $div, $doc, $devprop, true );
+    if( version_compare("ovclient-0.9.20-751bc89",$devprop['version'])<0 ){
+      xml_add_checkbox( 'selfmonitoronlyreverb', 'only reverberant self monitor', $div, $doc, $devprop );
+    }
     $divex = add_expert_div($div,$doc,$devprop);
     // ego monitor delay:
     $el = xml_add_input_generic( 'selfmonitordelay', 'self monitor delay in milliseconds:', $divex, $doc, $devprop );
