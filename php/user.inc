@@ -672,6 +672,9 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
+    echo '<div class="ad" style="text-align: center;">ORLANDO<i>viols</i> w&uuml;scht friedliche Feiertage und ein musikalisches und gesundes 2022!</div>'."\n";
+    // end ad.
+    // start ad:
     #echo '<div class="ad"><b>Concert</b> 10 September, 19:00h CEST: <em>Sound out my voice!</em> Italian madrigals with diminutions <a href="https://orlandoviols.de/">orlandoviols.de</a> </div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
@@ -701,9 +704,6 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
     echo '</span>';
     echo '</div>'. "\n";
     echo '<div class="ovcontent">'. "\n";
-    //// start ad:
-    //echo '<div class="ad"><b>Concert</b> June 23rd, 20:15h CEST: <em>Royal Coronation Consort</em> with ORLANDOviols - <a href="https://www.kultur-vor-ort.com/veranstaltungen/royal-coronation-consort/" style="font-family: Helvetica;">kultur|vor|ort</a> </div>'."\n";
-    //// end ad.
     if( isset($_SESSION['usermsg']) ){
       echo '<div class="deverror">'.$_SESSION['usermsg'].'</div>';
       unset($_SESSION['usermsg']);
