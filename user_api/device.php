@@ -514,7 +514,7 @@ if( !empty($device) ){
     $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
     $opt = $el->appendChild($doc->createElement('option'));
     $opt->setAttribute('value','{"url":"https://oldbox.orlandoviols.com/","protocol":"ov","ui":"https://box.orlandoviols.com/"}');
-    $opt->appendChild($doc->createTextNode('box.orlandoviols.com (secure device connection, untested)'));
+    $opt->appendChild($doc->createTextNode('box.orlandoviols.com (secure device connection)'));
     $opt = $el->appendChild($doc->createElement('option'));
     $opt->setAttribute('value','{"url":"http://digital-stage-device.ovbox.de/","protocol":"ov","ui":"https://digital-stage.ovbox.de/"}');
     $opt->appendChild($doc->createTextNode('digital-stage.ovbox.de'));
