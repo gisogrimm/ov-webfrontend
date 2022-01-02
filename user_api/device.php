@@ -360,7 +360,6 @@ if( !empty($device) ){
                      'MAT5'=>'GNU Octave mat',
                      'FLAC'=>'Free Lossless Audio Codec',
                      'CAF'=>'Apple CAF');
-    error_log('fmt: '.$devprop['jackrecfileformat']);
     foreach( $recdesc as $smpfmt=>$desc ){
       $opt = $el->appendChild($doc->createElement('option'));
       $opt->setAttribute('value',$smpfmt);
@@ -381,7 +380,6 @@ if( !empty($device) ){
                      'PCM_32'=>'32 bit signed integer',
                      'FLOAT'=>'32 Bit floating point (not for FLAC)',
                      'DOUBLE'=>'64 Bit floating point (not for FLAC)');
-    error_log('fmt: '.$devprop['jackrecsampleformat']);
     foreach( $recdesc as $smpfmt=>$desc ){
       $opt = $el->appendChild($doc->createElement('option'));
       $opt->setAttribute('value',$smpfmt);
@@ -501,6 +499,9 @@ if( !empty($device) ){
     }
     $divex = add_expert_div($div, $doc, $devprop );
     // frontend:
+    // load frontends from database:
+    $frontends = json_decode( file_get_contents( '../db/frontends.db' ), true );
+    // end load.
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('Switch configuration website: '));
     $el = $divex->appendChild($doc->createElement('select'));
@@ -509,26 +510,17 @@ if( !empty($device) ){
     $opt = $el->appendChild($doc->createElement('option'));
     $opt->setAttribute('value','{}');
     $opt->appendChild($doc->createTextNode('-- switch frontend --'));
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value','{"url":"http://oldbox.orlandoviols.com/","protocol":"ov","ui":"https://box.orlandoviols.com/"}');
-    $opt->appendChild($doc->createTextNode('box.orlandoviols.com'));
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value','{"url":"https://oldbox.orlandoviols.com/","protocol":"ov","ui":"https://box.orlandoviols.com/"}');
-    $opt->appendChild($doc->createTextNode('box.orlandoviols.com (secure device connection)'));
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value','{"url":"http://digital-stage-device.ovbox.de/","protocol":"ov","ui":"https://digital-stage.ovbox.de/"}');
-    $opt->appendChild($doc->createTextNode('digital-stage.ovbox.de'));
-    $opt = $el->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value','{"url":"http://dev.ovbox.de/","protocol":"ov","ui":"https://ovbox.de/"}');
-    $opt->appendChild($doc->createTextNode('ovbox.de (private)'));
+    foreach( $frontends as $frontend ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $val = json_encode( $frontend, JSON_UNESCAPED_SLASHES );
+      error_log($val);
+      $opt->setAttribute('value',$val);
+      $opt->appendChild($doc->createTextNode($frontend['label']));
+    }
     $divex->appendChild($doc->createElement('br'));
     $divex->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
     $divex->appendChild($doc->createTextNode('Before changing the frontend, make sure you have access to the new website. By selecting a frontend, you can lock your device. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
     $divex->appendChild($doc->createElement('br'));
-    //$a = $divex->appendChild($doc->createElement('a'));
-    //$a->setAttribute('href','rest.php?getrawjson=');
-    //$a->setAttribute('target','blank');
-    //$a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
   }
   {
     // Firmware
