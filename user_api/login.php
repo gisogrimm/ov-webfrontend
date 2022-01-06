@@ -107,6 +107,7 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         echo '</form>';
         echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">Register as new user</a> &nbsp; '.
             '<a href="forgotpw.php?grp='.grouphash($urlgroup).'">I forgot my password</a></p>';
+        echo '<p>If you have not used your account for more than 180 days, you must re-register as a new user to use the system again.</p>';
         echo '</div>';
         print_foot( $style, false );
         die();
