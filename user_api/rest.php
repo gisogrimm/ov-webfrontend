@@ -81,6 +81,8 @@ if( isset($_GET['getrooms']) ){
 }
 $presetkeys = ['label',
                'selfmonitor',
+               'selfmonitoronlyreverb',
+               'selfmonitordelay',
                'egogain',
                'inputchannels',
                'jitterreceive',
