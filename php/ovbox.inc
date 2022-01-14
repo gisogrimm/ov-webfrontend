@@ -122,7 +122,7 @@ function defaults( $type )
     'jackrecsampleformat'=>'PCM_16',
     'jackrecfileformat'=>'WAV',
     'uselocmcrec'=>false,
-    'locmcrecaddr'=>'224.0.0.1',
+    'locmcrecaddr'=>'224.0.0.10',
     'locmcrecport'=>10007,
     'locmcrecdevice'=>'',
     'locmcrecbuffer'=>10,

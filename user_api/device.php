@@ -426,7 +426,7 @@ if( !empty($device) ){
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
     $el->appendChild($doc->createTextNode('Multicast receiver:'));
-    xml_add_checkbox( 'uselocmcrec', 'start zita-n2j multicast receiver on multicast group '.$devprop['locmcrecaddr'].' port '.$devprop['locmcrecport'], $divex, $doc, $devprop );
+    xml_add_checkbox( 'uselocmcrec', 'start zita-n2j multicast receiver on port '.$devprop['locmcrecport'], $divex, $doc, $devprop );
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('Channels: '));
     $el = $divex->appendChild($doc->createElement('input'));
@@ -440,6 +440,8 @@ if( !empty($device) ){
     $el->setAttribute('pattern','[0-9 ,]*');
     $el->setAttribute('onchange','rest_set_devprop("locmcrecchannels",JSON.parse("["+event.target.value+"]"));');
     $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'locmcrecaddr','Multicast address of zita-n2j client:',$divex,$doc,$devprop);
+    //$divex->appendChild($doc->createElement('br'));
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('Network device: '));
     $el = $divex->appendChild($doc->createElement('select'));
