@@ -106,6 +106,8 @@ function rest_set_devprop( name, value )
 	request.send('setdevpropbool='+name+'&'+name+'='+value);
     else if( typeof value === "number" )
 	request.send('setdevpropfloat='+name+'&'+name+'='+value);
+    else if( typeof value === "object" )
+	request.send('setdevpropobj='+name+'&'+name+'='+JSON.stringify(value));
     else
 	request.send('setdevprop='+name+'&'+name+'='+value);
 }

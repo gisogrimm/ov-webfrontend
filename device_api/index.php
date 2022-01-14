@@ -163,6 +163,8 @@ if ($user == 'device') {
                     $dprop['isovbox'] = true;
                 if( isset($jsmsg['version']) )
                     $dprop['version'] = $jsmsg['version'];
+                if( isset($jsmsg['networkdevices']) )
+                    $dprop['networkdevices'] = $jsmsg['networkdevices'];
                 set_properties( $device, 'device', $dprop );
                 if( isset($jsmsg['pingstats']) )
                     set_properties( $device.'_'.$dprop['room'], 'pingstats', $jsmsg['pingstats'] );

@@ -220,6 +220,12 @@ function get_room_session( $device, $devhash )
                                                      'clients'=>$proxyclients),
                                       'jackrec'=>array('sampleformat'=>$devprop['jackrecsampleformat'],
                                                        'fileformat'=>$devprop['jackrecfileformat']),
+                                      'mcrec'=>array('use'=>boolval($devprop['uselocmcrec']),
+                                                     'addr'=>$devprop['locmcrecaddr'],
+                                                     'port'=>intval($devprop['locmcrecport']),
+                                                     'device'=>$devprop['locmcrecdevice'],
+                                                     'buffer'=>intval($devprop['locmcrecbuffer']),
+                                                     'channels'=>$devprop['locmcrecchannels']),
                                       'render'=>array('soundscape'=>boolval($devprop['rendersoundscape'])));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,

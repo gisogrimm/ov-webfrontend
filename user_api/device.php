@@ -235,6 +235,10 @@ if( !empty($device) ){
   {
     // gains
     $div = create_section($root, $doc,'Gains and acoustic rendering');
+    $divex = add_expert_div($div,$doc,$devprop);
+    // raw mode:
+    xml_add_checkbox( 'rawmode', 'raw mode - no virtual acoustics', $divex, $doc, $devprop );
+    //
     if( version_compare("ovclient-0.9.6",$devprop['version'])<0 ){
       $dsl = $div->appendChild($doc->createElement('p'));
       $dsl->appendChild($doc->createTextNode('Output: '));
@@ -260,7 +264,7 @@ if( !empty($device) ){
     // switch egomonitor
     xml_add_checkbox( 'selfmonitor', 'enable self monitoring', $div, $doc, $devprop, true );
     if( version_compare("ovclient-0.9.20-751bc89",$devprop['version'])<0 ){
-      xml_add_checkbox( 'selfmonitoronlyreverb', 'only reverberant self monitor', $div, $doc, $devprop );
+      xml_add_checkbox( 'selfmonitoronlyreverb', 'only reverb, no direct sound in self monitor', $div, $doc, $devprop );
     }
     $divex = add_expert_div($div,$doc,$devprop);
     // ego monitor delay:
@@ -312,8 +316,6 @@ if( !empty($device) ){
     $el->setAttribute('max','50');
     $el->setAttribute('step','1');
     $divex->appendChild($doc->createElement('br'));
-    // raw mode:
-    xml_add_checkbox( 'rawmode', 'raw mode - no virtual acoustics', $divex, $doc, $devprop );
     // level metering:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
@@ -419,6 +421,45 @@ if( !empty($device) ){
     $el->appendChild($doc->createTextNode('Downmix:'));
     xml_add_checkbox( 'receivedownmix', 'Receive downmix instead of individual channels', $divex, $doc, $devprop );
     xml_add_checkbox( 'senddownmix', 'Send downmix instead of physical inputs', $divex, $doc, $devprop );
+    // multicast zita receiver:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('Multicast receiver:'));
+    xml_add_checkbox( 'uselocmcrec', 'start zita-n2j multicast receiver on multicast group '.$devprop['locmcrecaddr'].' port '.$devprop['locmcrecport'], $divex, $doc, $devprop );
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('Channels: '));
+    $el = $divex->appendChild($doc->createElement('input'));
+    $chan = '';
+    foreach($devprop['locmcrecchannels'] as $ch){
+      if( !empty($chan) )
+        $chan = $chan.', ';
+      $chan = $chan.strval($ch);
+    }
+    $el->setAttribute('value',$chan);
+    $el->setAttribute('pattern','[0-9 ,]*');
+    $el->setAttribute('onchange','rest_set_devprop("locmcrecchannels",JSON.parse("["+event.target.value+"]"));');
+    $divex->appendChild($doc->createElement('br'));
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('Network device: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("locmcrecdevice",event.target.value);');
+    $el->setAttribute('id','mczitadevice');
+    $opt = $el->appendChild($doc->createElement('option'));
+    $opt->appendChild($doc->createTextNode('- please select a device -'));
+    foreach( $devprop['networkdevices'] as $netdev ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$netdev);
+      if( $devprop['locmcrecdevice'] == $netdev )
+        $opt->setAttribute('selected','');
+      $opt->appendChild($doc->createTextNode($netdev));
+    }
+    $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'locmcrecbuffer','Receiver buffer length in ms:',$divex,$doc,$devprop);
+    $el->setAttribute('value',intval($devprop['locmcrecbuffer']));
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('step','1');
     // tscinclude:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
@@ -513,7 +554,6 @@ if( !empty($device) ){
     foreach( $frontends as $frontend ){
       $opt = $el->appendChild($doc->createElement('option'));
       $val = json_encode( $frontend, JSON_UNESCAPED_SLASHES );
-      error_log($val);
       $opt->setAttribute('value',$val);
       $opt->appendChild($doc->createTextNode($frontend['label']));
     }

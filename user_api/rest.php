@@ -122,7 +122,12 @@ $presetkeys = ['label',
                'tscinclude',
                'showexpertsettings',
                'jackrecfileformat',
-               'jackrecsampleformat'];
+               'jackrecsampleformat',
+               'uselocmcrec',
+               'locmcrecaddr',
+               'locmcrecport',
+               'locmcrecdevice',
+               'locmcrecchannels'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
         $presets = get_properties( $device, 'devpresets' );
@@ -205,6 +210,12 @@ if( isset($_POST['setdevpropfloat']) ){
     if( isset($_POST[$_POST['setdevpropfloat']]))
         modify_device_prop($device,$_POST['setdevpropfloat'],floatval($_POST[$_POST['setdevpropfloat']]));
     if( in_array($_POST['setdevpropfloat'],$presetkeys) )
+        modify_device_prop($device,'preset','');
+}
+if( isset($_POST['setdevpropobj']) ){
+    if( isset($_POST[$_POST['setdevpropobj']]))
+        modify_device_prop($device,$_POST['setdevpropobj'],json_decode($_POST[$_POST['setdevpropobj']]));
+    if( in_array($_POST['setdevpropobj'],$presetkeys) )
         modify_device_prop($device,'preset','');
 }
 if( isset($_POST['setdevpropbool']) ){

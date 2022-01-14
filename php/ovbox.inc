@@ -121,6 +121,13 @@ function defaults( $type )
     'tscinclude'=>'',
     'jackrecsampleformat'=>'PCM_16',
     'jackrecfileformat'=>'WAV',
+    'uselocmcrec'=>false,
+    'locmcrecaddr'=>'224.0.0.1',
+    'locmcrecport'=>10007,
+    'locmcrecdevice'=>'',
+    'locmcrecbuffer'=>10,
+    'locmcrecchannels'=>[1,2],
+    'networkdevices'=>array(),
   );
   $defaults['room'] = array(
     'access'=>0,
