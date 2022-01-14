@@ -108,6 +108,7 @@ if( isset($_POST['setdevprop']) ){
         $prop['peer2peer'] = isset($_POST['peer2peer']);
         $prop['jackplugdev'] = isset($_POST['jackplugdev']);
         $prop['rawmode'] = isset($_POST['rawmode']);
+        $prop['virtualacoustics'] = isset($_POST['virtualacoustics']);
         $prop['selfmonitor'] = isset($_POST['selfmonitor']);
         $prop['sendlocal'] = isset($_POST['sendlocal']);
         $prop['headtracking'] = isset($_POST['headtracking']);
