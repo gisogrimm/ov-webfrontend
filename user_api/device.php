@@ -114,13 +114,14 @@ if( !empty($device) ){
     $el->setAttribute('value',$devprop['label']);
     $el->setAttribute('onchange','rest_set_devprop("label",event.target.value);');
     $div->appendChild($doc->createElement('br'));
-    $el = $div->appendChild($doc->createElement('input'));
-    $el->setAttribute('type','checkbox');
-    if( $devprop['showexpertsettings'] )
-      $el->setAttribute('checked','');
-    $div->appendChild($doc->createTextNode('show expert settings (danger zone)'));
-    $el->setAttribute('onchange','rest_set_devprop("showexpertsettings",event.target.checked);set_displayclass("expert",event.target.checked);');
-    $el = $div->appendChild($doc->createElement('br'));
+    xml_add_checkbox( 'showexpertsettings', 'show expert settings (danger zone)', $div, $doc, $devprop, false, true );
+    //$el = $div->appendChild($doc->createElement('input'));
+    //$el->setAttribute('type','checkbox');
+    //if( $devprop['showexpertsettings'] )
+    //  $el->setAttribute('checked','');
+    //$div->appendChild($doc->createTextNode('show expert settings (danger zone)'));
+    //$el->setAttribute('onchange','rest_set_devprop("showexpertsettings",event.target.checked);set_displayclass("expert",event.target.checked);');
+    //$el = $div->appendChild($doc->createElement('br'));
     // reset settings
     $inp = $div->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
@@ -237,7 +238,7 @@ if( !empty($device) ){
     $div = create_section($root, $doc,'Gains and acoustic rendering');
     $divex = add_expert_div($div,$doc,$devprop);
     // raw mode:
-    xml_add_checkbox( 'rawmode', 'raw mode - no virtual acoustics', $divex, $doc, $devprop );
+    xml_add_checkbox( 'virtualacoustics', 'virtual acoustics', $divex, $doc, $devprop, false, true );
     //
     if( version_compare("ovclient-0.9.6",$devprop['version'])<0 ){
       $dsl = $div->appendChild($doc->createElement('p'));
@@ -256,23 +257,28 @@ if( !empty($device) ){
     $el->setAttribute('max','20');
     $el->setAttribute('step','0.1');
     // ego monitor:
-    $el = xml_add_input_generic( 'egogain', 'ego monitor gain in dB (how much of your own microphone is added to your headphone):', $div, $doc, $devprop, false );
+    // switch egomonitor
+    $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
+    xml_add_checkbox( 'selfmonitor', 'enable self monitoring', $divva, $doc, $devprop, false, true );
+    $divmon = add_expert_div($divva,$doc,$devprop,'selfmonitor');
+    $el = xml_add_input_generic( 'egogain', 'ego monitor gain in dB (how much of your own microphone is added to your headphone):', $divmon, $doc, $devprop, false );
     $el->setAttribute('type','number');
     $el->setAttribute('min','-20');
     $el->setAttribute('max','20');
     $el->setAttribute('step','0.1');
-    // switch egomonitor
-    xml_add_checkbox( 'selfmonitor', 'enable self monitoring', $div, $doc, $devprop, true );
     if( version_compare("ovclient-0.9.20-751bc89",$devprop['version'])<0 ){
-      xml_add_checkbox( 'selfmonitoronlyreverb', 'only reverb, no direct sound in self monitor', $div, $doc, $devprop );
+      $divmon->appendChild($doc->createElement('br'));
+      xml_add_checkbox( 'selfmonitoronlyreverb', 'only reverb, no direct sound in self monitor', $divmon, $doc, $devprop );
     }
-    $divex = add_expert_div($div,$doc,$devprop);
+    $divex = add_expert_div($divmon,$doc,$devprop);
     // ego monitor delay:
     $el = xml_add_input_generic( 'selfmonitordelay', 'self monitor delay in milliseconds:', $divex, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','1000');
     $el->setAttribute('step','1');
+    $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
+    $divex = add_expert_div($divva,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
     $el->appendChild($doc->createTextNode('receiver type: '));
@@ -289,7 +295,7 @@ if( !empty($device) ){
     }
     $divex->appendChild($doc->createElement('br'));
     // reverb:
-    $divex = add_expert_div($div,$doc,$devprop);
+    $divex = add_expert_div($divva,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
     $el->appendChild($doc->createTextNode('Reverb:'));
@@ -394,9 +400,10 @@ if( !empty($device) ){
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
-    $el->appendChild($doc->createTextNode('Head tracking:'));
-    xml_add_checkbox( 'headtracking', 'load headtracking module', $divex, $doc, $devprop );
+    //$el->appendChild($doc->createTextNode('Head tracking:'));
+    xml_add_checkbox( 'headtracking', 'Head tracking', $el, $doc, $devprop, false, true );
     // apply headtracking:
+    $divex = add_expert_div($divex,$doc,$devprop,'headtracking');
     xml_add_checkbox( 'headtrackingrot', 'apply rotation to receiver', $divex, $doc, $devprop );
     xml_add_checkbox( 'headtrackingrotsrc', 'apply rotation to source', $divex, $doc, $devprop );
     //
@@ -425,10 +432,12 @@ if( !empty($device) ){
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
-    $el->appendChild($doc->createTextNode('Multicast receiver:'));
-    xml_add_checkbox( 'uselocmcrec', 'start zita-n2j multicast receiver on port '.$devprop['locmcrecport'], $divex, $doc, $devprop );
+    xml_add_checkbox( 'uselocmcrec', 'Extra multicast zita-n2j receiver', $el, $doc, $devprop, false, true );
+    //$el->appendChild($doc->createTextNode(' '));
+    $divex = add_expert_div($divex,$doc,$devprop,'uselocmcrec');
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('Channels: '));
+    $divex->appendChild($doc->createElement('br'));
     $el = $divex->appendChild($doc->createElement('input'));
     $chan = '';
     foreach($devprop['locmcrecchannels'] as $ch){
@@ -440,10 +449,20 @@ if( !empty($device) ){
     $el->setAttribute('pattern','[0-9 ,]*');
     $el->setAttribute('onchange','rest_set_devprop("locmcrecchannels",JSON.parse("["+event.target.value+"]"));');
     $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'locmcrecbuffer','Receiver buffer length in ms:',$divex,$doc,$devprop);
+    $el->setAttribute('value',intval($devprop['locmcrecbuffer']));
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('step','1');
     $el = xml_add_input_generic( 'locmcrecaddr','Multicast address of zita-n2j client:',$divex,$doc,$devprop);
-    //$divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'locmcrecport','Port number of zita-n2j client:',$divex,$doc,$devprop);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','1024');
+    $el->setAttribute('max','65535');
+    $el->setAttribute('step','1');
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('Network device: '));
+    //$divex->appendChild($doc->createElement('br'));
     $el = $divex->appendChild($doc->createElement('select'));
     $el->setAttribute('onchange','rest_set_devprop("locmcrecdevice",event.target.value);');
     $el->setAttribute('id','mczitadevice');
@@ -456,12 +475,6 @@ if( !empty($device) ){
         $opt->setAttribute('selected','');
       $opt->appendChild($doc->createTextNode($netdev));
     }
-    $divex->appendChild($doc->createElement('br'));
-    $el = xml_add_input_generic( 'locmcrecbuffer','Receiver buffer length in ms:',$divex,$doc,$devprop);
-    $el->setAttribute('value',intval($devprop['locmcrecbuffer']));
-    $el->setAttribute('type','number');
-    $el->setAttribute('min','0');
-    $el->setAttribute('step','1');
     // tscinclude:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));

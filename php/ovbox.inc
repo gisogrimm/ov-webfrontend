@@ -63,7 +63,7 @@ function defaults( $type )
     'position'=>array('x'=>0,'y'=>0,'z'=>0),
     'orientation'=>array('z'=>0,'y'=>0,'x'=>0),
     'srcshiftxyz'=>'0 0 0',
-    'rawmode'=>false,
+    'virtualacoustics'=>true,
     'receive'=>true,
     'reverb'=>true,
     'renderism'=>false,
@@ -229,6 +229,8 @@ function postproc_prop( &$prop, $type )
   if( array_key_exists('onlineaccess',$prop) )
     $prop['onlineage'] = time()-$prop['onlineaccess'];
   if( $type == 'device' ){
+    $prop['rawmode'] = !boolval($prop['virtualacoustics']);
+
     foreach(array_keys($prop) as $key){
       if( is_numeric($key) )
         unset($prop[$key]);

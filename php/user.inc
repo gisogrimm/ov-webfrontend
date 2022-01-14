@@ -154,12 +154,12 @@ function add_input_element( &$parent, &$doc, &$devprop, $prop, $type, $label, $e
   return $el;
 }
 
-function add_expert_div( &$el, &$doc, $devprop = array() )
+function add_expert_div( &$el, &$doc, $devprop = array(), $prop = 'showexpertsettings' )
 {
   $div = $el->appendChild( $doc->createElement('div') );
-  $div->setAttribute('class','expert');
-  if( isset($devprop['showexpertsettings']) ){
-    if( $devprop['showexpertsettings'] )
+  $div->setAttribute('class',$prop);
+  if( isset($devprop[$prop]) ){
+    if( $devprop[$prop] )
       $div->setAttribute('style','display: block;');
     else
       $div->setAttribute('style','display: none;');
@@ -169,7 +169,7 @@ function add_expert_div( &$el, &$doc, $devprop = array() )
   return $div;
 }
 
-function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false )
+function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false, $toggleclass = false )
 {
   if( $styled ){
     $lab = $div->appendChild($doc->createElement('label'));
@@ -186,7 +186,10 @@ function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false )
   $el->setAttribute('type','checkbox');
   if( $devprop[$id] )
     $el->setAttribute('checked','');
-  $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);');
+  if( $toggleclass )
+    $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);set_displayclass("'.$id.'",event.target.checked);');
+  else
+    $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);');
   if( !$styled ){
     $ellab = $div->appendChild($doc->createElement('label'));
     $ellab->setAttribute('for',$id);
