@@ -230,6 +230,7 @@ function get_room_session( $device, $devhash )
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,
                     'room'=>$room,
+                    'owner'=>$devprop['owner'],
                     'roomdev'=>$roomdev,
                     'firmwareupdate'=>$devprop['firmwareupdate'],
                     'usedevversion'=>$devprop['usedevversion']);
