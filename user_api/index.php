@@ -203,10 +203,12 @@ if( isset($_GET['clearroom']) ){
 
 if( isset($_GET['claim']) ){
     $devs = list_unclaimed_devices();
-    if( in_array( $_GET['claim'], $devs ) )
+    if( in_array( $_GET['claim'], $devs ) ){
         modify_device_prop( $_GET['claim'], 'owner', $user );
-    select_userdev($user, $_GET['claim']);
-    header( "Location: /" );
+        header( "Location: /?devselect=" . $_GET['claim'] );
+    }else{
+        header( "Location: /" );
+    }
     die();
 }
 
