@@ -38,8 +38,10 @@ if( isset($_POST['transferownership']) ){
 
 if( isset($_GET['claim']) ){
   $devs = list_unclaimed_devices();
-  if( in_array( $_GET['claim'], $devs ) )
+  if( in_array( $_GET['claim'], $devs ) ){
     modify_device_prop( $_GET['claim'], 'owner', $user );
+    select_userdev($user, $_GET['claim']);
+  }
   header( "Location: /device.php" );
   die();
 }
