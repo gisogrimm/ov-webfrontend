@@ -610,6 +610,7 @@ function claim_device_id( $user, $dev,  &$msg )
     modify_device_prop( $device, 'owner', $user);
     modify_device_prop( $device, 'access', $dprop['access']);
     modify_device_prop( $device, 'onlineaccess', $dprop['onlineaccess']);
+    select_userdev($user, $device);
     return true;
   }else{
     $msg = 'No device with MAC address or device ID '.$dev.' found in the data base. Probably the installation of the device failed, it has no network connection or is blocked by a firewall.';
