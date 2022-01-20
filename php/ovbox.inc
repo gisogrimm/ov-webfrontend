@@ -128,6 +128,7 @@ function defaults( $type )
     'locmcrecbuffer'=>10,
     'locmcrecchannels'=>[1,2],
     'networkdevices'=>array(),
+    'zitasampleformat'=>'16bit',
   );
   $defaults['room'] = array(
     'access'=>0,

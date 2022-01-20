@@ -535,6 +535,25 @@ if( !empty($device) ){
     }
     // extra destinations:
     $divex = add_expert_div($div, $doc, $devprop );
+    //
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->setAttribute('for','zitasampleformat');
+    $el->appendChild($doc->createTextNode('Network sample format: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("zitasampleformat",event.target.value);');
+    $el->setAttribute('id','zitasampleformat');
+    $recdesc = array('16bit'=>'(default, lowest bandwidth)',
+                     '24bit'=>'',
+                     'float'=>'');
+    foreach( $recdesc as $smpfmt=>$desc ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$smpfmt);
+      if( $devprop['zitasampleformat'] == $smpfmt )
+        $opt->setAttribute('selected','');
+      $opt->appendChild($doc->createTextNode($smpfmt.' '.$desc));
+    }
+    $divex->appendChild($doc->createElement('br'));
+    //
     xml_add_checkbox( 'sendlocal', 'send to local IP address if in same network', $divex, $doc, $devprop );
     $el = xml_add_input_generic( 'secrec','additional local receiver delay for secondary receiver (0 for no secondary receiver):',$divex,$doc,$devprop);
     $el->setAttribute('type','number');

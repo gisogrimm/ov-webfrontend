@@ -226,7 +226,8 @@ function get_room_session( $device, $devhash )
                                                      'device'=>$devprop['locmcrecdevice'],
                                                      'buffer'=>intval($devprop['locmcrecbuffer']),
                                                      'channels'=>$devprop['locmcrecchannels']),
-                                      'render'=>array('soundscape'=>boolval($devprop['rendersoundscape'])));
+                                      'render'=>array('soundscape'=>boolval($devprop['rendersoundscape']),
+                                                      'zitasampleformat'=>$devprop['zitasampleformat']));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,
                     'room'=>$room,
