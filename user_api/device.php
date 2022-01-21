@@ -178,7 +178,7 @@ if( !empty($device) ){
     $el = $div->appendChild($doc->createElement('select'));
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el->setAttribute('onchange','update_jack_rate( this.value );');
-    $opts = array('16000','22050','24000','32000','44100','48000');
+    $opts = array('16000','22050','24000','32000','44100','48000','96000','192000');
     foreach($opts as $o){
       $opt = $el->appendChild($doc->createElement('option'));
       $opt->setAttribute('value',$o);
