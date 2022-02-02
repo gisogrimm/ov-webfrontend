@@ -338,7 +338,7 @@ function list_unclaimed_devices()
 {
   $devs = array();
   foreach( list_devices() as $dev=>$devprop){
-    if( ($devprop['age'] < 20) && empty($devprop['owner']) && ($devprop['onlineage'] < 600) ){
+    if( ($devprop['age'] < 20) && empty($devprop['owner']) && ($devprop['onlineage'] < 600) && ($dev != '000000000000') ){
       $devs[] = $dev;
     }
   }
