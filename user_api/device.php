@@ -434,30 +434,11 @@ if( !empty($device) ){
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
-    xml_add_checkbox( 'uselocmcrec', 'Extra multicast zita-n2j receiver', $el, $doc, $devprop, false, true );
+    xml_add_checkbox( 'showmczita', 'Show multicast sender/receiver options', $el, $doc, $devprop, false, true );
     //$el->appendChild($doc->createTextNode(' '));
-    $divex = add_expert_div($divex,$doc,$devprop,'uselocmcrec');
-    $el = $divex->appendChild($doc->createElement('label'));
-    $el->appendChild($doc->createTextNode('Channels: '));
-    $divex->appendChild($doc->createElement('br'));
-    $el = $divex->appendChild($doc->createElement('input'));
-    $chan = '';
-    foreach($devprop['locmcrecchannels'] as $ch){
-      if( !empty($chan) )
-        $chan = $chan.', ';
-      $chan = $chan.strval($ch);
-    }
-    $el->setAttribute('value',$chan);
-    $el->setAttribute('pattern','[0-9 ,]*');
-    $el->setAttribute('onchange','rest_set_devprop("locmcrecchannels",JSON.parse("["+event.target.value+"]"));');
-    $divex->appendChild($doc->createElement('br'));
-    $el = xml_add_input_generic( 'locmcrecbuffer','Receiver buffer length in ms:',$divex,$doc,$devprop);
-    $el->setAttribute('value',intval($devprop['locmcrecbuffer']));
-    $el->setAttribute('type','number');
-    $el->setAttribute('min','0');
-    $el->setAttribute('step','1');
-    $el = xml_add_input_generic( 'locmcrecaddr','Multicast address of zita-n2j client:',$divex,$doc,$devprop);
-    $el = xml_add_input_generic( 'locmcrecport','Port number of zita-n2j client:',$divex,$doc,$devprop);
+    $divex = add_expert_div($divex,$doc,$devprop,'showmczita');
+    $el = xml_add_input_generic( 'locmcrecaddr','Multicast address:',$divex,$doc,$devprop);
+    $el = xml_add_input_generic( 'locmcrecport','Port number:',$divex,$doc,$devprop);
     $el->setAttribute('type','number');
     $el->setAttribute('min','1024');
     $el->setAttribute('max','65535');
@@ -477,6 +458,35 @@ if( !empty($device) ){
         $opt->setAttribute('selected','');
       $opt->appendChild($doc->createTextNode($netdev));
     }
+    $divex->appendChild($doc->createElement('br'));
+    $divex->appendChild($doc->createElement('hr'));
+    xml_add_checkbox( 'uselocmcrec', 'Start zita-n2j (receiver)', $divex, $doc, $devprop, false, true );
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('Channels: '));
+    $divex->appendChild($doc->createElement('br'));
+    $el = $divex->appendChild($doc->createElement('input'));
+    $chan = '';
+    foreach($devprop['locmcrecchannels'] as $ch){
+      if( !empty($chan) )
+        $chan = $chan.', ';
+      $chan = $chan.strval($ch);
+    }
+    $el->setAttribute('value',$chan);
+    $el->setAttribute('pattern','[0-9 ,]*');
+    $el->setAttribute('onchange','rest_set_devprop("locmcrecchannels",JSON.parse("["+event.target.value+"]"));');
+    $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'locmcrecbuffer','Receiver buffer length in ms:',$divex,$doc,$devprop);
+    $el->setAttribute('value',intval($devprop['locmcrecbuffer']));
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('step','1');
+    $divex->appendChild($doc->createElement('hr'));
+    xml_add_checkbox( 'uselocmcsend', 'Start zita-j2n (sender)', $divex, $doc, $devprop, false, true );
+    $el = xml_add_input_generic( 'locmcsendchannels','Number of sender channels:',$divex,$doc,$devprop);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','1');
+    $el->setAttribute('max','64');
+    $el->setAttribute('step','1');
     // tscinclude:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
