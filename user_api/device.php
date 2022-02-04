@@ -584,14 +584,15 @@ if( !empty($device) ){
       xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $div, $doc, $devprop );
       xml_add_checkbox( 'useproxy', 'use an audio proxy if possible', $div, $doc, $devprop );
     }
-    $divex = add_expert_div($div, $doc, $devprop );
+    //$divex = add_expert_div($div, $doc, $devprop );
     // frontend:
     // load frontends from database:
     $frontends = json_decode( file_get_contents( '../db/frontends.db' ), true );
     // end load.
-    $el = $divex->appendChild($doc->createElement('label'));
+    $el = $div->appendChild($doc->createElement('hr'));
+    $el = $div->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('Switch configuration website: '));
-    $el = $divex->appendChild($doc->createElement('select'));
+    $el = $div->appendChild($doc->createElement('select'));
     $el->setAttribute('name','jsfrontendconfig');
     $el->setAttribute('onchange','switch_to_frontend(event.target.value);');
     $opt = $el->appendChild($doc->createElement('option'));
@@ -603,10 +604,10 @@ if( !empty($device) ){
       $opt->setAttribute('value',$val);
       $opt->appendChild($doc->createTextNode($frontend['label']));
     }
-    $divex->appendChild($doc->createElement('br'));
-    $divex->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
-    $divex->appendChild($doc->createTextNode('Before changing the frontend, make sure you have access to the new website. By selecting a frontend, you can lock your device. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
-    $divex->appendChild($doc->createElement('br'));
+    $div->appendChild($doc->createElement('br'));
+    $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
+    $div->appendChild($doc->createTextNode('Before changing the front end, make sure you have registered an account on the new website. Without an account, you can lock your device by selecting a front end. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
+    $div->appendChild($doc->createElement('br'));
   }
   {
     // Firmware
