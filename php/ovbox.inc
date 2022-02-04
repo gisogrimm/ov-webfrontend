@@ -360,6 +360,18 @@ function owned_devices( $user, $alldev = null )
   return $devs;
 }
 
+function select_first_active_dev( $user )
+{
+  if( !isset($alldev) )
+    $alldev = list_devices();
+  foreach( $alldev as $dev=>$devprop ){
+    if( ($devprop['owner'] == $user) && ($devprop['age']<20) ){
+      select_userdev( $user, $dev );
+      return;
+    }
+  }
+}
+
 function modify_user_prop( $user, $key, $value )
 {
   $dprop = get_properties( $user, 'user' );

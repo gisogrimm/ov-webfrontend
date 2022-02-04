@@ -156,6 +156,8 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
     session_regenerate_id();
     // auth okay, setup session
     $_SESSION['user'] = $_POST['username'];
+    // select first active device (if any):
+    select_first_active_dev( $_POST['username'] );
     header( "Location: ?grp=".grouphash($urlgroup) );
     die();
 }
