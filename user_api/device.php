@@ -31,7 +31,29 @@ if( isset($_POST['transferownership']) ){
     $fname = '../'.$user.'.userdevice';
     if( file_exists( $fname ) )
       unlink($fname);
-    header( "Refresh:0" );
+    header( "Location: /device.php" );
+  }
+  die();
+}
+
+if( isset($_POST['copysettings']) ){
+  $device = $_POST['copysettings'];
+  $srcdev = $_POST['srcdev'];
+  if( !file_exists( '../db/'.$srcdev.'.device' ) ){
+    print_head( $user, $style, $urlgroup );
+    echo '<div class="deverror">The device "'.$srcdev.'" is not registered in the database. No settings were changed.</div>';
+    $alink = 'https://' . $_SERVER['HTTP_HOST'];
+    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )== 0)
+      $alink = 'http://' . $_SERVER['HTTP_HOST'];
+    echo '<p><a href="'.$alink.'/device.php">Continue</a></p>' . "\n";
+    print_foot($style);
+  }else{
+    $srcprop = get_properties( $srcdev, 'device' );
+    foreach( ['owner','room','label'] as $key ){
+      $srcprop[$key] = $devprop[$key];
+    }
+    set_properties( $device, 'device', $srcprop );
+    header( "Location: /device.php" );
   }
   die();
 }
@@ -135,6 +157,22 @@ if( !empty($device) ){
     $a->setAttribute('href','rest.php?getrawjson=');
     $a->setAttribute('target','blank');
     $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
+    $divex->appendChild($doc->createTextNode(' (device '.$device.')'));
+    //
+    $form = $divex->appendChild($doc->createElement('form'));
+    $form->setAttribute('method','POST');
+    $el = $form->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('Copy settings from device:'));
+    $el = $form->appendChild($doc->createElement('input'));
+    $el->setAttribute('type','text');
+    $el->setAttribute('name','srcdev');
+    $el = $form->appendChild($doc->createElement('input'));
+    $el->setAttribute('name','copysettings');
+    $el->setAttribute('value',$device);
+    $el->setAttribute('type','hidden');
+    $el = $form->appendChild($doc->createElement('button'));
+    $el->setAttribute('class','uibutton');
+    $el->appendChild($doc->createTextNode('copy settings'));;
 
   }
   {
