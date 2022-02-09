@@ -1,5 +1,6 @@
 <?php
 
+include '../php/ovbox.inc';
 {
   $sitecfg = get_properties('site','config');
   if( $sitecfg['forcehttps'] ){
@@ -13,7 +14,6 @@
   }
 }
 
-include '../php/ovbox.inc';
 include '../php/rest.inc';
 include '../php/user.inc';
 include '../php/session.inc';
