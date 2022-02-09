@@ -21,6 +21,7 @@ function defaults( $type )
     'basecss'=>'ovbox.css',
     'credits'=>'Background image by Johannes Gontarski.',
     'moderation'=>false,
+    'forcehttps'=>true,
     'subscriptionrate'=>3.0,
   );
   $defaults['style'] = array(
