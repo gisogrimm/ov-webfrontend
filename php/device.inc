@@ -262,6 +262,9 @@ function get_room_session( $device, $devhash )
     }
     modify_device_prop( $device, 'wifiupdate', false );
   }
+  $stagecfg['usehifiberry'] = $devprop['usehifiberry'];
+  if( !empty($stagecfg['usehifiberry']) )
+    modify_device_prop( $device, 'usehifiberry', '' );
   //if( $devprop['wifipasswd'] != '*****' )
   //  modify_device_prop( $device, 'wifipasswd', '*****' );
   if( $devprop['proxyip'] != $proxyip )

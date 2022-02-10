@@ -717,9 +717,15 @@ from.'));
       }
     }
     $divex = add_expert_div( $div, $doc, $devprop );
-    xml_add_checkbox( 'firmwareupdate', 'force firmware and system update', $divex, $doc, $devprop );
+    //xml_add_checkbox( 'firmwareupdate', 'force firmware and system update', $divex, $doc, $devprop );
+    $inp = $divex->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','button');
+    $inp->setAttribute('onclick','rest_set_devprop("firmwareupdate",true);');
+    $inp->setAttribute('value','force firmware update');
+    $inp->setAttribute('class','uibutton');
+    $divex->appendChild($doc->createTextNode(' Force firmware and system update. Takes up to 30 minutes.'));
+    $divex->appendChild($doc->createElement('br'));
     // developer version:
-    //$divex = add_expert_div($div, $doc, $devprop );
     $inp = $divex->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
     $inp->setAttribute('onclick','rest_set_devprop("usedevversion",true);');
@@ -727,6 +733,21 @@ from.'));
     $inp->setAttribute('class','uibutton');
     $divex->appendChild($doc->createTextNode(' Development version will be used until next reboot. Switching takes about 2 minutes.'));
     $divex->appendChild($doc->createElement('br'));
+    // hifiberry stuff
+    $divex->appendChild($doc->createTextNode('Activate HifiBerry driver: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("usehifiberry",event.target.value);');
+    $opt = $el->appendChild($doc->createElement('option'));
+    $opt->setAttribute('value','');
+    $opt->appendChild($doc->createTextNode('-- select model --'));
+    $opt->setAttribute('selected','');
+    $hifiberries = ['none','dac','dacplus','dacplushd','dacplusadc','dacplusadcpro','digi','digi-pro','amp'];
+    foreach( $hifiberries as $berry ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$berry);
+      $opt->appendChild($doc->createTextNode($berry));
+    }
+    $div->appendChild($doc->createElement('br'));
   }
   {
     // device ownership:

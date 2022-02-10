@@ -117,6 +117,7 @@ function defaults( $type )
     'wifissid'=>'',
     'wifipasswd'=>'',
     'wifiupdate'=>false,
+    'usehifiberry'=>'',
     'receivedownmix'=>false,
     'senddownmix'=>false,
     'tscinclude'=>'',
