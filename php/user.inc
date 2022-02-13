@@ -97,17 +97,15 @@ function html_device_selector( $user, $currentdevice, $dprop )
     $actclass = ' actmember';
   $select->setAttribute('class',$actclass);
   $devlist = owned_devices( $user );
-  uasort( $devlist, function ( $a, $b ) use ('label','id' )
+  uasort( $devlist, function ( $a, $b )
   {
-    if( $a[$sortkey] > $b[$sortkey] )
+    if( $a['label'] > $b['label'] )
       return 1;
-    if( $a[$sortkey] < $b[$sortkey] )
+    if( $a['label'] < $b['label'] )
       return -1;
-    if( empty( $sortkey2 ) )
-      return 0;
-    if( $a[$sortkey2] > $b[$sortkey2] )
+    if( $a['id'] > $b['id'] )
       return 1;
-    if( $a[$sortkey2] < $b[$sortkey2] )
+    if( $a['id'] < $b['id'] )
       return -1;
     return 0;
   } );
