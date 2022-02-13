@@ -97,7 +97,7 @@ function html_device_selector( $user, $currentdevice, $dprop )
     $actclass = ' actmember';
   $select->setAttribute('class',$actclass);
   $devlist = owned_devices( $user );
-  uasort( $devlist, function ( $a, $b )
+  uasort( &$devlist, function ( $a, $b )
   {
     if( $a['label'] > $b['label'] )
       return 1;
