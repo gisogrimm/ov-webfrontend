@@ -126,7 +126,7 @@ function defaults( $type )
     'showmczita'=>false,
     'uselocmcrec'=>false,
     'uselocmcsend'=>false,
-    'locmcrecaddr'=>'224.0.0.10',
+    'locmcrecaddr'=>'239.255.0.10',
     'locmcrecport'=>10007,
     'locmcrecdevice'=>'',
     'locmcrecbuffer'=>10,
@@ -359,6 +359,14 @@ function owned_devices( $user, $alldev = null )
     if( $devprop['owner'] == $user )
       $devs[$dev] = $devprop;
   }
+  uasort( $devs, function ( $a, $b )
+  {
+    if( $a['label'] > $b['label'] )
+      return 1;
+    if( $a['label'] < $b['label'] )
+      return -1;
+    return 0;
+  } );
   return $devs;
 }
 
