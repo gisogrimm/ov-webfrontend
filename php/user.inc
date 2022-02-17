@@ -97,16 +97,7 @@ function html_device_selector( $user, $currentdevice, $dprop )
     $actclass = ' actmember';
   $select->setAttribute('class',$actclass);
   $devlist = owned_devices( $user );
-  uasort( $devlist, function ( $a, $b )
-  {
-    if( $a['label'] > $b['label'] )
-      return 1;
-    if( $a['label'] < $b['label'] )
-      return -1;
-    return 0;
-  } );
   foreach( $devlist as $dev=>$sdprop ){
-    error_log($dev);
     $opt = $select->appendChild($doc->createElement('option'));
     $opt->setAttribute('value',$dev);
     if( $currentdevice == $dev )

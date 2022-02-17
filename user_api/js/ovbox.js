@@ -72,7 +72,7 @@ function rest_setval_reload( name, value )
 {
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload();
+	location.reload(true);
     }
     request.open('GET', 'rest.php?'+name+'='+value, true);
     request.send();
@@ -90,7 +90,7 @@ function rest_setval_post_reload( name, value )
 {
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload();
+	location.reload(true);
     }
     request.open('POST', '/rest.php', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -118,7 +118,7 @@ function rest_admusrprop( usr, name, value, reload = false )
     request.open('POST', '/rest.php', true);
     if( reload ){
         request.onload = function() {
-	    location.reload();
+	    location.reload(true);
         }
     }
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -136,7 +136,7 @@ function rest_admroomprop( room, name, value, reload = false )
     request.open('POST', '/rest.php', true);
     if( reload ){
         request.onload = function() {
-	    location.reload();
+	    location.reload(true);
         }
     }
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -153,7 +153,7 @@ function rest_addpayment( usr, value )
     let request = new XMLHttpRequest();
     request.open('POST', '/rest.php', true);
     request.onload = function() {
-	location.reload();
+	location.reload(true);
     }
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.send('addpayment='+value+'&admusr='+usr);
@@ -1203,7 +1203,7 @@ function everytenseconds()
 	    var unclaimed_devices = data.unclaimed_devices;
 	    if( phpdeviceid ){
 		if( phpdeviceid.value != device.id)
-		    location.reload();
+		    location.reload(true);
 	    }
 	    if( devstat )
 		// update device display:
@@ -1276,7 +1276,7 @@ function update_jack_rate( rate ){
 function create_preset(){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload();
+	location.reload(true);
     }
     request.open('GET', 'rest.php?devpresetsave=' + document.getElementById('savepresetname').value);
     request.send();
@@ -1286,7 +1286,7 @@ function save_preset( preset ){
     if( confirm('Really save to "'+preset+'"?') ){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	      location.reload();
+	      location.reload(true);
     }
     request.open('GET', 'rest.php?devpresetsave=' + preset);
         request.send();
@@ -1296,7 +1296,7 @@ function save_preset( preset ){
 function load_preset( preset ){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	      location.reload();
+	      location.reload(true);
     }
     request.open('GET', 'rest.php?devpresetload=' + preset);
     request.send();
@@ -1306,7 +1306,7 @@ function rm_preset( preset ){
     if( confirm('Really delete preset "'+preset+'"?') ){
 	let request = new XMLHttpRequest();
 	request.onload = function() {
-	    location.reload();
+	    location.reload(true);
 	}
 	request.open('GET', 'rest.php?devpresetrm=' + preset);
 	request.send();
@@ -1316,7 +1316,7 @@ function rm_preset( preset ){
 function select_device( device ){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload();
+	location.reload(true);
     }
     request.open('GET', 'rest.php?devselect=' + device);
     request.send();
@@ -1374,7 +1374,7 @@ function rest_admusergroup( user, group, value )
     let request = new XMLHttpRequest();
     request.open('POST', '/rest.php', true);
     request.onload = function() {
-	location.reload();
+	location.reload(true);
     }
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.send('admaddusertogroup='+user+'&admaddusertogroupgroup='+group+'&admaddusertogroupval='+value);
