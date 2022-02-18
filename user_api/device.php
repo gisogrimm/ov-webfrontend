@@ -466,6 +466,9 @@ if( !empty($device) ){
     $el->setAttribute('min','0');
     $el->setAttribute('max','65535');
     $el->setAttribute('step','1');
+    xml_add_input_generic( 'headtrackingtilturl','URL for tilt data:',$divex,$doc,$devprop);
+    xml_add_input_generic( 'headtrackingtiltpath','path for tilt data:',$divex,$doc,$devprop);
+    xml_add_input_generic( 'headtrackingtiltmap','Value map for tilt data:',$divex,$doc,$devprop);
     // downmix:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));

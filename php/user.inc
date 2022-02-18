@@ -132,6 +132,11 @@ function create_inputportcfg( &$doc, &$form, $devprop )
   $el->setAttribute('type','hidden');
   $el->setAttribute('id','hwinputchannels');
   $el->setAttribute('value',json_encode($devprop['hwinputchannels']));
+  // pass expert mode:
+  $el = $form->appendChild($doc->createElement('input'));
+  $el->setAttribute('type','hidden');
+  $el->setAttribute('id','devisexpert');
+  $el->setAttribute('value',boolval($devprop['showexpertsettings']));
   $div = $form->appendChild($doc->createElement('div'));
   $div->setAttribute('id','jsinputchannelsdiv');
   // load java scripts:
