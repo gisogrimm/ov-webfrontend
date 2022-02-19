@@ -271,10 +271,13 @@ if( !empty($device) ){
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('extra ports (json expression, e.g., {"Giso:out_1":"ardour:Giso/in"}): '));
     $divex->appendChild($doc->createElement('br'));
-    $el = $divex->appendChild($doc->createElement('input'));
-    $el->setAttribute('size','45');
-    $el->setAttribute('type','text');
-    $el->setAttribute('value',$devprop['xport']);
+    //$el = $divex->appendChild($doc->createElement('input'));
+    $el = $divex->appendChild($doc->createElement('textarea'));
+    //$el->setAttribute('size','45');
+    $el->setAttribute('style','width: 98%;');
+    $el->setAttribute('rows','5');
+    //$el->setAttribute('value',$devprop['xport']);
+    $el->appendChild($doc->createTextNode(json_encode(json_decode($devprop['xport']),JSON_PRETTY_PRINT| JSON_UNESCAPED_SLASHES)));
     $el->setAttribute('onchange','rest_set_devprop("xport",event.target.value);');
     $divex->appendChild($doc->createElement('br'));
   }

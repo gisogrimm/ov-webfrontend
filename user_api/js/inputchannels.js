@@ -32,6 +32,17 @@ const tube_red = {
     }
 }
 
+const spksim1 = {
+    'spksim' : {
+        'bypass':false,
+        'fres':1200,
+        'gain':0,
+        'q':0.8,
+        'scale':0.5,
+        'wet':1
+    }
+}
+
 function inputchannels_add() {
     inchannels.push({sourceport:'system:capture_1',position:{x:0,y:0,z:0},gain:1});
     jsinputchannels.value = JSON.stringify(inchannels);
@@ -284,6 +295,11 @@ function inputchannels_createUI( ) {
                 el.setAttribute('value','tube2');
                 el.setAttribute('style','background-color: #c81c1d;');
 	        el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(tube_red));inputchannels_createUI();}');
+                var el = cdiv.appendChild(document.createElement('input'));
+                el.setAttribute('type','button');
+                el.setAttribute('value','speaker');
+                //el.setAttribute('style','background-color: #c81c1d;');
+	        el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(spksim1));inputchannels_createUI();}');
                 var ediv = cdiv.appendChild(document.createElement('div'));
                 ediv.setAttribute('class','showexpertsettings');
 	        var el = ediv.appendChild(document.createElement('textarea'));
@@ -292,7 +308,7 @@ function inputchannels_createUI( ) {
 	        el.appendChild(document.createTextNode(JSON.stringify(inchannels[k]['plugins'],null,2)));
 	        //el.setAttribute('title','plugin configuration');
 	        el.setAttribute('onchange','{inputchannels_onedit_plugins('+k.toString(10)+',this.value);inputchannels_createUI();}');
-                el.setAttribute('style','width: 90%;');
+                el.setAttribute('style','width: 98%;');
             }
         }
     }
