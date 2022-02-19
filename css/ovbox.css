@@ -558,6 +558,14 @@ a.adminarea:hover {
     border:2px solid #666;
     border-radius:4px;
 }
+.channelcfg {
+    background-color: #99999950;
+    margin: 2px;
+    border: 1px solid #777;
+    display: block;
+    padding: 5px;
+    border-radius: 4px;
+}
 @media (min-width: 1200px) {
     .ovcontent {
 	width: 1200px;

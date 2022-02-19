@@ -1,5 +1,36 @@
 let inchannels = JSON.parse(jsinputchannels.value);
 let hwinputs = JSON.parse(hwinputchannels.value);
+let jsdevcfg = JSON.parse(devcfg.value);
+
+const tube_green = {
+    'filter' : {
+        'highpass':true,
+        'fc':80
+    },
+    'tubesim' : {
+        'bypass':false,
+        'pregain':9.1,
+        'postgain':-13.2,
+        'saturation':0.01,
+        'offset':0,
+        'wet':1
+    }
+}
+
+const tube_red = {
+    'filter' : {
+        'highpass':true,
+        'fc':140
+    },
+    'tubesim' : {
+        'bypass':false,
+        'pregain':40,
+        'postgain':-17,
+        'saturation':0.01,
+        'offset':0.083,
+        'wet':1
+    }
+}
 
 function inputchannels_add() {
     inchannels.push({sourceport:'system:capture_1',position:{x:0,y:0,z:0},gain:1});
@@ -173,13 +204,13 @@ function inputchannels_createUI( ) {
     adiv.appendChild(el);
     adiv.appendChild(document.createElement('br'));
     if( inchannels ){
-	var k;
-	for( k = 0; k < inchannels.length; k++ ){
-	    var el = document.createElement('input');
+	for( var k = 0; k < inchannels.length; k++ ){
+            var cdiv = adiv.appendChild(document.createElement('dev'));
+            cdiv.setAttribute('class','channelcfg');
+            var el = cdiv.appendChild(document.createElement('input'));
 	    el.setAttribute('value',inchannels[k]['sourceport']);
 	    el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
 	    el.setAttribute('title','source port name');
-	    adiv.appendChild(el);
 	    var el = document.createElement('select');
 	    el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
 	    var eopt = el.appendChild(document.createElement('option'));
@@ -196,25 +227,25 @@ function inputchannels_createUI( ) {
 	    }
 	    if( Array.isArray(hwinputs)) 
 		hwinputs.forEach(add_opt);
-	    adiv.appendChild(el);
+	    cdiv.appendChild(el);
 	    var el = document.createElement('input');
 	    el.setAttribute('value',inchannels[k]['position']['x']);
 	    el.setAttribute('onchange','{inputchannels_onedit_x('+k.toString(10)+',this.value);}');
 	    el.setAttribute('size','1');
 	    el.setAttribute('title','x position (positive values are in front of you)');
-	    adiv.appendChild(el);
+	    cdiv.appendChild(el);
 	    var el = document.createElement('input');
 	    el.setAttribute('value',inchannels[k]['position']['y']);
 	    el.setAttribute('onchange','{inputchannels_onedit_y('+k.toString(10)+',this.value);}');
 	    el.setAttribute('size','1');
 	    el.setAttribute('title','y position (positive values are to your left)');
-	    adiv.appendChild(el);
+	    cdiv.appendChild(el);
 	    var el = document.createElement('input');
 	    el.setAttribute('value',inchannels[k]['position']['z']);
 	    el.setAttribute('onchange','{inputchannels_onedit_z('+k.toString(10)+',this.value);}');
 	    el.setAttribute('size','1');
 	    el.setAttribute('title','z position (positive values are above your ears)');
-	    adiv.appendChild(el);
+	    cdiv.appendChild(el);
 	    // source directivity:
 	    var el = document.createElement('select');
 	    el.setAttribute('onchange','{inputchannels_onedit_directivity('+k.toString(10)+',this.value);inputchannels_createUI();}');
@@ -227,25 +258,43 @@ function inputchannels_createUI( ) {
 		el.appendChild(opt);
 	    }
 	    ['omni','cardioid'].forEach(add_opt_dir);
-	    adiv.appendChild(el);
+	    cdiv.appendChild(el);
 	    // end source directivity.
 	    var el = document.createElement('input');
 	    el.setAttribute('value','remove channel');
 	    el.setAttribute('type','button');
 	    el.setAttribute('onclick','{inputchannels_remove('+k.toString(10)+');inputchannels_createUI()}');
-	    adiv.appendChild(el);
-	    adiv.appendChild(document.createElement('br'));
-            if( devisexpert.value == true ){
+	    cdiv.appendChild(el);
+	    cdiv.appendChild(document.createElement('br'));
+            if( jsdevcfg.canplugins ){
                 if( inchannels[k]['plugins'] == null )
                     inchannels[k]['plugins'] = {};
-	        adiv.appendChild(document.createTextNode(' Plugins: '));
-	        var el = adiv.appendChild(document.createElement('input'));
-	        el.setAttribute('value',JSON.stringify(inchannels[k]['plugins']));
-	        el.setAttribute('title','plugin configuration');
+	        cdiv.appendChild(document.createTextNode(' Plugin presets: '));
+                var el = cdiv.appendChild(document.createElement('input'));
+                el.setAttribute('type','button');
+                el.setAttribute('value','direct');
+	        el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',"{}");inputchannels_createUI();}');
+                var el = cdiv.appendChild(document.createElement('input'));
+                el.setAttribute('type','button');
+                el.setAttribute('value','tube1');
+                el.setAttribute('style','background-color: #239617;');
+	        el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(tube_green));inputchannels_createUI();}');
+                var el = cdiv.appendChild(document.createElement('input'));
+                el.setAttribute('type','button');
+                el.setAttribute('value','tube2');
+                el.setAttribute('style','background-color: #c81c1d;');
+	        el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(tube_red));inputchannels_createUI();}');
+                var ediv = cdiv.appendChild(document.createElement('div'));
+                ediv.setAttribute('class','showexpertsettings');
+	        var el = ediv.appendChild(document.createElement('textarea'));
+                //el.setAttribute('type','edit');
+                el.setAttribute('rows','6');
+	        el.appendChild(document.createTextNode(JSON.stringify(inchannels[k]['plugins'],null,2)));
+	        //el.setAttribute('title','plugin configuration');
 	        el.setAttribute('onchange','{inputchannels_onedit_plugins('+k.toString(10)+',this.value);inputchannels_createUI();}');
-	        adiv.appendChild(document.createElement('br'));
+                el.setAttribute('style','width: 90%;');
             }
-	}
+        }
     }
 }
 

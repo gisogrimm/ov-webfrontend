@@ -135,8 +135,9 @@ function create_inputportcfg( &$doc, &$form, $devprop )
   // pass expert mode:
   $el = $form->appendChild($doc->createElement('input'));
   $el->setAttribute('type','hidden');
-  $el->setAttribute('id','devisexpert');
-  $el->setAttribute('value',boolval($devprop['showexpertsettings']));
+  $el->setAttribute('id','devcfg');
+  $devprop['canplugins'] = (version_compare("ovclient-0.16.13",$devprop['version'])<0);
+  $el->setAttribute('value',json_encode($devprop));
   $div = $form->appendChild($doc->createElement('div'));
   $div->setAttribute('id','jsinputchannelsdiv');
   // load java scripts:
