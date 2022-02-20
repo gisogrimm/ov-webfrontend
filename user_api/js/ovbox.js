@@ -519,7 +519,10 @@ function update_room( user, device, room, droom )
 	    kick.setAttribute('value','X');
 	    kick.setAttribute('class','kick');
 	    kick.setAttribute('type','button');
-	    kick.setAttribute('title','Kick this device out of my room.');
+            if(room.owner == device.owner)
+	        kick.setAttribute('title','Kick this device out of my room.');
+            else
+	        kick.setAttribute('title','Leave this room.');
 	    kick.setAttribute('onclick','location.href=\'?kick='+encodeURI(dev.id)+'\';');
 	}
     }
