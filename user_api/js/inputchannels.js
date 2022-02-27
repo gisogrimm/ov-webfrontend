@@ -4,7 +4,7 @@ let jsdevcfg = JSON.parse(devcfg.value);
 
 const tube_green = {
     'filter' : {
-        'highpass':true,
+        'mode':'highpass',
         'fc':80
     },
     'tubesim' : {
@@ -19,7 +19,7 @@ const tube_green = {
 
 const tube_red = {
     'filter' : {
-        'highpass':true,
+        'mode':'highpass',
         'fc':140
     },
     'tubesim' : {
