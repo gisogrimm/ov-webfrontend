@@ -116,7 +116,8 @@ function get_room_session( $device, $devhash )
   $rendersettings['peer2peer'] = boolval($devprop['peer2peer']);
   $rendersettings['renderreverb'] = boolval($devprop['reverb']);
   $rendersettings['renderism'] = boolval($devprop['renderism']);
-  $rendersettings['mastergain'] = pow(10.0,0.05*$devprop['mastergain']);
+  $rendersettings['outputgain'] = pow(10.0,0.05*$devprop['mastergain']);
+  $rendersettings['mastergain'] = $rendersettings['outputgain'];
   $rendersettings['rectype'] = $devprop['rectype'];
   $rendersettings['decorr'] = floatval($devprop['decorr']);
   $rendersettings['secrec'] = floatval($devprop['secrec']);
@@ -160,6 +161,8 @@ function get_room_session( $device, $devhash )
       $room['ambientlevel'] = floatval($roomprop['ambientlevel']);
       $room['reverb']= array('absorption'=>floatval($roomprop['rvbabs']),
                              'damping'=>floatval($roomprop['rvbdamp']),
+                             'gaindev'=>pow(10.0,0.05*($devprop['rvbgain'])),
+                             'gainroom'=>pow(10.0,0.05*($roomprop['rvbgain'])),
                              'gain'=>pow(10.0,0.05*($roomprop['rvbgain']+$devprop['rvbgain'])));
       // get all devices in room:
       $rdevs = get_devices_in_room( $devprop['room'] );
