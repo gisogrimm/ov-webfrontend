@@ -165,22 +165,42 @@ if ($user == 'device') {
                     $dprop['version'] = $jsmsg['version'];
                 if( isset($jsmsg['networkdevices']) )
                     $dprop['networkdevices'] = $jsmsg['networkdevices'];
-                if( isset($jsmsg['effectplugincfg']) && $jsmsg['effectplugincfg'] ){
-                    error_log('-----');
-                    error_log(json_encode($jsmsg['effectplugincfg']));
-                    foreach($dprop['inputchannels'] as $chn => &$ch){
-                        foreach($ch['plugins'] as $key=>&$plug){
-                            $plug = array_merge($plug,$jsmsg['effectplugincfg'][$chn][$key]);
-                            error_log($key);
-                            error_log(json_encode($plug));
-                        }
-                        error_log(json_encode($ch['plugins']));
-                    }
-                    //error_log(json_encode(array_merge($effectarr,$jsmsg['effectplugincfg'])));
-                }
+                //if( isset($jsmsg['effectplugincfg']) && $jsmsg['effectplugincfg'] ){
+                //    error_log('-----');
+                //    error_log(json_encode($jsmsg['effectplugincfg']));
+                //    foreach($dprop['inputchannels'] as $chn => &$ch){
+                //        foreach($ch['plugins'] as $key=>&$plug){
+                //            $plug = array_merge($plug,$jsmsg['effectplugincfg'][$chn][$key]);
+                //            error_log($key);
+                //            error_log(json_encode($plug));
+                //        }
+                //        error_log(json_encode($ch['plugins']));
+                //    }
+                //    //error_log(json_encode(array_merge($effectarr,$jsmsg['effectplugincfg'])));
+                //}
                 set_properties( $device, 'device', $dprop );
                 if( isset($jsmsg['pingstats']) )
                     set_properties( $device.'_'.$dprop['room'], 'pingstats', $jsmsg['pingstats'] );
+            }
+        }
+    }
+    if( isset($_GET['pluginscfg']) ){
+        $device = $_GET['pluginscfg'];
+        if( !empty($device) ){
+            $putdata = fopen("php://input", "r");
+            $jsmsg = '';
+            while ($data = fread($putdata,1024))
+                $jsmsg = $jsmsg . $data;
+            fclose($putdata);
+            $jsmsg = json_decode($jsmsg,true);
+            if( !is_null($jsmsg) ){
+                $dprop = get_properties($device,'device');
+                foreach($dprop['inputchannels'] as $chn => &$ch){
+                    foreach($ch['plugins'] as $key=>&$plug){
+                        $plug = array_merge($plug,$jsmsg[$chn][$key]);
+                    }
+                }
+                set_properties( $device, 'device', $dprop );
             }
         }
     }
