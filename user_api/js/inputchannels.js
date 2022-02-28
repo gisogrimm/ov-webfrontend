@@ -11,7 +11,7 @@ const tube_green = {
         'bypass':false,
         'pregain':9.1,
         'postgain':-13.2,
-        'saturation':0.01,
+        'saturation':-40.0,
         'offset':0,
         'wet':1
     }
@@ -26,7 +26,7 @@ const tube_red = {
         'bypass':false,
         'pregain':40,
         'postgain':-17,
-        'saturation':0.01,
+        'saturation':-40.0,
         'offset':0.083,
         'wet':1
     }
