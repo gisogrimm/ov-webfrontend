@@ -174,6 +174,7 @@ function defaults( $type )
     'devverwarn'=>0,
     'subscription'=>false,
     'subscriptionend'=>0,
+    'allowninja'=>false,
   );
   $defaults['group'] = array(
     'style'=>'default',

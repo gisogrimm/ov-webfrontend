@@ -206,8 +206,6 @@ function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false, $to
   return $el;
 }
 
-
-
 function xml_add_input_generic( $id, $msg, $div, $doc, $devprop, $bratend = true )
 {
   $el = $div->appendChild($doc->createElement('label'));

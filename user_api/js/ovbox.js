@@ -112,6 +112,21 @@ function rest_set_devprop( name, value )
 	request.send('setdevprop='+name+'&'+name+'='+value);
 }
 
+function rest_set_userprop( name, value )
+{
+    let request = new XMLHttpRequest();
+    request.open('POST', '/rest.php', true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    if( typeof value === "boolean" )
+	request.send('setuserpropbool='+name+'&'+name+'='+value);
+    else if( typeof value === "number" )
+	request.send('setuserpropfloat='+name+'&'+name+'='+value);
+    else if( typeof value === "object" )
+	request.send('setuserpropobj='+name+'&'+name+'='+JSON.stringify(value));
+    else
+	request.send('setuserprop='+name+'&'+name+'='+value);
+}
+
 function rest_admusrprop( usr, name, value, reload = false )
 {
     let request = new XMLHttpRequest();
@@ -557,6 +572,12 @@ function update_room( user, device, room, droom )
 	    a.setAttribute('class','roomctl');
 	    a.setAttribute('href','sessionstat.php');
 	    a.appendChild(document.createTextNode('statistics'));
+            if( user.allowninja ){
+	        a = ctl.appendChild(document.createElement('a'));
+	        a.setAttribute('class','roomctl');
+	        a.setAttribute('href','sessionvid.php');
+	        a.appendChild(document.createTextNode('videos'));
+            }
 	} else {
             if( room.premium && (!user.validsubscription)){
 		ctl.appendChild(document.createTextNode('Premium room, available only for donors. '));

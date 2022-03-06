@@ -204,6 +204,7 @@ if( isset($_POST['updatepassword']) ){
 if( isset($_POST['mypwreset']) ){
     modify_user_prop( $user, 'validpw', false);
 }
+// set device properties:
 if( isset($_POST['setdevprop']) ){
     if( isset($_POST[$_POST['setdevprop']])){
         if($_POST['setdevprop']=='xrecport')
@@ -232,6 +233,24 @@ if( isset($_POST['setdevpropbool']) ){
     if( in_array($_POST['setdevpropbool'],$presetkeys) )
     modify_device_prop($device,'preset','');
 }
+// set user properties:
+if( isset($_POST['setuserprop']) ){
+    if( isset($_POST[$_POST['setuserprop']]))
+        modify_user_prop($user,$_POST['setuserprop'],$_POST[$_POST['setuserprop']]);
+}
+if( isset($_POST['setuserpropfloat']) ){
+    if( isset($_POST[$_POST['setuserpropfloat']]))
+        modify_user_prop($user,$_POST['setuserpropfloat'],floatval($_POST[$_POST['setuserpropfloat']]));
+}
+if( isset($_POST['setuserpropobj']) ){
+    if( isset($_POST[$_POST['setuserpropobj']]))
+        modify_user_prop($user,$_POST['setuserpropobj'],json_decode($_POST[$_POST['setuserpropobj']]));
+}
+if( isset($_POST['setuserpropbool']) ){
+    if( isset($_POST[$_POST['setuserpropbool']]))
+        modify_user_prop($user,$_POST['setuserpropbool'],$_POST[$_POST['setuserpropbool']]=='true');
+}
+//
 if( isset($_POST['jsinputchannels']) ){
     modify_device_prop($device,'inputchannels',json_decode($_POST['jsinputchannels']));
     modify_device_prop($device,'preset','');

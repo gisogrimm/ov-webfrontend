@@ -73,6 +73,17 @@ $root->setAttribute('class','userarea');
   $el->setAttribute('value','reset password');
   $el->setAttribute('type','button');
   $el->setAttribute('onclick','rest_setval_post_reload( \'mypwreset\',\'\');;');
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('type','checkbox');
+  $el->setAttribute('id','allowninja');
+  if( $userprop['allowninja'] )
+    $el->setAttribute('checked','');
+  $el->setAttribute('onchange','rest_set_userprop("allowninja",event.target.checked);');
+  $ellab = $div->appendChild($doc->createElement('label'));
+  $ellab->setAttribute('for','allowninja');
+  $ellab->appendChild($doc->createTextNode('allow usage of video service from https://vdo.ninja/'));
+  //XXX
   $supp = $div->appendChild($doc->createElement('div'));
   if( $userprop['subscription'] )
     $msg = 'As a permanent supporter you have premium access.';
