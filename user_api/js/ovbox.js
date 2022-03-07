@@ -577,6 +577,13 @@ function update_room( user, device, room, droom )
 	        a.setAttribute('class','roomctl');
 	        a.setAttribute('href','sessionvid.php');
 	        a.appendChild(document.createTextNode('videos'));
+                a.setAttribute('title','experimental video sharing (no audio)');
+            }else{
+	        a = ctl.appendChild(document.createElement('a'));
+	        a.setAttribute('class','roomctl');
+	        a.appendChild(document.createTextNode('[videos disabled]'));
+	        a.setAttribute('href','account.php');
+                a.setAttribute('title','See account settings to enable experimental video sharing');
             }
 	} else {
             if( room.premium && (!user.validsubscription)){
@@ -1404,7 +1411,38 @@ function rest_admusergroup( user, group, value )
     request.send('admaddusertogroup='+user+'&admaddusertogroupgroup='+group+'&admaddusertogroupval='+value);
 }
 
-
+function vid_toggle_max( id )
+{
+    let el = document.getElementById('sessionvid');
+    let elthis = document.getElementById('vcon.'+id);
+    let elfr = document.getElementById('vid'+id);
+    if( el && elthis && elfr ){
+        if( el.className == 'sessionvid' ){
+            // minimized
+            elthis.className = 'vidcontmax';
+            el.className = 'sessionvidmax';
+            elfr.style.position = 'static';
+            elfr.style.height = '95%';
+            var x=document.getElementsByClassName('vidcont');
+            for(var k=0;k<x.length;k++)
+	        x[k].style.display="none";
+            x=document.getElementsByClassName('viddevlabel');
+            for(var k=0;k<x.length;k++)
+	        x[k].style.position="relative";
+	}else{
+            var x=document.getElementsByClassName('vidcont');
+            for(var k=0;k<x.length;k++)
+	        x[k].style.display="block";
+            x=document.getElementsByClassName('viddevlabel');
+            for(var k=0;k<x.length;k++)
+	        x[k].style.position="absolute";
+            elthis.className = 'vidcont';
+            el.className = 'sessionvid';
+            elfr.style.position = 'absolute';
+            elfr.style.height = '100%';
+        }
+    }
+}
 /*
  * Local Variables:
  * c-basic-offset: 2

@@ -82,7 +82,7 @@ $root->setAttribute('class','userarea');
   $el->setAttribute('onchange','rest_set_userprop("allowninja",event.target.checked);');
   $ellab = $div->appendChild($doc->createElement('label'));
   $ellab->setAttribute('for','allowninja');
-  $ellab->appendChild($doc->createTextNode('allow usage of video service from https://vdo.ninja/'));
+  $ellab->appendChild($doc->createTextNode('allow embedding of video service from https://vdo.ninja/'));
   //XXX
   $supp = $div->appendChild($doc->createElement('div'));
   if( $userprop['subscription'] )
