@@ -1415,31 +1415,31 @@ function vid_toggle_max( id )
 {
     let el = document.getElementById('sessionvid');
     let elthis = document.getElementById('vcon.'+id);
-    let elfr = document.getElementById('vid'+id);
+    let elfr = document.getElementById('vid.'+id);
     if( el && elthis && elfr ){
         if( el.className == 'sessionvid' ){
             // minimized
             elthis.className = 'vidcontmax';
             el.className = 'sessionvidmax';
-            elfr.style.position = 'static';
-            elfr.style.height = '95%';
+            //elfr.style.position = 'static';
+            //elfr.style.height = '95%';
             var x=document.getElementsByClassName('vidcont');
             for(var k=0;k<x.length;k++)
 	        x[k].style.display="none";
-            x=document.getElementsByClassName('viddevlabel');
-            for(var k=0;k<x.length;k++)
-	        x[k].style.position="relative";
+            //x=document.getElementsByClassName('viddevlabel');
+            //for(var k=0;k<x.length;k++)
+	    //    x[k].style.position="relative";
 	}else{
             var x=document.getElementsByClassName('vidcont');
             for(var k=0;k<x.length;k++)
-	        x[k].style.display="block";
-            x=document.getElementsByClassName('viddevlabel');
-            for(var k=0;k<x.length;k++)
-	        x[k].style.position="absolute";
+	        x[k].style.display="inline-block";
+            //x=document.getElementsByClassName('viddevlabel');
+            //for(var k=0;k<x.length;k++)
+	    //    x[k].style.position="absolute";
             elthis.className = 'vidcont';
             el.className = 'sessionvid';
-            elfr.style.position = 'absolute';
-            elfr.style.height = '100%';
+            //elfr.style.position = 'absolute';
+            //elfr.style.height = '100%';
         }
     }
 }

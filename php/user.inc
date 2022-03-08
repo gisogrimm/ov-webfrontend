@@ -718,7 +718,7 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   //echo '<div class="deverror"><b>Planned service downtime</b> (server maintenance): Thursday April 22nd 8pm - Friday April 23rd 9am<br/><b>Server-Wartung</b>: Von Donnerstag 22.4. 20 Uhr bis vorraussichtlich Freitag 23.4. 9 Uhr steht diese Seite nicht zur Verfügung.</div>'."\n";
 }
 
-function print_foot($style = '',$show_donate = true)
+function print_foot($style = '',$show_donate = -1)
 {
   $sitecfg = get_properties('site','config');
   $credits = $sitecfg['credits'];
@@ -727,8 +727,11 @@ function print_foot($style = '',$show_donate = true)
   if( !empty($style) ){
     $sprop = get_properties( $style, 'style' );
     $credits = $sprop['credits'];
-    $show_donate = $sprop['showdonate'];
+    if( $show_donate == -1 )
+      $show_donate = $sprop['showdonate'];
   }
+  if( $show_donate == -1 )
+    $show_donate = true;
   if( $show_donate ){
     echo '<div class="donate">';
     echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">';
