@@ -630,6 +630,21 @@ a.adminarea:hover {
     border:2px solid #666;
     border-radius:4px;
 }
+.plugincategory {
+    display: inline-block;
+    border: 1px solid #666;
+    border-radius:4px;
+    padding: 4px;
+    vertical-align: middle;
+}
+.plugincategorylab {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    display: block;
+    font-size: 60%;
+}
 .channelcfg {
     background-color: #99999950;
     margin: 2px;

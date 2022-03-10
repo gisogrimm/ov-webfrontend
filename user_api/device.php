@@ -230,9 +230,9 @@ if( !empty($device) ){
       $opt->appendChild($doc->createTextNode($o.' Hz'));
     }
     $div->appendChild($doc->createElement('br'));
-    $el = add_input_element( $div, $doc, $devprop, 'jackperiod', 'number','Period size in samples: (typically 2ms, i.e. 96 for 48000 Hz Sampling rate)');
-    $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $divex = add_expert_div( $div, $doc, $devprop );
+    $el = add_input_element( $divex, $doc, $devprop, 'jackperiod', 'number','Period size in samples: (typically 2ms, i.e. 96 for 48000 Hz Sampling rate)');
+    $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number','Number of buffers (typically 2): ');
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el->setAttribute('min',2);
@@ -630,8 +630,8 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     // proxy settings
     if( version_compare("ovclient-0.6.120",$devprop['version'])<0 ){
-      xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $div, $doc, $devprop );
-      xml_add_checkbox( 'useproxy', 'use an audio proxy if possible', $div, $doc, $devprop );
+      xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $divex, $doc, $devprop );
+      xml_add_checkbox( 'useproxy', 'use an audio proxy if possible', $divex, $doc, $devprop );
     }
     //$divex = add_expert_div($div, $doc, $devprop );
     // frontend:
