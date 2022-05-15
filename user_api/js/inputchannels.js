@@ -88,7 +88,7 @@ function inputchannels_onedit_directivity( rk, value ) {
 function inputchannels_onedit_x( rk, value ) {
     inchannels[rk]['position']['x'] = value;
     jsinputchannels.value = JSON.stringify(inchannels);
-    dispvaluechanged("valuechanged");
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
 function inputchannels_onedit_y( rk, value ) {
