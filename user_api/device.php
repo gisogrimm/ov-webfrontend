@@ -469,6 +469,7 @@ if( !empty($device) ){
     $el->setAttribute('min','0');
     $el->setAttribute('max','500');
     $el->setAttribute('step','0.1');
+    xml_add_checkbox( 'headtrackingautorefzonly', 'Auto-referencing affects only Z-axis', $divex, $doc, $devprop );
     //
     $el = xml_add_input_generic( 'headtrackingport','data logging port for headtracking:',$divex,$doc,$devprop);
     $el->setAttribute('value',intval($devprop['headtrackingport']));

@@ -131,6 +131,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
   $rendersettings['headtrackingrotsrc'] = boolval($devprop['headtrackingrotsrc']);
   $rendersettings['headtrackingport'] = intval($devprop['headtrackingport']);
+  $rendersettings['headtrackingautorefzonly'] = boolval($devprop['headtrackingautorefzonly']);
   $rendersettings['lmetertc'] = floatval($devprop['lmetertc']);
   $rendersettings['lmeterfw'] = strval($devprop['lmeterfw']);
   $rendersettings['stagedevid'] = 0;
