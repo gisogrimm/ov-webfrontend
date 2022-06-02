@@ -169,6 +169,7 @@ if( !empty($device) ){
     $a->setAttribute('href','https://vdo.ninja/?view='.hash('md5',$device));
     $a->setAttribute('target','blank');
     $a->appendChild($doc->createTextNode('receive URL'));
+    $divex->appendChild($doc->createTextNode(' / '));
     $a = $divex->appendChild($doc->createElement('a'));
     $a->setAttribute('href','https://vdo.ninja/?push='.hash('md5',$device).'&ad=0');
     $a->setAttribute('target','blank');
