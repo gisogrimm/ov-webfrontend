@@ -165,6 +165,7 @@ if( !empty($device) ){
     $divex->appendChild($doc->createTextNode(' (device '.$device.')'));
     $divex->appendChild($doc->createElement('br'));
     // video URLs
+    $divex->appendChild($doc->createTextNode('Video: '));
     $a = $divex->appendChild($doc->createElement('a'));
     $a->setAttribute('href','https://vdo.ninja/?view='.hash('md5',$device));
     $a->setAttribute('target','blank');
