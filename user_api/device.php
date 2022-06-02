@@ -164,10 +164,15 @@ if( !empty($device) ){
     $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
     $divex->appendChild($doc->createTextNode(' (device '.$device.')'));
     $divex->appendChild($doc->createElement('br'));
+    // video URLs
     $a = $divex->appendChild($doc->createElement('a'));
     $a->setAttribute('href','https://vdo.ninja/?view='.hash('md5',$device));
     $a->setAttribute('target','blank');
-    $a->appendChild($doc->createTextNode('video URL'));
+    $a->appendChild($doc->createTextNode('receive URL'));
+    $a = $divex->appendChild($doc->createElement('a'));
+    $a->setAttribute('href','https://vdo.ninja/?push='.hash('md5',$device).'&ad=0');
+    $a->setAttribute('target','blank');
+    $a->appendChild($doc->createTextNode('send URL'));
     $divex->appendChild($doc->createTextNode(' (e.g., to embed in OBS)'));
     $divex->appendChild($doc->createElement('br'));
     //
