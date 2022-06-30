@@ -416,6 +416,11 @@ function device_enter_room( $device, $room )
   $othersinroom = get_devices_in_room( $room );
   if( !in_array( $device, $othersinroom ) ){
     $dprop = get_properties( $device, 'device' );
+    if( empty($room) ){
+      // we are leaving a room, so re-order people in the room which
+      // we just left:
+      set_dev_room_pos( $dprop['room'] );
+    }
     $dprop['room'] = $room;
     $dprop['chair'] = get_free_chair($room);
     if( empty($room) )
