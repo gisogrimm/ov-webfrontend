@@ -176,7 +176,7 @@ function add_expert_div( &$el, &$doc, $devprop = array(), $prop = 'showexpertset
   return $div;
 }
 
-function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false, $toggleclass = false )
+function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false, $toggleclass = false, $msgclass = '' )
 {
   if( $styled ){
     $lab = $div->appendChild($doc->createElement('label'));
@@ -201,6 +201,8 @@ function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false, $to
     $ellab = $div->appendChild($doc->createElement('label'));
     $ellab->setAttribute('for',$id);
     $ellab->appendChild($doc->createTextNode($msg));
+    if( strlen($msgclass) > 0 )
+      $ellab->setAttribute('class',$msgclass);
   }
   $div->appendChild($doc->createElement('br'));
   return $el;

@@ -143,7 +143,7 @@ if( !empty($device) ){
     $el->setAttribute('value',$devprop['label']);
     $el->setAttribute('onchange','rest_set_devprop("label",event.target.value);');
     $div->appendChild($doc->createElement('br'));
-    xml_add_checkbox( 'showexpertsettings', 'show expert settings (danger zone)', $div, $doc, $devprop, false, true );
+    xml_add_checkbox( 'showexpertsettings', 'show expert settings (danger zone)', $div, $doc, $devprop, false, true, 'expert' );
     //$el = $div->appendChild($doc->createElement('input'));
     //$el->setAttribute('type','checkbox');
     //if( $devprop['showexpertsettings'] )
