@@ -78,9 +78,10 @@ if( !empty($devprop['room'])){
   $r = 0;
   foreach($vids as $row){
     $r = $r + 1;
+    ksort($row);
     $divr = $root->appendChild($doc->createElement('div'));
     $divr->setAttribute('class','vidrow');
-    error_log('row');
+    //error_log('row');
     $k = 0;
     foreach($row as $vid){
       $k = $k+1;
