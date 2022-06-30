@@ -428,7 +428,10 @@ function device_enter_room( $device, $room )
     $dprop['position'] = array('x'=>0,'y'=>0,'z'=>0);
     $dprop['orientation'] = array('z'=>0,'y'=>0,'x'=>0);
     set_properties( $device, 'device', $dprop );
-    set_dev_room_pos( $prevroom );
+    if( empty($room) )
+      set_dev_room_pos( $prevroom );
+    else
+      set_dev_room_pos( $room );
     modify_room_prop( $room, 'deventer', time() );
     array_map('unlink', glob('../db/'.$device.'_*.pingstats'));
     array_map('unlink', glob('../db/*_'.$room.'.pingstats'));
