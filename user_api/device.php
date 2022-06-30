@@ -133,7 +133,9 @@ if( !empty($device) ){
   {
     // general settings
     $div = create_section($root, $doc,'General settings');
-    xml_add_checkbox( 'showexpertsettings', 'show expert settings (danger zone)', $div, $doc, $devprop, false, true );
+    $span = $div->appendChild($doc->createElement('div'));
+    $span->setAttribute('class','expert');
+    xml_add_checkbox( 'showexpertsettings', 'show expert settings (danger zone)', $span, $doc, $devprop, false, true );
     $div->appendChild($doc->createTextNode('device label (appears in rooms and the mixer of the others): '));
     $div->appendChild($doc->createElement('br'));
     $el = $div->appendChild($doc->createElement('input'));
