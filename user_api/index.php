@@ -96,8 +96,10 @@ if( isset($_GET['kick']) ){
         $rdevprop = get_properties( $rdev, 'device' );
         if( !empty($rdevprop['room']) ){
             $rprop = get_properties( $rdevprop['room'], 'room' );
-            if( ($rprop['owner'] == $user) || ($rdevprop['owner'] == $user) )
+            if( ($rprop['owner'] == $user) || ($rdevprop['owner'] == $user) ){
                 modify_device_prop( $rdev, 'room', '');
+                set_dev_room_pos( $rdevprop['room'] );
+            }
         }
     }
     header( "Location: /" );

@@ -414,11 +414,7 @@ function auth( $username, $password )
 function device_enter_room( $device, $room )
 {
   $dprop = get_properties( $device, 'device' );
-  if( empty($room) ){
-    // we are leaving a room, so re-order people in the room which
-    // we just left:
-    set_dev_room_pos( $dprop['room'] );
-  }
+  $prevroom = $dprop['room'];
   $othersinroom = get_devices_in_room( $room );
   if( !in_array( $device, $othersinroom ) ){
     $dprop['room'] = $room;
@@ -432,7 +428,7 @@ function device_enter_room( $device, $room )
     $dprop['position'] = array('x'=>0,'y'=>0,'z'=>0);
     $dprop['orientation'] = array('z'=>0,'y'=>0,'x'=>0);
     set_properties( $device, 'device', $dprop );
-    set_dev_room_pos( $room );
+    set_dev_room_pos( $prevroom );
     modify_room_prop( $room, 'deventer', time() );
     array_map('unlink', glob('../db/'.$device.'_*.pingstats'));
     array_map('unlink', glob('../db/*_'.$room.'.pingstats'));
