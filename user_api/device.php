@@ -75,7 +75,7 @@ if( isset($_GET['claim']) ){
 
 print_head( $user, $style, $urlgroup );
 
-echo '<div><span class="ovtitle">Device settings</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
+echo '<div><span class="ovtitle">Device settings</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
 

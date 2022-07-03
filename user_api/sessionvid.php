@@ -20,12 +20,6 @@ include '../php/session.inc';
 
 print_head( $user, $style, $urlgroup );
 
-//echo '<div><span class="ovtitle">Session videos</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
-
-//echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
-
-//html_show_device( $user, $device, $devprop );
-
 echo '<div class="sessionvid" id="sessionvid">';
 
 function rotate( $rcos, $rsin, &$x, &$y,$posx,$posy )

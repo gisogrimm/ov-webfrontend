@@ -237,7 +237,7 @@ print_head( $user, $style, $urlgroup );
 if( !empty($msg) ){
     echo '<div class="deverror">'.$msg.'</div>';
 }
-echo '<div><span class="ovtitle">Session</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
+echo '<div><span class="ovtitle">Session</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
 
