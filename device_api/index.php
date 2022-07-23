@@ -165,6 +165,10 @@ if ($user == 'device') {
                     $dprop['version'] = $jsmsg['version'];
                 if( isset($jsmsg['networkdevices']) )
                     $dprop['networkdevices'] = $jsmsg['networkdevices'];
+                if( isset($jsmsg['backendperiodsize']) )
+                    $dprop['backendperiodsize'] = $jsmsg['backendperiodsize'];
+                if( isset($jsmsg['backendsrate']) )
+                    $dprop['backendsrate'] = $jsmsg['backendsrate'];
                 //if( isset($jsmsg['effectplugincfg']) && $jsmsg['effectplugincfg'] ){
                 //    error_log('-----');
                 //    error_log(json_encode($jsmsg['effectplugincfg']));
