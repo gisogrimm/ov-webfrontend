@@ -748,8 +748,12 @@ function update_devicestatus( user, device, owned_devices )
 		devstat.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
 	    }
 	    if( device.cpuload && (device.cpuload > 0) ){
-		devstat.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
+		      devstat.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
 	    }
+      if( device.backendperiodsize && (device.backendperiodsize > 0) &&
+          device.backendsrate && (device.backendsrate > 0)){
+		      devstat.appendChild(document.createTextNode(' '+(device.backendperiodsize).toFixed(0)+'/'+(device.backendperiodsize*0.001).toFixed(1)+'kHz'));
+      }
 	}
 	if( device.useproxy && (device.proxyip.length>0))
 	    devstat.appendChild(document.createTextNode(' proxy: '+device.proxyip));
