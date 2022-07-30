@@ -212,6 +212,7 @@ function get_room_session( $device, $devhash )
                                                          'autorefzonly'=>boolval($devprop['headtrackingautorefzonly']),
                                                          'tiltmap'=>$devprop['headtrackingtiltmap']),
                                       'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay']),
+                                                       'active'=>boolval($devprop['selfmonitor']),
                                                        'onlyreverb'=>boolval($devprop['selfmonitoronlyreverb'])),
                                       'metronome'=>array('active'=>boolval($devprop['metroactive']),
                                                          'bpm'=>floatval($devprop['metrobpm']),
