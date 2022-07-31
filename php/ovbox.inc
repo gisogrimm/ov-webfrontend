@@ -139,6 +139,7 @@ function defaults( $type )
     'locmcsendchannels'=>2,
     'networkdevices'=>array(),
     'zitasampleformat'=>'16bit',
+    'useloudspeaker'=>false,
   );
   $defaults['room'] = array(
     'access'=>0,

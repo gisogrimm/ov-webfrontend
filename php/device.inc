@@ -237,6 +237,7 @@ function get_room_session( $device, $devhash )
                                                      'channels'=>$devprop['locmcrecchannels'],
                                                      'sendchannels'=>intval($devprop['locmcsendchannels'])),
                                       'render'=>array('soundscape'=>boolval($devprop['rendersoundscape']),
+                                                      'useloudspeaker'=>boolval($devprop['useloudspeaker']),
                                                       'zitasampleformat'=>$devprop['zitasampleformat']));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,

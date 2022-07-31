@@ -343,6 +343,9 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
+    if( version_compare("ovclient-0.18.15",$devprop['version'])<0 ){
+      xml_add_checkbox( 'useloudspeaker', 'use loudspeaker for playback (activates echo cancellation)', $divex, $doc, $devprop, false, true );
+    }
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
     $el->appendChild($doc->createTextNode('receiver type: '));
