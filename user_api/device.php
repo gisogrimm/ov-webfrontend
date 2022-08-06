@@ -593,6 +593,10 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     // peer-to-peer:
     xml_add_checkbox( 'peer2peer', 'peer-to-peer mode', $div, $doc, $devprop );
+    if( version_compare("ovclient-0.18.20",$devprop['version'])<0 ){
+      $divex = add_expert_div($div, $doc, $devprop );
+      xml_add_checkbox( 'usetcptunnel', 'use TCP tunnel to server (not in peer-to-peer mode)', $divex, $doc, $devprop );
+    }
     // wifi
     if( $devprop['isovbox'] ){
       if( version_compare("ovclient-0.6.151",$devprop['version'])<0 ){

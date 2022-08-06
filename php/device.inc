@@ -114,6 +114,7 @@ function get_room_session( $device, $devhash )
   }
   $rendersettings['xport'] = $nxp;
   $rendersettings['peer2peer'] = boolval($devprop['peer2peer']);
+  $rendersettings['usetcptunnel'] = boolval($devprop['usetcptunnel']);
   $rendersettings['renderreverb'] = boolval($devprop['reverb']);
   $rendersettings['renderism'] = boolval($devprop['renderism']);
   $rendersettings['outputgain'] = pow(10.0,0.05*$devprop['mastergain']);
