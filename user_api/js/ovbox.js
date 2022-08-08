@@ -1,47 +1,94 @@
 var roomvaluechanged = false;
 
+function versionCompare(v1, v2, options) {
+    var lexicographical = options && options.lexicographical,
+        zeroExtend = options && options.zeroExtend,
+        v1parts = v1.split('.'),
+        v2parts = v2.split('.');
+
+    function isValidPart(x) {
+        return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
+    }
+
+    if (!v1parts.every(isValidPart) || !v2parts.every(isValidPart)) {
+        return NaN;
+    }
+
+    if (zeroExtend) {
+        while (v1parts.length < v2parts.length) v1parts.push("0");
+        while (v2parts.length < v1parts.length) v2parts.push("0");
+    }
+
+    if (!lexicographical) {
+        v1parts = v1parts.map(Number);
+        v2parts = v2parts.map(Number);
+    }
+
+    for (var i = 0; i < v1parts.length; ++i) {
+        if (v2parts.length == i) {
+            return 1;
+        }
+
+        if (v1parts[i] == v2parts[i]) {
+            continue;
+        }
+        else if (v1parts[i] > v2parts[i]) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    if (v1parts.length != v2parts.length) {
+        return -1;
+    }
+
+    return 0;
+}
+
 function toggledisplay(id,msg){
     var x=document.getElementById(id);
     if(x.style.display==="none"){
-	x.style.display="block";
-	event.target.value='hide '+msg;
+	      x.style.display="block";
+	      event.target.value='hide '+msg;
     }else{
-	x.style.display="none";
-	event.target.value='show '+msg;
+	      x.style.display="none";
+	      event.target.value='show '+msg;
     }
 }
 
 function toggle_ovnavh(){
     var x=document.getElementById("ovnavh");
     if( x ){
-	if((x.style.display.length==0) || (x.style.display==="none")){
-	    x.style.display="block";
-	}else{
-	    x.style.display="none";
-	}
+	      if((x.style.display.length==0) || (x.style.display==="none")){
+	          x.style.display="block";
+	      }else{
+	          x.style.display="none";
+	      }
     }
 }
 
 function toggledisplayclass(id,msg){
     var x=document.getElementsByClassName(id);
     for(var k=0;k<x.length;k++){
-	if(x[k].style.display==="none"){
-	    x[k].style.display="block";
-	    event.target.value='hide '+msg;
-	}else{
-	    x[k].style.display="none";
-	    event.target.value='show '+msg;
-	}
+	      if(x[k].style.display==="none"){
+	          x[k].style.display="block";
+	          event.target.value='hide '+msg;
+	      }else{
+	          x[k].style.display="none";
+	          event.target.value='show '+msg;
+	      }
     }
 }
 
 function set_displayclass( id, value ){
     var x=document.getElementsByClassName(id);
     for(var k=0;k<x.length;k++){
-	if( value )
-	    x[k].style.display="block";
-	else
-	    x[k].style.display="none";
+	      if( value )
+	          x[k].style.display="block";
+	      else
+	          x[k].style.display="none";
     }
 }
 
@@ -51,13 +98,13 @@ function setmetro( name, value )
     request.open('GET', 'rest.php?metro'+name+'='+value);
     request.send();
     if( name == 'active' ){
-	var x = document.getElementById('metrocontrols');
-	if( x ){
-	    if( value )
-		x.setAttribute('style','display: block;')
-	    else
-		x.setAttribute('style','display: none;')
-	}
+	      var x = document.getElementById('metrocontrols');
+	      if( x ){
+	          if( value )
+		            x.setAttribute('style','display: block;');
+	          else
+		            x.setAttribute('style','display: none;');
+	      }
     }
 }
 
@@ -72,8 +119,8 @@ function rest_setval_reload( name, value )
 {
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload(true);
-    }
+	      location.reload(true);
+    };
     request.open('GET', 'rest.php?'+name+'='+value, true);
     request.send();
 }
@@ -90,8 +137,8 @@ function rest_setval_post_reload( name, value )
 {
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload(true);
-    }
+	      location.reload(true);
+    };
     request.open('POST', '/rest.php', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.send(name+'='+value);
@@ -103,13 +150,13 @@ function rest_set_devprop( name, value )
     request.open('POST', '/rest.php', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     if( typeof value === "boolean" )
-	request.send('setdevpropbool='+name+'&'+name+'='+value);
+	      request.send('setdevpropbool='+name+'&'+name+'='+value);
     else if( typeof value === "number" )
-	request.send('setdevpropfloat='+name+'&'+name+'='+value);
+	      request.send('setdevpropfloat='+name+'&'+name+'='+value);
     else if( typeof value === "object" )
-	request.send('setdevpropobj='+name+'&'+name+'='+JSON.stringify(value));
+	      request.send('setdevpropobj='+name+'&'+name+'='+JSON.stringify(value));
     else
-	request.send('setdevprop='+name+'&'+name+'='+value);
+	      request.send('setdevprop='+name+'&'+name+'='+value);
 }
 
 function rest_set_userprop( name, value )
@@ -118,13 +165,13 @@ function rest_set_userprop( name, value )
     request.open('POST', '/rest.php', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     if( typeof value === "boolean" )
-	request.send('setuserpropbool='+name+'&'+name+'='+value);
+	      request.send('setuserpropbool='+name+'&'+name+'='+value);
     else if( typeof value === "number" )
-	request.send('setuserpropfloat='+name+'&'+name+'='+value);
+	      request.send('setuserpropfloat='+name+'&'+name+'='+value);
     else if( typeof value === "object" )
-	request.send('setuserpropobj='+name+'&'+name+'='+JSON.stringify(value));
+	      request.send('setuserpropobj='+name+'&'+name+'='+JSON.stringify(value));
     else
-	request.send('setuserprop='+name+'&'+name+'='+value);
+	      request.send('setuserprop='+name+'&'+name+'='+value);
 }
 
 function rest_admusrprop( usr, name, value, reload = false )
@@ -133,16 +180,16 @@ function rest_admusrprop( usr, name, value, reload = false )
     request.open('POST', '/rest.php', true);
     if( reload ){
         request.onload = function() {
-	    location.reload(true);
-        }
+	          location.reload(true);
+        };
     }
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     if( typeof value === "boolean" )
-	request.send('admusrprop='+name+'&'+name+'='+value+'&type=bool&admusr='+usr);
+	      request.send('admusrprop='+name+'&'+name+'='+value+'&type=bool&admusr='+usr);
     else if( typeof value === "number" )
-	request.send('admusrprop='+name+'&'+name+'='+value+'&type=float&admusr='+usr);
+	      request.send('admusrprop='+name+'&'+name+'='+value+'&type=float&admusr='+usr);
     else
-	request.send('admusrprop='+name+'&'+name+'='+value+'&admusr='+usr);
+	      request.send('admusrprop='+name+'&'+name+'='+value+'&admusr='+usr);
 }
 
 function rest_admroomprop( room, name, value, reload = false )
@@ -151,16 +198,16 @@ function rest_admroomprop( room, name, value, reload = false )
     request.open('POST', '/rest.php', true);
     if( reload ){
         request.onload = function() {
-	    location.reload(true);
-        }
+	          location.reload(true);
+        };
     }
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     if( typeof value === "boolean" )
-	request.send('admroomprop='+name+'&'+name+'='+value+'&type=bool&admroom='+room);
+	      request.send('admroomprop='+name+'&'+name+'='+value+'&type=bool&admroom='+room);
     else if( typeof value === "number" )
-	request.send('admroomprop='+name+'&'+name+'='+value+'&type=float&admroom='+room);
+	      request.send('admroomprop='+name+'&'+name+'='+value+'&type=float&admroom='+room);
     else
-	request.send('admroomprop='+name+'&'+name+'='+value+'&admroom='+room);
+	      request.send('admroomprop='+name+'&'+name+'='+value+'&admroom='+room);
 }
 
 function rest_addpayment( usr, value )
@@ -168,19 +215,19 @@ function rest_addpayment( usr, value )
     let request = new XMLHttpRequest();
     request.open('POST', '/rest.php', true);
     request.onload = function() {
-	location.reload(true);
-    }
+	      location.reload(true);
+    };
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.send('addpayment='+value+'&admusr='+usr);
 }
 
 function escapeHtml(text) {
     var map = {
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&#039;'
+	      '&': '&amp;',
+	      '<': '&lt;',
+	      '>': '&gt;',
+	      '"': '&quot;',
+	      "'": '&#039;'
     };
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
@@ -213,13 +260,13 @@ function create_room_div( device, room )
     inp.setAttribute('name','editbulletinboard');
     inp.setAttribute('value',id);
     inp.setAttribute('type','hidden');
-    var inp = bbed.appendChild(document.createElement('textarea'));
+    inp = bbed.appendChild(document.createElement('textarea'));
     inp.setAttribute('name','bulletinboard');
     inp.setAttribute('rows','4');
     inp.setAttribute('cols','60');
     inp.setAttribute('class','bulletinboard');
     inp.appendChild(document.createTextNode(room.bulletinboard));
-    var inp = bbed.appendChild(document.createElement('button'));
+    inp = bbed.appendChild(document.createElement('button'));
     inp.appendChild(document.createTextNode('Save'));
     var bulletinboard = eroom.appendChild(document.createElement('div'));
     bulletinboard.setAttribute('id',id+':bulletinboard');
@@ -241,14 +288,14 @@ function create_room_div( device, room )
     span.setAttribute('class','roomvalchanged important');
     var form = rp.appendChild(document.createElement('form'));
     form.setAttribute('method','POST');
-    var inp = add_input_to_form(form,id,'setroom','hidden');
+    inp = add_input_to_form(form,id,'setroom','hidden');
     inp.setAttribute('value',id);
     if( device.owner == room.owner ){
-	form.appendChild(document.createTextNode('Name: '));
-	inp = add_input_to_form(form,id,'label','text');
-	inp.setAttribute('pattern','[a-zA-Z0-9-_]*');
-	inp.setAttribute('value',room.label);
-	form.appendChild(document.createElement('br'));
+	      form.appendChild(document.createTextNode('Name: '));
+	      inp = add_input_to_form(form,id,'label','text');
+	      inp.setAttribute('pattern','[a-zA-Z0-9-_]*');
+	      inp.setAttribute('value',room.label);
+	      form.appendChild(document.createElement('br'));
     }
     form.appendChild(document.createTextNode('Size L x W x H [m]: '));
     var inpx = add_input_to_form(form,id,'sx','number');
@@ -307,41 +354,41 @@ function create_room_div( device, room )
     form.appendChild(document.createElement('br'));
     // group:
     if( device.owner == room.owner ){
-	inp = form.appendChild(document.createElement('label'));
-	inp.appendChild(document.createTextNode('Group: '));
-	inp = form.appendChild(document.createElement('select'));
-	inp.setAttribute('oninput','dispvaluechanged("roomvalchanged");');
-	inp.setAttribute('name','group');
-	inp.setAttribute('id',id+':cfg:group');
-	var opt = inp.appendChild(document.createElement('option'));
-	opt.setAttribute('value','');
-	opt.appendChild(document.createTextNode(' - public - '));
-	device.usergroups.forEach( function( grp ){
-	    opt = inp.appendChild(document.createElement('option'));
-	    opt.setAttribute('value',grp);
-	    opt.appendChild(document.createTextNode(grp));
-	    if( room.group == grp )
-		opt.setAttribute('selected','');
-	});
-	// private room:
-	inp = add_input_to_form(form,id,'private','checkbox');
-	if( room['private'] )
-	    inp.setAttribute('checked','');
-	inp = form.appendChild(document.createElement('label'));
-	inp.setAttribute('for',id+':cfg:private');
-	inp.appendChild(document.createTextNode('Private room - visible only to me (overrides group)'));
-	form.appendChild(document.createElement('br'));
-	// editable by everyone:
-	inp = add_input_to_form(form,id,'editable','checkbox');
-	if( room.editable )
-	    inp.setAttribute('checked','');
-	inp = form.appendChild(document.createElement('label'));
-	inp.setAttribute('for',id+':cfg:editable');
-	inp.appendChild(document.createTextNode('Editable by everyone who can see the room'));
-	form.appendChild(document.createElement('br'));
+	      inp = form.appendChild(document.createElement('label'));
+	      inp.appendChild(document.createTextNode('Group: '));
+	      inp = form.appendChild(document.createElement('select'));
+	      inp.setAttribute('oninput','dispvaluechanged("roomvalchanged");');
+	      inp.setAttribute('name','group');
+	      inp.setAttribute('id',id+':cfg:group');
+	      var opt = inp.appendChild(document.createElement('option'));
+	      opt.setAttribute('value','');
+	      opt.appendChild(document.createTextNode(' - public - '));
+	      device.usergroups.forEach( function( grp ){
+	          opt = inp.appendChild(document.createElement('option'));
+	          opt.setAttribute('value',grp);
+	          opt.appendChild(document.createTextNode(grp));
+	          if( room.group == grp )
+		            opt.setAttribute('selected','');
+	      });
+	      // private room:
+	      inp = add_input_to_form(form,id,'private','checkbox');
+	      if( room['private'] )
+	          inp.setAttribute('checked','');
+	      inp = form.appendChild(document.createElement('label'));
+	      inp.setAttribute('for',id+':cfg:private');
+	      inp.appendChild(document.createTextNode('Private room - visible only to me (overrides group)'));
+	      form.appendChild(document.createElement('br'));
+	      // editable by everyone:
+	      inp = add_input_to_form(form,id,'editable','checkbox');
+	      if( room.editable )
+	          inp.setAttribute('checked','');
+	      inp = form.appendChild(document.createElement('label'));
+	      inp.setAttribute('for',id+':cfg:editable');
+	      inp.appendChild(document.createTextNode('Editable by everyone who can see the room'));
+	      form.appendChild(document.createElement('br'));
     }
     // save button:
-    var inp = form.appendChild(document.createElement('button'));
+    inp = form.appendChild(document.createElement('button'));
     inp.setAttribute('class','uibutton');
     inp.appendChild(document.createTextNode('Save'));
     inp.setAttribute('id','roomsettingssave');
@@ -363,11 +410,11 @@ function update_room( user, device, room, droom )
     room.lock = Number(room.lock);
     var eroom = document.getElementById(room.id);
     if( !eroom )
-	eroom = droom.appendChild(create_room_div(device, room));
+	      eroom = droom.appendChild(create_room_div(device, room));
     if( room.entered )
-	eroom.setAttribute('class','myroom');
+	      eroom.setAttribute('class','myroom');
     else
-	eroom.setAttribute('class','room');
+	      eroom.setAttribute('class','room');
     // title div:
     var tit = document.getElementById(room.id+':title');
     while( tit.firstChild ) tit.removeChild( tit.firstChild );
@@ -384,58 +431,59 @@ function update_room( user, device, room, droom )
     sup.appendChild(document.createTextNode('60'));
     var soundscape = '';
     if( room.ambientsound.length > 0 )
-	soundscape = ', sound scape';
+	      soundscape = ', sound scape';
     span.appendChild(document.createTextNode(': '+room['t60'].toFixed(2)+' s'+soundscape+')'));
     if( room['private'] )
-	span.appendChild(document.createTextNode(' private'));
+	      span.appendChild(document.createTextNode(' private'));
     else{
-	if( room['group'].length==0 )
-	    span.appendChild(document.createTextNode(' public'));
-	else
-	    span.appendChild(document.createTextNode(' group \''+room['group']+'\''));
+	      if( room['group'].length==0 )
+	          span.appendChild(document.createTextNode(' public'));
+	      else
+	          span.appendChild(document.createTextNode(' group \''+room['group']+'\''));
     }
     if( room.owner.length>0 )
-	span.appendChild(document.createTextNode(', managed by '+room.owner));
+	      span.appendChild(document.createTextNode(', managed by '+room.owner));
     if( room['editable'] )
-	span.appendChild(document.createTextNode(', acoustics can be changed'));
+	      span.appendChild(document.createTextNode(', acoustics can be changed'));
     var srvjit = Number(room['srvjit']);
     var sjspan = span.appendChild(document.createElement('span'));
+    console.log(room.version);
     if( room.premium )
-	sjspan.setAttribute('class','srvjit premium');
+	      sjspan.setAttribute('class','srvjit premium');
     else
-	sjspan.setAttribute('class','srvjit');
+	      sjspan.setAttribute('class','srvjit');
     if( srvjit<=0 ){
-	sjspan.appendChild(document.createTextNode('☆☆☆'));
+	      sjspan.appendChild(document.createTextNode('☆☆☆'));
     }else{
-	if( srvjit<1 ){
-	    sjspan.appendChild(document.createTextNode('★★★'));
+	      if( srvjit<1 ){
+	          sjspan.appendChild(document.createTextNode('★★★'));
             sjspan.setAttribute('title','perfect for server mode');
-	}else{
-	    if( srvjit<5 ){
-		sjspan.appendChild(document.createTextNode('★★☆'));
+	      }else{
+	          if( srvjit<5 ){
+		            sjspan.appendChild(document.createTextNode('★★☆'));
                 sjspan.setAttribute('title','works for any mode');
-	    }else{
-		sjspan.appendChild(document.createTextNode('★☆☆'));
+	          }else{
+		            sjspan.appendChild(document.createTextNode('★☆☆'));
                 sjspan.setAttribute('title','best in peer2peer mode');
-	    }       
-	}
+	          }       
+	      }
     }
     span.appendChild(document.createTextNode('(jitter '+srvjit.toFixed(1)+' ms)'));
     // bulletin board:
     if( room.entered ){
-	var tog = tit.appendChild(document.createElement('input'));
-	tog.setAttribute('type','button');
-	tog.setAttribute('class','roomsettingstoggle uibutton');
-	tog.setAttribute('onclick','toggledisplay("'+room.id+':bulletinboard:editor","bulletin board editor");');
-	tog.setAttribute('value','show bulletin board editor');
+	      var tog = tit.appendChild(document.createElement('input'));
+	      tog.setAttribute('type','button');
+	      tog.setAttribute('class','roomsettingstoggle uibutton');
+	      tog.setAttribute('onclick','toggledisplay("'+room.id+':bulletinboard:editor","bulletin board editor");');
+	      tog.setAttribute('value','show bulletin board editor');
     }
     var bull = document.getElementById(room.id+':bulletinboard');
     while( bull.firstChild ) bull.removeChild( bull.firstChild );
     if( room.bulletinboard.length > 0 ){
-	bull.appendChild(document.createTextNode(room.bulletinboard));
-	bull.setAttribute('style','display: block;');
+	      bull.appendChild(document.createTextNode(room.bulletinboard));
+	      bull.setAttribute('style','display: block;');
     }else{
-	bull.setAttribute('style','display: none;');
+	      bull.setAttribute('style','display: none;');
     }
     //span.appendChild(document.createTextNode(' ('+room.id+')'));
     var memb = document.getElementById(room.id+':members');
@@ -445,210 +493,210 @@ function update_room( user, device, room, droom )
     var listeners = memb.appendChild(document.createElement('span'));
     listeners.setAttribute('class','roomlistener');
     for( const chair in room.roomdev ){
-	var dev = room.roomdev[chair];
-	var mem = document.createElement('span');
-	if( dev.issender && (!dev.senddownmix) ){
-	    senders.appendChild(mem);
-	    senders.appendChild(document.createTextNode(' '));
-	}else{
-	    listeners.appendChild(mem);
-	    listeners.appendChild(document.createTextNode(' '));
-	}
-	var tagsuffix = 'member';
-	if( !dev.issender )
-	    tagsuffix = 'listener';
+	      var dev = room.roomdev[chair];
+	      var mem = document.createElement('span');
+	      if( dev.issender && (!dev.senddownmix) ){
+	          senders.appendChild(mem);
+	          senders.appendChild(document.createTextNode(' '));
+	      }else{
+	          listeners.appendChild(mem);
+	          listeners.appendChild(document.createTextNode(' '));
+	      }
+	      var tagsuffix = 'member';
+	      if( !dev.issender )
+	          tagsuffix = 'listener';
         if( dev.senddownmix )
             tagsuffix = 'downmix';
-	var bclass = 'psv';
-	if( dev.isactive )
-	    bclass = 'act';
-	bclass = bclass + tagsuffix;
-	mem.setAttribute('class',bclass);
-	var latdisp = '';
-	if( device.chair != chair ){
-	    if( device.peer2peer && dev.peer2peer ){
-		// display peer2peer latency:
-		const latkey = chair + '-' + device.chair;
-		if( room.lat.hasOwnProperty(latkey) ){
-		    // only display values from last 15 minutes:
-		    if( room.now-room.lat[latkey].access < 900 ){
-			const lat = 0.5*Number(room.lat[latkey].lat)+Number(dev.jittersend)+Number(device.jitterreceive)+10;
-			latdisp = ' '+lat.toFixed(1)+'ms ';
-		    }
-		}
-	    }else{
-		// display latency via server:
-		const latkey1 = chair + '-200';
-		const latkey2 = device.chair + '-200';
-		if( room.lat.hasOwnProperty(latkey1) && room.lat.hasOwnProperty(latkey2) && (dev.id != device.id) ){
-		    // only display values from last 15 minutes:
-		    if( (room.now-room.lat[latkey1].access < 900) && (room.now-room.lat[latkey2].access < 900) ){
-			const lat = 0.5*(Number(room.lat[latkey1].lat)+Number(room.lat[latkey2].lat))+Number(dev.jittersend)+Number(device.jitterreceive)+10;
-			latdisp = ' '+lat.toFixed(1)+'ms ';
-		    }
-		}
-	    }
-	}
-	//mem.appendChild(document.createTextNode(device.chair));
-	var mtype = 'span';
-	if( (dev.id != device.id) && room.entered && dev.issender && device.issender && (!dev.senddownmix) )
-	    mtype = 'a';
-	if ( dev.id == device.id ){
-	    if( device.issender )
-		mem.setAttribute('style','border: 3px solid #000000;');
-	    else
-		mem.setAttribute('style','border: 2px solid #606060;');
-	}
-	var memlink = mem.appendChild(document.createElement(mtype));
-	memlink.setAttribute('class',bclass);
-	if( mtype == 'a')
-	    memlink.setAttribute('href','?swapdev='+encodeURI(dev.id));
-	var lab = dev.label;
-	if( lab.length==0 )
-	    lab = dev.id;
-	memlink.appendChild(document.createTextNode( escapeHtml(lab) ));
-	if( room.entered ){
-	    if( (dev.numchannels > 1) && (!dev.senddownmix) )
-		latdisp = dev.numchannels + 'c ' + latdisp;
-	    latdisp = (dev.jackrate*0.001).toFixed(0) + 'k ' + latdisp;
+	      var bclass = 'psv';
+	      if( dev.isactive )
+	          bclass = 'act';
+	      bclass = bclass + tagsuffix;
+	      mem.setAttribute('class',bclass);
+	      var latdisp = '';
+	      if( device.chair != chair ){
+	          if( device.peer2peer && dev.peer2peer ){
+		            // display peer2peer latency:
+		            const latkey = chair + '-' + device.chair;
+		            if( room.lat.hasOwnProperty(latkey) ){
+		                // only display values from last 15 minutes:
+		                if( room.now-room.lat[latkey].access < 900 ){
+			                  const lat = 0.5*Number(room.lat[latkey].lat)+Number(dev.jittersend)+Number(device.jitterreceive)+10;
+			                  latdisp = ' '+lat.toFixed(1)+'ms ';
+		                }
+		            }
+	          }else{
+		            // display latency via server:
+		            const latkey1 = chair + '-200';
+		            const latkey2 = device.chair + '-200';
+		            if( room.lat.hasOwnProperty(latkey1) && room.lat.hasOwnProperty(latkey2) && (dev.id != device.id) ){
+		                // only display values from last 15 minutes:
+		                if( (room.now-room.lat[latkey1].access < 900) && (room.now-room.lat[latkey2].access < 900) ){
+			                  const lat = 0.5*(Number(room.lat[latkey1].lat)+Number(room.lat[latkey2].lat))+Number(dev.jittersend)+Number(device.jitterreceive)+10;
+			                  latdisp = ' '+lat.toFixed(1)+'ms ';
+		                }
+		            }
+	          }
+	      }
+	      //mem.appendChild(document.createTextNode(device.chair));
+	      var mtype = 'span';
+	      if( (dev.id != device.id) && room.entered && dev.issender && device.issender && (!dev.senddownmix) )
+	          mtype = 'a';
+	      if ( dev.id == device.id ){
+	          if( device.issender )
+		            mem.setAttribute('style','border: 3px solid #000000;');
+	          else
+		            mem.setAttribute('style','border: 2px solid #606060;');
+	      }
+	      var memlink = mem.appendChild(document.createElement(mtype));
+	      memlink.setAttribute('class',bclass);
+	      if( mtype == 'a')
+	          memlink.setAttribute('href','?swapdev='+encodeURI(dev.id));
+	      var lab = dev.label;
+	      if( lab.length==0 )
+	          lab = dev.id;
+	      memlink.appendChild(document.createTextNode( escapeHtml(lab) ));
+	      if( room.entered ){
+	          if( (dev.numchannels > 1) && (!dev.senddownmix) )
+		            latdisp = dev.numchannels + 'c ' + latdisp;
+	          latdisp = (dev.jackrate*0.001).toFixed(0) + 'k ' + latdisp;
             if( !dev.senddownmix ){
-	        if( dev.peer2peer )
-		    latdisp = 'p2p ' + latdisp;
-	        else
-		    latdisp = 'srv ' + latdisp;
-	        if( dev.receivedownmix )
-		    latdisp = 'dm ' + latdisp;
-	        if( dev.isproxy )
-		    latdisp = ':P: ' + latdisp;
-	        if( dev.useproxy )
-		    latdisp = 'p-' + latdisp;
+	              if( dev.peer2peer )
+		                latdisp = 'p2p ' + latdisp;
+	              else
+		                latdisp = 'srv ' + latdisp;
+	              if( dev.receivedownmix )
+		                latdisp = 'dm ' + latdisp;
+	              if( dev.isproxy )
+		                latdisp = ':P: ' + latdisp;
+	              if( dev.useproxy )
+		                latdisp = 'p-' + latdisp;
             }
-	}
-	if( latdisp.length > 0 ){
-	    var span = mem.appendChild(document.createElement('span'));
-	    span.setAttribute('class','latency');
-	    span.appendChild(document.createTextNode(latdisp));
-	}
-	if( (room.owner == device.owner) || (dev.owner == device.owner) ){
-	    var kick = mem.appendChild(document.createElement('input'));
-	    kick.setAttribute('value','X');
-	    kick.setAttribute('class','kick');
-	    kick.setAttribute('type','button');
+	      }
+	      if( latdisp.length > 0 ){
+	          var xspan = mem.appendChild(document.createElement('span'));
+	          xspan.setAttribute('class','latency');
+	          xspan.appendChild(document.createTextNode(latdisp));
+	      }
+	      if( (room.owner == device.owner) || (dev.owner == device.owner) ){
+	          var kick = mem.appendChild(document.createElement('input'));
+	          kick.setAttribute('value','X');
+	          kick.setAttribute('class','kick');
+	          kick.setAttribute('type','button');
             if(room.owner == device.owner)
-	        kick.setAttribute('title','Kick this device out of my room.');
+	              kick.setAttribute('title','Kick this device out of my room.');
             else
-	        kick.setAttribute('title','Leave this room.');
-	    kick.setAttribute('onclick','location.href=\'?kick='+encodeURI(dev.id)+'\';');
-	}
+	              kick.setAttribute('title','Leave this room.');
+	          kick.setAttribute('onclick','location.href=\'?kick='+encodeURI(dev.id)+'\';');
+	      }
     }
     var ctl = document.getElementById(room.id+':ctl');
     while( ctl.firstChild ) ctl.removeChild( ctl.firstChild );
     if( device.id ){
-	if( room.lock ){
-	    var lck = ctl.appendChild(document.createElement('img'));
-	    lck.setAttribute('src','lock.svg');
-	    lck.setAttribute('width','20px');
-	    ctl.appendChild(document.createTextNode(' '));
-	}
-	if( room.entered ) {
-	    var a = ctl.appendChild(document.createElement('a'));
-	    a.setAttribute('href','?enterroom=');
-	    a.setAttribute('class','roomctl');
-	    a.appendChild(document.createTextNode('leave room'));
-	    a = ctl.appendChild(document.createElement('a'));
-	    a.setAttribute('class','roomctl');
-	    if( room.lock ){
-		a.setAttribute('href','?lockroom='+encodeURI(room.id)+'&lck=0');
-		a.appendChild(document.createTextNode('unlock room'));
-	    }else{
-		a.setAttribute('href','?lockroom='+encodeURI(room.id)+'&lck=1');
-		a.appendChild(document.createTextNode('lock room'));
-	    }
-	    a = ctl.appendChild(document.createElement('a'));
-	    a.setAttribute('class','roomctl');
-	    a.setAttribute('href','sessionmap.php');
-	    a.appendChild(document.createTextNode('map'));
-	    a = ctl.appendChild(document.createElement('a'));
-	    a.setAttribute('class','roomctl');
-	    a.setAttribute('href','sessionstat.php');
-	    a.appendChild(document.createTextNode('statistics'));
+	      if( room.lock ){
+	          var lck = ctl.appendChild(document.createElement('img'));
+	          lck.setAttribute('src','lock.svg');
+	          lck.setAttribute('width','20px');
+	          ctl.appendChild(document.createTextNode(' '));
+	      }
+	      if( room.entered ) {
+	          var a = ctl.appendChild(document.createElement('a'));
+	          a.setAttribute('href','?enterroom=');
+	          a.setAttribute('class','roomctl');
+	          a.appendChild(document.createTextNode('leave room'));
+	          a = ctl.appendChild(document.createElement('a'));
+	          a.setAttribute('class','roomctl');
+	          if( room.lock ){
+		            a.setAttribute('href','?lockroom='+encodeURI(room.id)+'&lck=0');
+		            a.appendChild(document.createTextNode('unlock room'));
+	          }else{
+		            a.setAttribute('href','?lockroom='+encodeURI(room.id)+'&lck=1');
+		            a.appendChild(document.createTextNode('lock room'));
+	          }
+	          a = ctl.appendChild(document.createElement('a'));
+	          a.setAttribute('class','roomctl');
+	          a.setAttribute('href','sessionmap.php');
+	          a.appendChild(document.createTextNode('map'));
+	          a = ctl.appendChild(document.createElement('a'));
+	          a.setAttribute('class','roomctl');
+	          a.setAttribute('href','sessionstat.php');
+	          a.appendChild(document.createTextNode('statistics'));
             if( user.allowninja ){
-	        a = ctl.appendChild(document.createElement('a'));
-	        a.setAttribute('class','roomctl');
-	        a.setAttribute('href','sessionvid.php');
-	        a.appendChild(document.createTextNode('videos'));
+	              a = ctl.appendChild(document.createElement('a'));
+	              a.setAttribute('class','roomctl');
+	              a.setAttribute('href','sessionvid.php');
+	              a.appendChild(document.createTextNode('videos'));
                 a.setAttribute('title','experimental video sharing (no audio)');
             }else{
-	        a = ctl.appendChild(document.createElement('a'));
-	        a.setAttribute('class','roomctl');
-	        a.appendChild(document.createTextNode('[videos disabled]'));
-	        a.setAttribute('href','account.php');
+	              a = ctl.appendChild(document.createElement('a'));
+	              a.setAttribute('class','roomctl');
+	              a.appendChild(document.createTextNode('[videos disabled]'));
+	              a.setAttribute('href','account.php');
                 a.setAttribute('title','See account settings to enable experimental video sharing');
             }
-	} else {
+	      } else {
             if( room.premium && (!user.validsubscription)){
-		ctl.appendChild(document.createTextNode('Premium room, available only for donors. '));
-		var a = ctl.appendChild(document.createElement('a'));
-		a.setAttribute('class','roomctl');
-		a.setAttribute('href','account.php');
-		a.appendChild(document.createTextNode('check account'));
+		            ctl.appendChild(document.createTextNode('Premium room, available only for donors. '));
+		            a = ctl.appendChild(document.createElement('a'));
+		            a.setAttribute('class','roomctl');
+		            a.setAttribute('href','account.php');
+		            a.appendChild(document.createTextNode('check account'));
             }else{
-	        if( room.lock ){
-		    ctl.appendChild(document.createTextNode('room is locked.'));
-	        }else{
-		    var a = ctl.appendChild(document.createElement('a'));
-		    a.setAttribute('class','roomctl');
-		    a.setAttribute('href','?enterroom='+encodeURI(room.id));
-		    a.appendChild(document.createTextNode('enter'));
-	        }
+	              if( room.lock ){
+		                ctl.appendChild(document.createTextNode('room is locked.'));
+	              }else{
+		                a = ctl.appendChild(document.createElement('a'));
+		                a.setAttribute('class','roomctl');
+		                a.setAttribute('href','?enterroom='+encodeURI(room.id));
+		                a.appendChild(document.createTextNode('enter'));
+	              }
             }
-	}
+	      }
     }
     if( (device.owner == room.owner)||(room.editable && room.entered) ){
-	// my room, provide settings box:
-	if( device.owner == room.owner ){
-	    var numdevs = 0;
-	    for( const dev in room.roomdev)
-		numdevs++;
-	    if( numdevs>0 ){
-		var a = ctl.appendChild(document.createElement('a'));
-		a.setAttribute('href','?clearroom='+encodeURI(room.id));
-		a.appendChild(document.createTextNode('kick all'));
-		a.setAttribute('class','roomctl');
-	    }
-	}
-	var rp = document.getElementById(room.id+':cfg');
-	var tog = ctl.appendChild(document.createElement('input'));
-	tog.setAttribute('type','button');
-	tog.setAttribute('class','roomsettingstoggle uibutton');
-	tog.setAttribute('onclick','toggledisplay("'+room.id+':cfg","room settings");');
-	tog.setAttribute('value','show room settings');
+	      // my room, provide settings box:
+	      if( device.owner == room.owner ){
+	          var numdevs = 0;
+	          for( const dev in room.roomdev)
+		            numdevs++;
+	          if( numdevs>0 ){
+		            a = ctl.appendChild(document.createElement('a'));
+		            a.setAttribute('href','?clearroom='+encodeURI(room.id));
+		            a.appendChild(document.createTextNode('kick all'));
+		            a.setAttribute('class','roomctl');
+	          }
+	      }
+	      var rp = document.getElementById(room.id+':cfg');
+	      tog = ctl.appendChild(document.createElement('input'));
+	      tog.setAttribute('type','button');
+	      tog.setAttribute('class','roomsettingstoggle uibutton');
+	      tog.setAttribute('onclick','toggledisplay("'+room.id+':cfg","room settings");');
+	      tog.setAttribute('value','show room settings');
     }
     if( !roomvaluechanged ){
-	for (const [key, value] of Object.entries(room)) {
-	    var inp = document.getElementById(room.id+':cfg:'+key);
-	    if( inp ){
-		switch( inp.type ){
-		case 'checkbox' :
-	    	    if( value )
-			inp.setAttribute('checked','');
-		    else
-			inp.removeAttribute('checked');
-		    break;
-		case 'number' :
-		case 'text' :
-		    inp.value = value;
-		    break;
-		case 'select-one' :
-		    for( var k=0;k<inp.options.length;k++){
-			inp.options[k].selected = inp.options[k].value==value;
-		    }
-		    break;
-		default:
-		    console.log('key '+key+' type: '+inp.type);
-		}
-	    }
-	}
+	      for (const [key, value] of Object.entries(room)) {
+	          var inp = document.getElementById(room.id+':cfg:'+key);
+	          if( inp ){
+		            switch( inp.type ){
+		            case 'checkbox' :
+	    	            if( value )
+			                  inp.setAttribute('checked','');
+		                else
+			                  inp.removeAttribute('checked');
+		                break;
+		            case 'number' :
+		            case 'text' :
+		                inp.value = value;
+		                break;
+		            case 'select-one' :
+		                for( var k=0;k<inp.options.length;k++){
+			                  inp.options[k].selected = inp.options[k].value==value;
+		                }
+		                break;
+		            default:
+		                console.log('key '+key+' type: '+inp.type);
+		            }
+	          }
+	      }
     }
 }
 
@@ -681,17 +729,17 @@ function numage2str( nage )
     var d = secondsToTime( nage );
     var age = '';
     if( nage > 3600*24*365*40 )
-	return 'never';
+	      return 'never';
     if( nage >= 3600*24 )
-	age = age + d.d + 'd';
+	      age = age + d.d + 'd';
     if( (nage >= 3600) && (nage < 7*3600*24) )
-	age = age + d.h + 'h';
+	      age = age + d.h + 'h';
     if( (nage >= 60) && (nage < 3600*24) )
-	age = age + d.m + '\'';
+	      age = age + d.m + '\'';
     if( (nage >= 0) && (nage < 3600) )
-	age = age + d.s + '"';
+	      age = age + d.s + '"';
     if( nage < 0 )
-	age = nage + 's';
+	      age = nage + 's';
     return age;
 }
 
@@ -700,12 +748,12 @@ function update_devicestatus( user, device, owned_devices )
     var devstat = document.getElementById('devstatus');
     while( devstat.firstChild ) devstat.removeChild(devstat.firstChild);
     if( device.id.length==0 ){
-	devstat.appendChild(document.createTextNode('No device is linked to this account.'));
+	      devstat.appendChild(document.createTextNode('No device is linked to this account.'));
     }else{
-	var dclass = 'psvmember';
-	//var state = '';
-	var lastseen = '';
-	var otherdev = '';
+	      var dclass = 'psvmember';
+	      //var state = '';
+	      var lastseen = '';
+	      var otherdev = '';
         if( device.firmwareupdate )
             lastseen = ' Firmware update pending. ';
         if( device.isupdating ){
@@ -719,106 +767,106 @@ function update_devicestatus( user, device, owned_devices )
             while( devver.firstChild ) devver.removeChild(devver.firstChild);
             devver.appendChild(document.createTextNode(device.version+lastseen));
         }
-	if( device.age < 20 ){
-	    dclass = 'actmember';
-	    //state = 'active';
-	}else{
-	    lastseen = lastseen+' inactive since '+numage2str(device.age)+'.';
-	    var oact = false;
-	    for( const od in owned_devices){
-		if( owned_devices[od].age<20 )
-		    oact = true;
-	    }
-	    if( oact )
-		otherdev = ' You own active devices - please check the device selector above to access them.';
-	}
-	devstat.appendChild(document.createTextNode(lastseen+otherdev));
-	if( device.age < 20 ){
-	    if( device.bandwidth && ((device.bandwidth.tx>0)||(device.bandwidth.rx>0)) ){
-		var txstr;
-		if( device.bandwidth.tx >= 100000 )
-		    txstr = (0.000001*device.bandwidth.tx).toFixed(2)+' MBps';
-		else
-		    txstr = (0.001*device.bandwidth.tx).toFixed(2)+' kBps';
-		var rxstr;
-		if( device.bandwidth.rx >= 100000 )
-		    rxstr = (0.000001*device.bandwidth.rx).toFixed(2)+' MBps';
-		else
-		    rxstr = (0.001*device.bandwidth.rx).toFixed(2)+' kBps';
-		devstat.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
-	    }
-	    if( device.cpuload && (device.cpuload > 0) ){
-		      devstat.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
-	    }
-      if( device.backendperiodsize && (device.backendperiodsize > 0) &&
-          device.backendsrate && (device.backendsrate > 0)){
-		      devstat.appendChild(document.createTextNode(' ['+(device.backendperiodsize/device.backendsrate*1000).toFixed(1)+'ms/'+(device.backendsrate*0.001).toFixed(1)+'kHz]'));
-      }
-	}
-	if( device.useproxy && (device.proxyip.length>0))
-	    devstat.appendChild(document.createTextNode(' proxy: '+device.proxyip));
-	if( device.isproxy )
-	    devstat.appendChild(document.createTextNode(' offering proxy service'));
-	if( device.lastfrontendconfig && device.lastfrontendconfig.ui){
-	    devstat.appendChild(document.createElement('br'));
-	    devstat.appendChild(document.createTextNode('Currently registered at '));
-	    var ahref = devstat.appendChild(document.createElement('a'));
-	    ahref.setAttribute('href',device.lastfrontendconfig.ui);
-	    ahref.appendChild(document.createTextNode(device.lastfrontendconfig.ui));
-	}
-	//console.log(device.lastfrontendconfig);
+	      if( device.age < 20 ){
+	          dclass = 'actmember';
+	          //state = 'active';
+	      }else{
+	          lastseen = lastseen+' inactive since '+numage2str(device.age)+'.';
+	          var oact = false;
+	          for( const od in owned_devices){
+		            if( owned_devices[od].age<20 )
+		                oact = true;
+	          }
+	          if( oact )
+		            otherdev = ' You own active devices - please check the device selector above to access them.';
+	      }
+	      devstat.appendChild(document.createTextNode(lastseen+otherdev));
+	      if( device.age < 20 ){
+	          if( device.bandwidth && ((device.bandwidth.tx>0)||(device.bandwidth.rx>0)) ){
+		            var txstr;
+		            if( device.bandwidth.tx >= 100000 )
+		                txstr = (0.000001*device.bandwidth.tx).toFixed(2)+' MBps';
+		            else
+		                txstr = (0.001*device.bandwidth.tx).toFixed(2)+' kBps';
+		            var rxstr;
+		            if( device.bandwidth.rx >= 100000 )
+		                rxstr = (0.000001*device.bandwidth.rx).toFixed(2)+' MBps';
+		            else
+		                rxstr = (0.001*device.bandwidth.rx).toFixed(2)+' kBps';
+		            devstat.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
+	          }
+	          if( device.cpuload && (device.cpuload > 0) ){
+		            devstat.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
+	          }
+            if( device.backendperiodsize && (device.backendperiodsize > 0) &&
+                device.backendsrate && (device.backendsrate > 0)){
+		            devstat.appendChild(document.createTextNode(' ['+(device.backendperiodsize/device.backendsrate*1000).toFixed(1)+'ms/'+(device.backendsrate*0.001).toFixed(1)+'kHz]'));
+            }
+	      }
+	      if( device.useproxy && (device.proxyip.length>0))
+	          devstat.appendChild(document.createTextNode(' proxy: '+device.proxyip));
+	      if( device.isproxy )
+	          devstat.appendChild(document.createTextNode(' offering proxy service'));
+	      if( device.lastfrontendconfig && device.lastfrontendconfig.ui){
+	          devstat.appendChild(document.createElement('br'));
+	          devstat.appendChild(document.createTextNode('Currently registered at '));
+	          var ahref = devstat.appendChild(document.createElement('a'));
+	          ahref.setAttribute('href',device.lastfrontendconfig.ui);
+	          ahref.appendChild(document.createTextNode(device.lastfrontendconfig.ui));
+	      }
+	      //console.log(device.lastfrontendconfig);
     }
     // update device error:
     var deverr = document.getElementById('deverror');
     if( deverr ){
-	while( deverr.firstChild ) deverr.removeChild(deverr.firstChild);
-	if( (device.message.length>0) && (device.age<3600) ){
-	    deverr.setAttribute('style','display: block;');
-	    var b = deverr.appendChild(document.createElement('b'));
-	    b.appendChild(document.createTextNode('Device error:'));
-	    deverr.appendChild(document.createElement('br'));
-	    deverr.appendChild(document.createTextNode(device.message));
-	    if( device.message.includes('Unable to connect to the JACK server')){
-		deverr.appendChild(document.createElement('br'));
-		deverr.appendChild(document.createTextNode('Is your sound card connected and configured correctly?'));
-	    }
-	}else{
-	    deverr.setAttribute('style','display: none;');
-	}
+	      while( deverr.firstChild ) deverr.removeChild(deverr.firstChild);
+	      if( (device.message.length>0) && (device.age<3600) ){
+	          deverr.setAttribute('style','display: block;');
+	          var b = deverr.appendChild(document.createElement('b'));
+	          b.appendChild(document.createTextNode('Device error:'));
+	          deverr.appendChild(document.createElement('br'));
+	          deverr.appendChild(document.createTextNode(device.message));
+	          if( device.message.includes('Unable to connect to the JACK server')){
+		            deverr.appendChild(document.createElement('br'));
+		            deverr.appendChild(document.createTextNode('Is your sound card connected and configured correctly?'));
+	          }
+	      }else{
+	          deverr.setAttribute('style','display: none;');
+	      }
     }
     // update device selector:
     var devsel = document.getElementById('deviceselector');
     if( devsel ){
-	while( devsel.options.length > 0 )
-	    devsel.remove(0);
-	var opt = document.createElement('option');
-	opt.value = '';
-	opt.text = '-- please select a device --';
-	devsel.add(opt);
-	for( const od in owned_devices){
-	    var act = '';
-	    if( (owned_devices[od].age<20) && (od!=device.id))
-		act = ' *active*';
-	    opt = document.createElement('option');
-	    opt.value = od;
-	    opt.text = od+' ('+owned_devices[od].label+')'+act;
-	    opt.selected = od==device.id;
-	    devsel.add(opt);
-	}
-	if( device.age < 20 )
-	    devsel.setAttribute('class','actmember');
-	else
-	    devsel.setAttribute('class','psvmember');
+	      while( devsel.options.length > 0 )
+	          devsel.remove(0);
+	      var opt = document.createElement('option');
+	      opt.value = '';
+	      opt.text = '-- please select a device --';
+	      devsel.add(opt);
+	      for( const od in owned_devices){
+	          var act = '';
+	          if( (owned_devices[od].age<20) && (od!=device.id))
+		            act = ' *active*';
+	          opt = document.createElement('option');
+	          opt.value = od;
+	          opt.text = od+' ('+owned_devices[od].label+')'+act;
+	          opt.selected = od==device.id;
+	          devsel.add(opt);
+	      }
+	      if( device.age < 20 )
+	          devsel.setAttribute('class','actmember');
+	      else
+	          devsel.setAttribute('class','psvmember');
     }
     // update webmixer link:
     var webm = document.getElementById('webmixerlink');
     if( webm ){
-	while( webm.firstChild ) webm.removeChild(webm.firstChild);
-	// use IP address for mixer if possible:
-	var mixer = device.localip;
-	if( mixer.length = 0 )
-	    mixer = device.host;
-	if( (device.age < 20) && (mixer.length > 0) ){
+	      while( webm.firstChild ) webm.removeChild(webm.firstChild);
+	      // use IP address for mixer if possible:
+	      var mixer = device.localip;
+	      if( mixer.length == 0 )
+	          mixer = device.host;
+	      if( (device.age < 20) && (mixer.length > 0) ){
             // device is active and we know the host name:
             webm.setAttribute('style','display: block;');
             var a = webm.appendChild(document.createElement('a'));
@@ -829,26 +877,26 @@ function update_devicestatus( user, device, owned_devices )
             webm.setAttribute('class','mixer');
             a.appendChild(document.createTextNode('open mixer'));
             webm.appendChild(document.createTextNode(' (works only when your browser is in the same network as your device)'));
-	}else{
+	      }else{
             webm.setAttribute('style','display: none;');
-	}
+	      }
     }
     var presetindicator = document.getElementById('presetindicator');
     if( presetindicator ){
-	while( presetindicator.firstChild ) presetindicator.removeChild(presetindicator.firstChild);
-	if( device.preset.length > 0 ){
-	    presetindicator.appendChild(document.createTextNode(device.preset));
-	    presetindicator.setAttribute('class','presetspan presetact');
-	}else{
-	    presetindicator.setAttribute('class','');
-	    var els=document.getElementsByClassName("presetact");
-	    for( const el in els ){
-		if( els.item(el) ){
-		    var cl = els.item(el).getAttribute('class');
-		    els.item(el).setAttribute('class',cl.replace('presetact',''));
-		}
-	    }
-	}
+	      while( presetindicator.firstChild ) presetindicator.removeChild(presetindicator.firstChild);
+	      if( device.preset.length > 0 ){
+	          presetindicator.appendChild(document.createTextNode(device.preset));
+	          presetindicator.setAttribute('class','presetspan presetact');
+	      }else{
+	          presetindicator.setAttribute('class','');
+	          var els=document.getElementsByClassName("presetact");
+	          for( const el in els ){
+		            if( els.item(el) ){
+		                var cl = els.item(el).getAttribute('class');
+		                els.item(el).setAttribute('class',cl.replace('presetact',''));
+		            }
+	          }
+	      }
     }
     //if(!empty($dprop['preset'])){
     //	$pres->appendChild($doc->createTextNode($dprop['preset']));
@@ -861,19 +909,19 @@ function update_unclaimed( user, unclaimed_devices )
     var p = document.getElementById('devclaim');
     while( p.firstChild ) p.removeChild(p.firstChild);
     if( unclaimed_devices.length == 0 )
-	p.setAttribute('style','display:none;');
+	      p.setAttribute('style','display:none;');
     else{
-	p.setAttribute('style','display:block;');
-	p.appendChild(document.createTextNode('Unclaimed active devices exist. If this is your device, and it is active now, you may claim it by clicking on the device id:'));
-	p.appendChild(document.createElement('br'));
+	      p.setAttribute('style','display:block;');
+	      p.appendChild(document.createTextNode('Unclaimed active devices exist. If this is your device, and it is active now, you may claim it by clicking on the device id:'));
+	      p.appendChild(document.createElement('br'));
         for( var k=0;k<unclaimed_devices.length;k++){
-	    var form=p.appendChild(document.createElement('form'));
-	    form.setAttribute('style','display:inline;');
-	    var inp=form.appendChild(document.createElement('input'));
-	    inp.setAttribute('type','hidden');
-	    inp.setAttribute('name','claim');
-	    inp.setAttribute('value',unclaimed_devices[k]);
-	    form.appendChild(document.createElement('button')).appendChild(document.createTextNode(unclaimed_devices[k]));
+	          var form=p.appendChild(document.createElement('form'));
+	          form.setAttribute('style','display:inline;');
+	          var inp=form.appendChild(document.createElement('input'));
+	          inp.setAttribute('type','hidden');
+	          inp.setAttribute('name','claim');
+	          inp.setAttribute('value',unclaimed_devices[k]);
+	          form.appendChild(document.createElement('button')).appendChild(document.createTextNode(unclaimed_devices[k]));
         }
     }
 }
@@ -885,18 +933,18 @@ var timer10;
 function everysecond(){
     var el=document.getElementsByClassName("timedisplay");
     for( var k=0,len=el.length|0;k<len;k=k+1|0 ){
-	while (el[k].firstChild) {el[k].removeChild(el[k].firstChild);}
-	el[k].appendChild(document.createTextNode(Math.floor(0.001*(Date.now()-tstart))));
+	      while (el[k].firstChild) {el[k].removeChild(el[k].firstChild);}
+	      el[k].appendChild(document.createTextNode(Math.floor(0.001*(Date.now()-tstart))));
     }
 }
 
 function hexval(c){
     if( c < 0 )
-	return '00';
+	      return '00';
     if( c < 16 )
-	return '0'+c.toString(16);
+	      return '0'+c.toString(16);
     if( c < 256 )
-	return c.toString(16);
+	      return c.toString(16);
     return 'ff';
 }
 
@@ -913,7 +961,7 @@ function tab_header( tab, data ){
     td=tr.appendChild(document.createElement('td'));
     var numch = 0;
     for( const chair in data.chairs )
-	numch++;
+	      numch++;
     td.setAttribute('colspan',numch);
     td.setAttribute('class','statcell statcellsend');
     td.appendChild(document.createTextNode('sender'));
@@ -922,15 +970,15 @@ function tab_header( tab, data ){
     td.appendChild(document.createTextNode('receiver'));
     td.setAttribute('class','statcellrec');
     for( const chair in data.chairs ){
-	const dev=data.chairs[chair];
-	if( dev && data.stats[dev] ){
-	    var td=tr.appendChild(document.createElement('td'));
-	    td.setAttribute('class','statcell statcellsend');
-	    if( data.versions[dev] < 0 )
-		td.appendChild(document.createTextNode('('+chair+')'));
-	    else
-		td.appendChild(document.createTextNode(chair));
-	}
+	      const dev=data.chairs[chair];
+	      if( dev && data.stats[dev] ){
+	          td=tr.appendChild(document.createElement('td'));
+	          td.setAttribute('class','statcell statcellsend');
+	          if( data.versions[dev] < 0 )
+		            td.appendChild(document.createTextNode('('+chair+')'));
+	          else
+		            td.appendChild(document.createTextNode(chair));
+	      }
     }
 }
 
@@ -942,7 +990,7 @@ function create_tab_stat(div,title,data,header=true){
     h_ping.appendChild(document.createTextNode(title));
     var tab = sec_ping.appendChild(document.createElement('table'));
     if( header )
-	tab_header( tab, data );
+	      tab_header( tab, data );
     return tab;
 }
 
@@ -951,9 +999,9 @@ function create_row_stat(tab,chair,data){
     var tr=tab.appendChild(document.createElement('tr'));
     var td=tr.appendChild(document.createElement('td'));
     if( data.versions[dev] < 0 )
-	td.appendChild(document.createTextNode('('+chair+' '+data.names[dev]+')'));
+	      td.appendChild(document.createTextNode('('+chair+' '+data.names[dev]+')'));
     else
-	td.appendChild(document.createTextNode(chair+' '+data.names[dev]));
+	      td.appendChild(document.createTextNode(chair+' '+data.names[dev]));
     td.setAttribute('class','statcellrec');
     return tr;
 }
@@ -962,16 +1010,16 @@ function data2mat( data, category, measure )
 {
     var mat = [];
     for( const chair in data.chairs ){
-	const dev=data.chairs[chair];
-	if( dev && data.stats[dev] ){
-	    for( const chx in data.chairs ){
-		if( data.stats[dev][chx] ){
-		    mat.push(data.stats[dev][chx][category][measure]);
-		}else{
-		    mat.push(NaN);
-		}
-	    }
-	}
+	      const dev=data.chairs[chair];
+	      if( dev && data.stats[dev] ){
+	          for( const chx in data.chairs ){
+		            if( data.stats[dev][chx] ){
+		                mat.push(data.stats[dev][chx][category][measure]);
+		            }else{
+		                mat.push(NaN);
+		            }
+	          }
+	      }
     }
     return mat;
 }
@@ -992,35 +1040,35 @@ function get_optimal_receiver_jitter( data, category )
     var idx = 0;
     var chairidx = new Object();
     for( const chair in data.chairs ){
-	chidx[chair] = idx;
-	chairidx[idx] = chair;
-	idx++;
+	      chidx[chair] = idx;
+	      chairidx[idx] = chair;
+	      idx++;
     }
     const dp99 = data2mat(data,category,'p99');
     const dmin = data2mat(data,category,'min');
     const mat_jitter = dp99.map(function (num,idx) { return num-dmin[idx];});
     var vjitrec = {};
     for( const chair in data.chairs ){
-	var jitrec = 1000;
-	for( var k=data.n*chidx[chair]; k<data.n*(chidx[chair]+1);k++){
-	    if( mat_jitter[k] > 0 )
-		jitrec = Math.min(jitrec,mat_jitter[k]);
-	}
-	vjitrec[chair] = jitrec;
+	      var jitrec = 1000;
+	      for( var k=data.n*chidx[chair]; k<data.n*(chidx[chair]+1);k++){
+	          if( mat_jitter[k] > 0 )
+		            jitrec = Math.min(jitrec,mat_jitter[k]);
+	      }
+	      vjitrec[chair] = jitrec;
     }
     var vjitsend = {};
     for( const chair in data.chairs ){
-	var jitsend = 0;
-	for( var k=0;k<data.n;k++){
-	    if( matelem(mat_jitter,chidx[chair],k,data.n) > 0 ){
-		var sq = Math.sqrt(sqr(matelem(mat_jitter,chidx[chair],k,data.n))-sqr(vjitrec[chairidx[k]]));
-		jitsend = Math.max(jitsend,sq);
-	    }
-	}
-	vjitsend[chair] = Math.ceil(Math.sqrt(sqr(jitsend)+sqr(data.fragsize[data.chairs[chair]])));
+	      var jitsend = 0;
+	      for( var k=0;k<data.n;k++){
+	          if( matelem(mat_jitter,chidx[chair],k,data.n) > 0 ){
+		            var sq = Math.sqrt(sqr(matelem(mat_jitter,chidx[chair],k,data.n))-sqr(vjitrec[chairidx[k]]));
+		            jitsend = Math.max(jitsend,sq);
+	          }
+	      }
+	      vjitsend[chair] = Math.ceil(Math.sqrt(sqr(jitsend)+sqr(data.fragsize[data.chairs[chair]])));
     }
     for( const chair in vjitsend ){
-	vjitrec[chair] = Math.ceil(Math.sqrt(sqr(vjitrec[chair])+sqr(data.fragsize[data.chairs[chair]])));
+	      vjitrec[chair] = Math.ceil(Math.sqrt(sqr(vjitrec[chair])+sqr(data.fragsize[data.chairs[chair]])));
     }
     return {'rec':vjitrec,'send':vjitsend};
 }
@@ -1029,9 +1077,9 @@ function update_sessionmap(div)
 {
     let request = new XMLHttpRequest();
     request.onload = function() {
-	var svg = request.responseXML;
-	while( div.firstChild ) div.removeChild(div.firstChild);
-	var img = div.appendChild(svg.rootElement.cloneNode(true));
+	      var svg = request.responseXML;
+	      while( div.firstChild ) div.removeChild(div.firstChild);
+	      var img = div.appendChild(svg.rootElement.cloneNode(true));
         var maxw = div.clientWidth;
         if( 0.6*top.innerHeight < maxw ){
             maxw = 0.6*top.innerHeight;
@@ -1039,7 +1087,7 @@ function update_sessionmap(div)
         }else{
             div.removeAttribute('style');
         }
-    }
+    };
     request.open('GET', 'sessionsvg.php');
     request.reponseType = 'svg';
     request.send();
@@ -1049,161 +1097,161 @@ function update_sessionstat(div)
 {
     let request = new XMLHttpRequest();
     request.onload = function() {
-	var data = JSON.parse(request.response, (key,value)=>
-			      {
-				  if( value == "0" ) return 0;
-				  return value;
-			      }
-			     );
-	while( div.firstChild ) div.removeChild(div.firstChild);
-	if( data && data.stats && (data.room.length>0)){
-	    var h=div.appendChild(document.createElement('h3'));
-	    h.appendChild(document.createTextNode('Session '+data.room));
-	    const modes = ['cur','p2p','srv','loc']
-	    for( const mode in modes){
-		var show = false;
-		for( const chair in data.chairs ){
-		    const dev=data.chairs[chair];
-		    if( dev && data.stats[dev] ){
-			for( const chx in data.chairs ){
-			    if( data.stats[dev][chx] && data.stats[dev][chx][modes[mode]])
-				if( data.stats[dev][chx][modes[mode]].received > 0 )
-				    show = true;
-			}
-		    }
-		}
-		if(show){
-		    {
-			var tab = create_tab_stat(div,'Suggestions '+modes[mode],data,false);
-			const suggest = get_optimal_receiver_jitter(data,modes[mode]);
-			var tr = tab.appendChild(document.createElement('tr'));
-			td = tr.appendChild(document.createElement('td'));
-			td = tr.appendChild(document.createElement('td'));
-			td.setAttribute('class','statcell');
-			td.appendChild(document.createTextNode('rec'));
-			td = tr.appendChild(document.createElement('td'));
-			td.appendChild(document.createTextNode('send'));
-			td.setAttribute('class','statcell');
-			for( const chair in data.chairs ){
-			    var tr=create_row_stat(tab,chair,data);
-			    td = tr.appendChild(document.createElement('td'));
-			    td.setAttribute('class','statcell');
+	      var data = JSON.parse(request.response, (key,value)=>
+			                        {
+				                          if( value == "0" ) return 0;
+				                          return value;
+			                        }
+			                       );
+	      while( div.firstChild ) div.removeChild(div.firstChild);
+	      if( data && data.stats && (data.room.length>0)){
+	          var h=div.appendChild(document.createElement('h3'));
+	          h.appendChild(document.createTextNode('Session '+data.room));
+	          const modes = ['cur','p2p','srv','loc'];
+	          for( const mode in modes){
+		            var show = false;
+		            for( const chair in data.chairs ){
+		                const dev=data.chairs[chair];
+		                if( dev && data.stats[dev] ){
+			                  for( const chx in data.chairs ){
+			                      if( data.stats[dev][chx] && data.stats[dev][chx][modes[mode]])
+				                        if( data.stats[dev][chx][modes[mode]].received > 0 )
+				                            show = true;
+			                  }
+		                }
+		            }
+		            if(show){
+		                {
+			                  var tab = create_tab_stat(div,'Suggestions '+modes[mode],data,false);
+			                  const suggest = get_optimal_receiver_jitter(data,modes[mode]);
+			                  var tr = tab.appendChild(document.createElement('tr'));
+			                  td = tr.appendChild(document.createElement('td'));
+			                  td = tr.appendChild(document.createElement('td'));
+			                  td.setAttribute('class','statcell');
+			                  td.appendChild(document.createTextNode('rec'));
+			                  td = tr.appendChild(document.createElement('td'));
+			                  td.appendChild(document.createTextNode('send'));
+			                  td.setAttribute('class','statcell');
+			                  for( const chair in data.chairs ){
+			                      var tr=create_row_stat(tab,chair,data);
+			                      td = tr.appendChild(document.createElement('td'));
+			                      td.setAttribute('class','statcell');
                             if( suggest.rec[chair] < 1000 )
-			        td.appendChild(document.createTextNode(suggest.rec[chair]));
+			                          td.appendChild(document.createTextNode(suggest.rec[chair]));
                             else
                                 td.appendChild(document.createTextNode('--'));
-			    td = tr.appendChild(document.createElement('td'));
-			    td.setAttribute('class','statcell');
+			                      td = tr.appendChild(document.createElement('td'));
+			                      td.setAttribute('class','statcell');
                             if( suggest.send[chair] < 1000 )
-			        td.appendChild(document.createTextNode(suggest.send[chair]));
+			                          td.appendChild(document.createTextNode(suggest.send[chair]));
                             else
                                 td.appendChild(document.createTextNode('--'));
-			    td = tr.appendChild(document.createElement('td'));
-			    td.setAttribute('class','statcell');
-			    if( data.p2p[data.chairs[chair]] )
-				td.appendChild(document.createTextNode('p2p'));
-			    else
-				td.appendChild(document.createTextNode('srv'));
-			}
-		    }
-		    var tab_ping=create_tab_stat(div,'Median ping times '+modes[mode], data);
-		    var tab_jitter=create_tab_stat(div,'Jitter '+modes[mode], data);
-		    for( const chair in data.chairs ){
-			const dev=data.chairs[chair];
-			if( dev && data.stats[dev] ){
-			    // ping:
-			    var tr=create_row_stat(tab_ping,chair,data);
-			    for( const chx in data.chairs ){
-				var pt=-1;
-				if( data.stats[dev][chx] )
-				    pt=data.stats[dev][chx][modes[mode]].median;
-				var td=tr.appendChild(document.createElement('td'));
-				td.setAttribute('class','statcell');
-				if( pt > 0){
-				    td.appendChild(document.createTextNode(pt.toFixed(1)+'ms'));
-				    td.setAttribute('style','background-color:'+lat2rgb(pt,0,60));
-				}else{
-				    //td.appendChild(document.createTextNode('---'));
-				    td.setAttribute('style','background-color: #AAAAAA');
-				}
-			    }
-			    // jitter:
-			    var tr=create_row_stat(tab_jitter,chair,data);
-			    for( const chx in data.chairs ){
-				var pt=-1;
-				if( data.stats[dev][chx] )
-				    pt=data.stats[dev][chx][modes[mode]].p99-
-				    data.stats[dev][chx][modes[mode]].min;
-				var td=tr.appendChild(document.createElement('td'));
-				td.setAttribute('class','statcell');
-				if( pt > 0){
-				    td.appendChild(document.createTextNode(pt.toFixed(1)+'ms'));
-				    td.setAttribute('style','background-color:'+lat2rgb(pt,0,15));
-				}else{
-				    //td.appendChild(document.createTextNode('---'));
-				    td.setAttribute('style','background-color: #AAAAAA');
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	    var tab=create_tab_stat(div,'Package loss', data);
-	    for( const chair in data.chairs ){
-		const dev=data.chairs[chair];
-		if( dev && data.stats[dev] ){
-		    // ping:
-		    var tr=create_row_stat(tab,chair,data);
-		    for( const chx in data.chairs ){
-			var pt=-1;
-			if( data.stats[dev][chx] && data.stats[dev][chx].packages ){
-			    const p = data.stats[dev][chx].packages;
-			    if( p.received+p.lost>0 ){
-				pt=100.0*p.lost/(p.received+p.lost);
-			    }
-			}
-			var td=tr.appendChild(document.createElement('td'));
-			td.setAttribute('class','statcell');
-			if( pt >= 0){
-			    td.appendChild(document.createTextNode(pt.toFixed(2)+'%'));
-			    td.setAttribute('style','background-color:'+lat2rgb(pt,0,0.2));
-			}else{
-			    //td.appendChild(document.createTextNode('---'));
-			    td.setAttribute('style','background-color: #AAAAAA');
-			}
-		    }
-		}
-	    }
-	    var tab=create_tab_stat(div,'Sequence error/corrected', data);
-	    for( const chair in data.chairs ){
-		const dev=data.chairs[chair];
-		if( dev && data.stats[dev] ){
-		    var tr=create_row_stat(tab,chair,data);
-		    for( const chx in data.chairs ){
-			var pt=-1;
-			var pt2=-1;
-			if( data.stats[dev][chx] && data.stats[dev][chx].packages ){
-			    const p = data.stats[dev][chx].packages;
-			    if( p.received+p.lost>0 ){
-				pt = p.seqerr;
-				pt2 = p.seqrecovered;
-			    }
-			}
-			var td=tr.appendChild(document.createElement('td'));
-			td.setAttribute('class','statcell');
-			if( pt >= 0){
-			    td.appendChild(document.createTextNode(pt + '/' + pt2));
-			    td.setAttribute('style','background-color:'+lat2rgb(pt,0,2));
-			}else{
-			    td.setAttribute('style','background-color: #AAAAAA');
-			}
-		    }
-		}
-	    }
-	}else{
-	    div.appendChild(document.createTextNode('No data available.'));
-	}
-    }
+			                      td = tr.appendChild(document.createElement('td'));
+			                      td.setAttribute('class','statcell');
+			                      if( data.p2p[data.chairs[chair]] )
+				                        td.appendChild(document.createTextNode('p2p'));
+			                      else
+				                        td.appendChild(document.createTextNode('srv'));
+			                  }
+		                }
+		                var tab_ping=create_tab_stat(div,'Median ping times '+modes[mode], data);
+		                var tab_jitter=create_tab_stat(div,'Jitter '+modes[mode], data);
+		                for( const chair in data.chairs ){
+			                  const dev=data.chairs[chair];
+			                  if( dev && data.stats[dev] ){
+			                      // ping:
+			                      var tr=create_row_stat(tab_ping,chair,data);
+			                      for( const chx in data.chairs ){
+				                        var pt=-1;
+				                        if( data.stats[dev][chx] )
+				                            pt=data.stats[dev][chx][modes[mode]].median;
+				                        var td=tr.appendChild(document.createElement('td'));
+				                        td.setAttribute('class','statcell');
+				                        if( pt > 0){
+				                            td.appendChild(document.createTextNode(pt.toFixed(1)+'ms'));
+				                            td.setAttribute('style','background-color:'+lat2rgb(pt,0,60));
+				                        }else{
+				                            //td.appendChild(document.createTextNode('---'));
+				                            td.setAttribute('style','background-color: #AAAAAA');
+				                        }
+			                      }
+			                      // jitter:
+			                      var tr=create_row_stat(tab_jitter,chair,data);
+			                      for( const chx in data.chairs ){
+				                        var pt=-1;
+				                        if( data.stats[dev][chx] )
+				                            pt=data.stats[dev][chx][modes[mode]].p99-
+				                            data.stats[dev][chx][modes[mode]].min;
+				                        var td=tr.appendChild(document.createElement('td'));
+				                        td.setAttribute('class','statcell');
+				                        if( pt > 0){
+				                            td.appendChild(document.createTextNode(pt.toFixed(1)+'ms'));
+				                            td.setAttribute('style','background-color:'+lat2rgb(pt,0,15));
+				                        }else{
+				                            //td.appendChild(document.createTextNode('---'));
+				                            td.setAttribute('style','background-color: #AAAAAA');
+				                        }
+			                      }
+			                  }
+		                }
+		            }
+	          }
+	          var tab=create_tab_stat(div,'Package loss', data);
+	          for( const chair in data.chairs ){
+		            const dev=data.chairs[chair];
+		            if( dev && data.stats[dev] ){
+		                // ping:
+		                var tr=create_row_stat(tab,chair,data);
+		                for( const chx in data.chairs ){
+			                  var pt=-1;
+			                  if( data.stats[dev][chx] && data.stats[dev][chx].packages ){
+			                      const p = data.stats[dev][chx].packages;
+			                      if( p.received+p.lost>0 ){
+				                        pt=100.0*p.lost/(p.received+p.lost);
+			                      }
+			                  }
+			                  var td=tr.appendChild(document.createElement('td'));
+			                  td.setAttribute('class','statcell');
+			                  if( pt >= 0){
+			                      td.appendChild(document.createTextNode(pt.toFixed(2)+'%'));
+			                      td.setAttribute('style','background-color:'+lat2rgb(pt,0,0.2));
+			                  }else{
+			                      //td.appendChild(document.createTextNode('---'));
+			                      td.setAttribute('style','background-color: #AAAAAA');
+			                  }
+		                }
+		            }
+	          }
+	          var tab=create_tab_stat(div,'Sequence error/corrected', data);
+	          for( const chair in data.chairs ){
+		            const dev=data.chairs[chair];
+		            if( dev && data.stats[dev] ){
+		                var tr=create_row_stat(tab,chair,data);
+		                for( const chx in data.chairs ){
+			                  var pt=-1;
+			                  var pt2=-1;
+			                  if( data.stats[dev][chx] && data.stats[dev][chx].packages ){
+			                      const p = data.stats[dev][chx].packages;
+			                      if( p.received+p.lost>0 ){
+				                        pt = p.seqerr;
+				                        pt2 = p.seqrecovered;
+			                      }
+			                  }
+			                  var td=tr.appendChild(document.createElement('td'));
+			                  td.setAttribute('class','statcell');
+			                  if( pt >= 0){
+			                      td.appendChild(document.createTextNode(pt + '/' + pt2));
+			                      td.setAttribute('style','background-color:'+lat2rgb(pt,0,2));
+			                  }else{
+			                      td.setAttribute('style','background-color: #AAAAAA');
+			                  }
+		                }
+		            }
+	          }
+	      }else{
+	          div.appendChild(document.createTextNode('No data available.'));
+	      }
+    };
     request.open('GET', 'rest.php?getsessionstat');
     request.reponseType = 'json';
     request.send();
@@ -1219,51 +1267,51 @@ function everytenseconds()
     var sessionstat = document.getElementById('sessionstat');
     var sessionmap = document.getElementById('sessionmap');
     if( droom || devstat || devclaim ){
-	if( droomrm )
-	    droomrm.remove(droomrm);
-	let request = new XMLHttpRequest();
-	request.onload = function() {
-	    var data = JSON.parse(request.response, (key,value)=>
-				  {
-				      if( value == "0" ) return 0;
-				      if( value == "0.000000" ) return 0.0;
-				      return value;
-				  }
-				 );
-	    var user = data.user;
-	    var userprop = data.userprop;
-	    var rooms = data.rooms;
-	    var device = data.device;
-	    var owned_devices = data.owned_devices;
-	    var unclaimed_devices = data.unclaimed_devices;
-	    if( phpdeviceid ){
-		if( phpdeviceid.value != device.id)
-		    location.reload(true);
-	    }
-	    if( devstat )
-		// update device display:
-		update_devicestatus( user, device, owned_devices );
-	    if( devclaim )
-		update_unclaimed( user, unclaimed_devices );
-	    if( droom ){
-		// delete unused rooms:
-	    	for( let k=droom.children.length-1;k>=0;k--){
-		    if( rooms.find(room=>room.id==droom.children[k].id)===undefined)
-			droom.removeChild(droom.children[k]);
-		}
-		for( var k=0;k<rooms.length;k++){
-		    // room div:
-		    update_room( userprop, device, rooms[k], droom );
-		}
-	    }
-	    if( sessionstat )
-		update_sessionstat(sessionstat);
-	    if( sessionmap )
-		update_sessionmap(sessionmap);
-	}
-	request.open('GET', 'rest.php?getrooms');
-	request.reponseType = 'json';
-	request.send();
+	      if( droomrm )
+	          droomrm.remove(droomrm);
+	      let request = new XMLHttpRequest();
+	      request.onload = function() {
+	          var data = JSON.parse(request.response, (key,value)=>
+				                          {
+				                              if( value == "0" ) return 0;
+				                              if( value == "0.000000" ) return 0.0;
+				                              return value;
+				                          }
+				                         );
+	          var user = data.user;
+	          var userprop = data.userprop;
+	          var rooms = data.rooms;
+	          var device = data.device;
+	          var owned_devices = data.owned_devices;
+	          var unclaimed_devices = data.unclaimed_devices;
+	          if( phpdeviceid ){
+		            if( phpdeviceid.value != device.id)
+		                location.reload(true);
+	          }
+	          if( devstat )
+		            // update device display:
+		            update_devicestatus( user, device, owned_devices );
+	          if( devclaim )
+		            update_unclaimed( user, unclaimed_devices );
+	          if( droom ){
+		            // delete unused rooms:
+	    	        for( let k=droom.children.length-1;k>=0;k--){
+		                if( rooms.find(room=>room.id==droom.children[k].id)===undefined)
+			                  droom.removeChild(droom.children[k]);
+		            }
+		            for( var k=0;k<rooms.length;k++){
+		                // room div:
+		                update_room( userprop, device, rooms[k], droom );
+		            }
+	          }
+	          if( sessionstat )
+		            update_sessionstat(sessionstat);
+	          if( sessionmap )
+		            update_sessionmap(sessionmap);
+	      };
+	      request.open('GET', 'rest.php?getrooms');
+	      request.reponseType = 'json';
+	      request.send();
     }
 }
 
@@ -1277,18 +1325,18 @@ function starttimer(){
 function dispvaluechanged(id){
     var savebutton;
     if( id == "valuechanged" )
-	savebutton=document.getElementById('devsettingssave');
+	      savebutton=document.getElementById('devsettingssave');
     else{
-	savebutton=document.getElementById('roomsettingssave');
-	roomvaluechanged = true;
+	      savebutton=document.getElementById('roomsettingssave');
+	      roomvaluechanged = true;
     }
     if( savebutton )
-	savebutton.style.border="5px solid #aa0000";
+	      savebutton.style.border="5px solid #aa0000";
     var el=document.getElementsByClassName(id);
     for( var k=0,len=el.length|0;k<len;k=k+1|0 ){
         while (el[k].firstChild) {
-	    el[k].removeChild(el[k].firstChild);
-	}
+	          el[k].removeChild(el[k].firstChild);
+	      }
         el[k].appendChild(document.createTextNode(" Press Save to apply changes."));
     }
 }
@@ -1296,14 +1344,14 @@ function dispvaluechanged(id){
 function dispvaluechanged_id(id){
     var savebutton=document.getElementById(id);
     if( savebutton )
-	savebutton.style.border="5px solid #aa0000";
+	      savebutton.style.border="5px solid #aa0000";
 }
 
 function update_jack_rate( rate ){
     if( rate < 32000 )
-	document.getElementById('jackplugdev').checked = true;
+	      document.getElementById('jackplugdev').checked = true;
     if( rate > 32000 )
-	document.getElementById('jackplugdev').checked = false;
+	      document.getElementById('jackplugdev').checked = false;
     document.getElementById('jackrate').value = rate;
     document.getElementById('jackperiod').value = 16*Math.floor(0.002*rate/16);
 }
@@ -1311,19 +1359,19 @@ function update_jack_rate( rate ){
 function create_preset(){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload(true);
-    }
+	      location.reload(true);
+    };
     request.open('GET', 'rest.php?devpresetsave=' + document.getElementById('savepresetname').value);
     request.send();
 }
 
 function save_preset( preset ){
     if( confirm('Really save to "'+preset+'"?') ){
-    let request = new XMLHttpRequest();
-    request.onload = function() {
-	      location.reload(true);
-    }
-    request.open('GET', 'rest.php?devpresetsave=' + preset);
+        let request = new XMLHttpRequest();
+        request.onload = function() {
+	          location.reload(true);
+        };
+        request.open('GET', 'rest.php?devpresetsave=' + preset);
         request.send();
     }
 }
@@ -1332,27 +1380,27 @@ function load_preset( preset ){
     let request = new XMLHttpRequest();
     request.onload = function() {
 	      location.reload(true);
-    }
+    };
     request.open('GET', 'rest.php?devpresetload=' + preset);
     request.send();
 }
 
 function rm_preset( preset ){
     if( confirm('Really delete preset "'+preset+'"?') ){
-	let request = new XMLHttpRequest();
-	request.onload = function() {
-	    location.reload(true);
-	}
-	request.open('GET', 'rest.php?devpresetrm=' + preset);
-	request.send();
+	      let request = new XMLHttpRequest();
+	      request.onload = function() {
+	          location.reload(true);
+	      };
+	      request.open('GET', 'rest.php?devpresetrm=' + preset);
+	      request.send();
     }
 }
 
 function select_device( device ){
     let request = new XMLHttpRequest();
     request.onload = function() {
-	location.reload(true);
-    }
+	      location.reload(true);
+    };
     request.open('GET', 'rest.php?devselect=' + device);
     request.send();
 }
@@ -1360,7 +1408,7 @@ function select_device( device ){
 function get_value_by_id( id, def='' ){
     var x = document.getElementById(id);
     if( x )
-	return x.value;
+	      return x.value;
     return def;
 }
 
@@ -1371,23 +1419,23 @@ function apply_jack_settings(){
     request.open('POST', '/rest.php', true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     var data = 'jackaudio=&jackplugdev=' + document.getElementById('jackplugdev').checked +
-	'&jackdevice='+encodeURIComponent(get_value_by_id('jackdevice')) +
-	'&jackrate='+get_value_by_id('jackrate') +
-	'&jackperiod='+get_value_by_id('jackperiod') +
-	'&jackbuffers='+get_value_by_id('jackbuffers');    
+	      '&jackdevice='+encodeURIComponent(get_value_by_id('jackdevice')) +
+	      '&jackrate='+get_value_by_id('jackrate') +
+	      '&jackperiod='+get_value_by_id('jackperiod') +
+	      '&jackbuffers='+get_value_by_id('jackbuffers');    
     request.send(data);
 }
 
 function switch_to_frontend( js ){
     if( js && (js.length>0)){
-	frontend = JSON.parse(js);
-	let request = new XMLHttpRequest();
-	request.onload = function() {
-	    location.href = frontend.ui;
-	}
-	request.open('POST', '/rest.php', true);
-	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	request.send('jsfrontendconfig='+js);
+	      frontend = JSON.parse(js);
+	      let request = new XMLHttpRequest();
+	      request.onload = function() {
+	          location.href = frontend.ui;
+	      };
+	      request.open('POST', '/rest.php', true);
+	      request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	      request.send('jsfrontendconfig='+js);
     }
 }
 
@@ -1396,11 +1444,11 @@ function update_wifi(){
     var inp_wifissid = document.getElementById('wifissid');
     var inp_wifipasswd = document.getElementById('wifipasswd');
     if( inp_wificb && inp_wifissid && inp_wifipasswd ){
-	let request = new XMLHttpRequest();
-	request.open('POST', '/rest.php', true);
-	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	var data = 'wifi='+inp_wificb.checked+'&wifissid='+inp_wifissid.value+'&wifipasswd='+inp_wifipasswd.value;
-	request.send(data);
+	      let request = new XMLHttpRequest();
+	      request.open('POST', '/rest.php', true);
+	      request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	      var data = 'wifi='+inp_wificb.checked+'&wifissid='+inp_wifissid.value+'&wifipasswd='+inp_wifipasswd.value;
+	      request.send(data);
     }
 }
 
@@ -1409,8 +1457,8 @@ function rest_admusergroup( user, group, value )
     let request = new XMLHttpRequest();
     request.open('POST', '/rest.php', true);
     request.onload = function() {
-	location.reload(true);
-    }
+	      location.reload(true);
+    };
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.send('admaddusertogroup='+user+'&admaddusertogroupgroup='+group+'&admaddusertogroupval='+value);
 }
@@ -1429,17 +1477,17 @@ function vid_toggle_max( id )
             //elfr.style.height = '95%';
             var x=document.getElementsByClassName('vidcont');
             for(var k=0;k<x.length;k++)
-	        x[k].style.display="none";
+	              x[k].style.display="none";
             //x=document.getElementsByClassName('viddevlabel');
             //for(var k=0;k<x.length;k++)
-	    //    x[k].style.position="relative";
-	}else{
+	          //    x[k].style.position="relative";
+	      }else{
             var x=document.getElementsByClassName('vidcont');
             for(var k=0;k<x.length;k++)
-	        x[k].style.display="inline-block";
+	              x[k].style.display="inline-block";
             //x=document.getElementsByClassName('viddevlabel');
             //for(var k=0;k<x.length;k++)
-	    //    x[k].style.position="absolute";
+	          //    x[k].style.position="absolute";
             elthis.className = 'vidcont';
             el.className = 'sessionvid';
             //elfr.style.position = 'absolute';
