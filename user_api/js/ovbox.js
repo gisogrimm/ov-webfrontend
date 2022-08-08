@@ -445,11 +445,11 @@ function update_room( user, device, room, droom )
 	      span.appendChild(document.createTextNode(', managed by '+room.owner));
     if( room['editable'] )
 	      span.appendChild(document.createTextNode(', acoustics can be changed'));
+    if( room.version.startsWith('0.18.32') ){
+	      span.appendChild(document.createTextNode(' TCP '));
+    }
     var srvjit = Number(room['srvjit']);
     var sjspan = span.appendChild(document.createElement('span'));
-    if( room.version.startsWith('0.18.32') ){
-	      sjspan.appendChild(document.createTextNode(' TCP '));
-    }
     if( room.premium )
 	      sjspan.setAttribute('class','srvjit premium');
     else
