@@ -164,6 +164,7 @@ function defaults( $type )
     'ambientlevel'=>50,
     'bulletinboard'=>'',
     'premium'=>false,
+    'version'=>'',
   );
   $defaults['user'] = array(
     'group'=>'',

@@ -231,11 +231,14 @@ if ($user == 'room') {
             if( in_array( $_GET['grp'], list_groups()))
                 $group = $_GET['grp'];
         }
+        $roomver = '';
+        if( isset($_GET['version']) )
+            $roomver = $_GET['version'];
         // update database entry:
         if( isset($_GET['srvjit']) )
-            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $_GET['srvjit'] );
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver, $_GET['srvjit'] );
         else
-            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group );
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver );
         if( isset($_GET['empty']) )
             clear_room_lat( $clientip, $_GET['port'] );
     }

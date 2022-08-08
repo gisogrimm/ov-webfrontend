@@ -244,6 +244,7 @@ function html_admin_rooms()
 {
   $showfields = array();
   $showfields[] = 'srvjit';
+  $showfields[] = 'version';
   $sortprop = get_properties('list','sortkey');
   $sortkey = $sortprop['room'];
   $rooms = list_db('room');
