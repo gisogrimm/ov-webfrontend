@@ -447,7 +447,9 @@ function update_room( user, device, room, droom )
 	      span.appendChild(document.createTextNode(', acoustics can be changed'));
     var srvjit = Number(room['srvjit']);
     var sjspan = span.appendChild(document.createElement('span'));
-    console.log(room.version);
+    if( room.version.startsWith('0.18.32') ){
+	      sjspan.appendChild(document.createTextNode(' TCP '));
+    }
     if( room.premium )
 	      sjspan.setAttribute('class','srvjit premium');
     else
