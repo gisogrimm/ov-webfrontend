@@ -564,8 +564,12 @@ function update_room( user, device, room, droom )
             if( !dev.senddownmix ){
 	              if( dev.peer2peer )
 		                latdisp = 'p2p ' + latdisp;
-	              else
-		                latdisp = 'srv ' + latdisp;
+	              else{
+                    if( dev.usetcptunnel )
+		                    latdisp = 'tcp ' + latdisp;
+                    else
+		                    latdisp = 'srv ' + latdisp;
+                }
 	              if( dev.receivedownmix )
 		                latdisp = 'dm ' + latdisp;
 	              if( dev.isproxy )
