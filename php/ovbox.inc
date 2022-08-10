@@ -182,10 +182,8 @@ function defaults( $type )
   );
   $defaults['group'] = array(
     'style'=>'default',
-    'preamble'=>'<div>The <em>ovbox</em> is a remote collaboration system developed by
-the ORLANDOviols ensemble during the Covid19 pandemic. Our primary
-goal is to enable freelance musicians to rehearse and amateur
-musicians to reduce the effects of social isolation.</div>'."\n"
+    'preamble'=>'<div>The <em>ovbox</em> is a remote music collaboration system developed by
+the ORLANDOviols ensemble during the Covid19 pandemic.</div>'."\n"
   );
   if( array_key_exists( $type, $defaults ) )
     return $defaults[$type];
