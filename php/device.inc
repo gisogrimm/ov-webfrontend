@@ -28,6 +28,7 @@ function get_dev_stage_settings( $device )
   $d['externalip'] = $dprop['externalip'];
   $d['receivedownmix'] = boolval($dprop['receivedownmix']);
   $d['senddownmix'] = boolval($dprop['senddownmix']);
+  $d['usetcptunnel'] = boolval($dprop['usetcptunnel']);
   return $d;
 }
 
