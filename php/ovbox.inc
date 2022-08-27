@@ -141,6 +141,10 @@ function defaults( $type )
     'networkdevices'=>array(),
     'zitasampleformat'=>'16bit',
     'useloudspeaker'=>false,
+    'echoc_nrep'=>64,
+    'echoc_level'=>60.0,
+    'echoc_maxdist'=>4.0,
+    'echoc_filterlen'=>65,
   );
   $defaults['room'] = array(
     'access'=>0,

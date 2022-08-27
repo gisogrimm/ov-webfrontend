@@ -241,6 +241,10 @@ function get_room_session( $device, $devhash )
                                                      'sendchannels'=>intval($devprop['locmcsendchannels'])),
                                       'render'=>array('soundscape'=>boolval($devprop['rendersoundscape']),
                                                       'useloudspeaker'=>boolval($devprop['useloudspeaker']),
+                                                      'echoc_level'=>floatval($devprop['echoc_level']),
+                                                      'echoc_nrep'=>intval($devprop['echoc_nrep']),
+                                                      'echoc_filterlen'=>intval($devprop['echoc_filterlen']),
+                                                      'echoc_maxdist'=>floatval($devprop['echoc_maxdist']),
                                                       'zitasampleformat'=>$devprop['zitasampleformat']));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,

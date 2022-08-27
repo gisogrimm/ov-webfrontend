@@ -344,7 +344,28 @@ if( !empty($device) ){
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
     if( version_compare("ovclient-0.18.15",$devprop['version'])<0 ){
-      xml_add_checkbox( 'useloudspeaker', 'use loudspeaker for playback (activates echo cancellation)', $divex, $doc, $devprop, false, true );
+      xml_add_checkbox( 'useloudspeaker', 'use loudspeaker for playback (activates echo cancellation)',
+                        $divex, $doc, $devprop, false, true );
+      $el = xml_add_input_generic( 'echoc_maxdist', 'maximum distance for echo cancellation in meter', $divex, $doc, $devprop );
+      $el->setAttribute('type','number');
+      $el->setAttribute('min','0');
+      $el->setAttribute('max','30');
+      $el->setAttribute('step','0.1');
+      $el = xml_add_input_generic( 'echoc_level', 'level in dB SPL during echo cancellation measurement', $divex, $doc, $devprop );
+      $el->setAttribute('type','number');
+      $el->setAttribute('min','30');
+      $el->setAttribute('max','90');
+      $el->setAttribute('step','1');
+      $el = xml_add_input_generic( 'echoc_nrep', 'number of repetitions in echo cancellation measurement', $divex, $doc, $devprop );
+      $el->setAttribute('type','number');
+      $el->setAttribute('min','1');
+      $el->setAttribute('max','128');
+      $el->setAttribute('step','1');
+      $el = xml_add_input_generic( 'echoc_filterlen', 'minimum length of filters in echo cancellation, in samples', $divex, $doc, $devprop );
+      $el->setAttribute('type','number');
+      $el->setAttribute('min','16');
+      $el->setAttribute('max','1024');
+      $el->setAttribute('step','1');
     }
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
