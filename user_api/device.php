@@ -362,9 +362,10 @@ if( !empty($device) ){
       $divex = add_expert_div($divva,$doc,$devprop);
       $el = $divex->appendChild($doc->createElement('div'));
       $el->setAttribute('class','devproptitle');
-      $el->appendChild($doc->createTextNode('Echo cancellation:'));
+      //$el->appendChild($doc->createTextNode('Echo cancellation:'));
       xml_add_checkbox( 'useloudspeaker', 'use loudspeaker for playback (activates echo cancellation)',
-                        $divex, $doc, $devprop, false, true );
+                        $el, $doc, $devprop, false, true );
+      $divex = add_expert_div($divex,$doc,$devprop,'useloudspeaker');
       $el = xml_add_input_generic( 'echoc_maxdist', 'maximum distance for echo cancellation in meter', $divex, $doc, $devprop );
       $el->setAttribute('type','number');
       $el->setAttribute('min','0');
