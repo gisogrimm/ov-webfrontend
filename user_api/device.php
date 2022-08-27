@@ -343,7 +343,26 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->setAttribute('for','rectype');
+    $el->appendChild($doc->createTextNode('receiver type: '));
+    $el = $divex->appendChild($doc->createElement('select'));
+    $el->setAttribute('onchange','rest_set_devprop("rectype",event.target.value);');
+    $el->setAttribute('id','rectype');
+    $recdesc = array('ortf'=>'Commonly used stereo microphone technique','hrtf'=>'Binaural Head Related Transfer Function simulation','itu51'=>'ITU 5.1 rendering, channel order L,R,C,LFE,Ls,Rs','omni'=>'mono');
+    foreach( $recdesc as $rectype=>$desc ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$rectype);
+      if( $devprop['rectype'] == $rectype )
+        $opt->setAttribute('selected','');
+      $opt->appendChild($doc->createTextNode($rectype.': '.$desc));
+    }
+    $divex->appendChild($doc->createElement('br'));
     if( version_compare("ovclient-0.18.15",$devprop['version'])<0 ){
+      $divex = add_expert_div($divva,$doc,$devprop);
+      $el = $divex->appendChild($doc->createElement('div'));
+      $el->setAttribute('class','devproptitle');
+      $el->appendChild($doc->createTextNode('Echo cancellation:'));
       xml_add_checkbox( 'useloudspeaker', 'use loudspeaker for playback (activates echo cancellation)',
                         $divex, $doc, $devprop, false, true );
       $el = xml_add_input_generic( 'echoc_maxdist', 'maximum distance for echo cancellation in meter', $divex, $doc, $devprop );
@@ -367,21 +386,6 @@ if( !empty($device) ){
       $el->setAttribute('max','1024');
       $el->setAttribute('step','1');
     }
-    $el = $divex->appendChild($doc->createElement('label'));
-    $el->setAttribute('for','rectype');
-    $el->appendChild($doc->createTextNode('receiver type: '));
-    $el = $divex->appendChild($doc->createElement('select'));
-    $el->setAttribute('onchange','rest_set_devprop("rectype",event.target.value);');
-    $el->setAttribute('id','rectype');
-    $recdesc = array('ortf'=>'Commonly used stereo microphone technique','hrtf'=>'Binaural Head Related Transfer Function simulation','itu51'=>'ITU 5.1 rendering, channel order L,R,C,LFE,Ls,Rs','omni'=>'mono');
-    foreach( $recdesc as $rectype=>$desc ){
-      $opt = $el->appendChild($doc->createElement('option'));
-      $opt->setAttribute('value',$rectype);
-      if( $devprop['rectype'] == $rectype )
-        $opt->setAttribute('selected','');
-      $opt->appendChild($doc->createTextNode($rectype.': '.$desc));
-    }
-    $divex->appendChild($doc->createElement('br'));
     // reverb:
     $divex = add_expert_div($divva,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
