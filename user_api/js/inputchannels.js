@@ -124,10 +124,16 @@ function inputchannels_onedit_z( rk, value ) {
     rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
+function inputchannels_onedit_name( rk, value ) {
+    inchannels[rk]['name'] = value;
+    jsinputchannels.value = JSON.stringify(inchannels);
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
+}
+
 function inputchannels_preset( p ){
     if(p=="p0"){
         inchannels = [];
-        inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1,directivity:'cardioid'});
+        inchannels.push({sourceport:'system:capture_1',position:{x:-0.08,y:0,z:-0.03},gain:1,directivity:'cardioid'});
     }
     if(p=="p1"){
         inchannels = [];
@@ -153,8 +159,8 @@ function inputchannels_preset( p ){
     }
     if(p=="p12dualvoc"){
         inchannels = [];
-        inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1,directivity:'omni'});
-        inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:-0.1,z:-0.6},gain:1,directivity:'omni'});
+        inchannels.push({sourceport:'system:capture_1',position:{x:0.08,y:0,z:-0.07},gain:1,directivity:'omni',name:'voc'});
+        inchannels.push({sourceport:'system:capture_2',position:{x:0.3,y:-0.1,z:-0.6},gain:1,directivity:'omni',name:'guit'});
     }
     if(p=="p12single"){
         inchannels = [];
@@ -239,10 +245,17 @@ function inputchannels_createUI( ) {
         for( var k = 0; k < inchannels.length; k++ ){
             var cdiv = adiv.appendChild(document.createElement('dev'));
             cdiv.setAttribute('class','channelcfg');
-            var el = cdiv.appendChild(document.createElement('input'));
-            el.setAttribute('value',inchannels[k]['sourceport']);
-            el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
-            el.setAttribute('title','source port name');
+            var box0 = cdiv.appendChild(document.createElement('div'));
+            box0.setAttribute('class','plugincategory');
+            //var tlab0 = box0.appendChild(document.createElement('div'));
+            //tlab0.setAttribute('class','plugincategorylab');
+            //tlab0.appendChild(document.createTextNode('Plugin presets:'));
+            // boxes with labels
+            var box1 = box0.appendChild(document.createElement('div'));
+            box1.setAttribute('class','toplabelbox');
+            var tlab1 = box1.appendChild(document.createElement('div'));
+            tlab1.setAttribute('class','toplabel');
+            tlab1.appendChild(document.createTextNode('source port:'));
             var el = document.createElement('select');
             el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
             var eopt = el.appendChild(document.createElement('option'));
@@ -259,26 +272,36 @@ function inputchannels_createUI( ) {
             }
             if( Array.isArray(hwinputs)) 
                 hwinputs.forEach(add_opt);
-            cdiv.appendChild(el);
+            box1.appendChild(el);
+            var box2 = box0.appendChild(document.createElement('div'));
+            box2.setAttribute('class','toplabelbox');
+            var tlab2 = box2.appendChild(document.createElement('div'));
+            tlab2.setAttribute('class','toplabel');
+            tlab2.appendChild(document.createTextNode('position:'));
             var el = document.createElement('input');
             el.setAttribute('value',inchannels[k]['position']['x']);
             el.setAttribute('onchange','{inputchannels_onedit_x('+k.toString(10)+',this.value);}');
             el.setAttribute('size','1');
             el.setAttribute('title','x position (positive values are in front of you)');
-            cdiv.appendChild(el);
+            box2.appendChild(el);
             var el = document.createElement('input');
             el.setAttribute('value',inchannels[k]['position']['y']);
             el.setAttribute('onchange','{inputchannels_onedit_y('+k.toString(10)+',this.value);}');
             el.setAttribute('size','1');
             el.setAttribute('title','y position (positive values are to your left)');
-            cdiv.appendChild(el);
+            box2.appendChild(el);
             var el = document.createElement('input');
             el.setAttribute('value',inchannels[k]['position']['z']);
             el.setAttribute('onchange','{inputchannels_onedit_z('+k.toString(10)+',this.value);}');
             el.setAttribute('size','1');
             el.setAttribute('title','z position (positive values are above your ears)');
-            cdiv.appendChild(el);
+            box2.appendChild(el);
             // source directivity:
+            var box3 = box0.appendChild(document.createElement('div'));
+            box3.setAttribute('class','toplabelbox');
+            var tlab3 = box3.appendChild(document.createElement('div'));
+            tlab3.setAttribute('class','toplabel');
+            tlab3.appendChild(document.createTextNode('directivity:'));
             var el = document.createElement('select');
             el.setAttribute('onchange','{inputchannels_onedit_directivity('+k.toString(10)+',this.value);inputchannels_createUI();}');
             function add_opt_dir(optv,ind,options){
@@ -290,23 +313,44 @@ function inputchannels_createUI( ) {
                 el.appendChild(opt);
             }
             ['omni','cardioid'].forEach(add_opt_dir);
-            cdiv.appendChild(el);
+            box3.appendChild(el);
             // end source directivity.
+            // name:
+            var box4 = box0.appendChild(document.createElement('div'));
+            box4.setAttribute('class','toplabelbox');
+            var tlab4 = box4.appendChild(document.createElement('div'));
+            tlab4.setAttribute('class','toplabel');
+            tlab4.appendChild(document.createTextNode('name:'));
+            var el = document.createElement('input');
+            if( inchannels[k]['name'] )
+                el.setAttribute('value',inchannels[k]['name']);
+            else
+                el.setAttribute('value','');
+            el.setAttribute('onchange','{inputchannels_onedit_name('+k.toString(10)+',this.value);}');
+            el.setAttribute('size','10');
+            el.setAttribute('title','channel name (optional)');
+            box4.appendChild(el);
+            // remove:
             var el = document.createElement('input');
             el.setAttribute('value','remove channel');
             el.setAttribute('type','button');
             el.setAttribute('onclick','{inputchannels_remove('+k.toString(10)+');inputchannels_createUI()}');
             cdiv.appendChild(el);
             cdiv.appendChild(document.createElement('br'));
+            // plugins:
+            var box5 = cdiv.appendChild(document.createElement('div'));
+            box5.setAttribute('class','plugincategory');
+            var tlab5 = box5.appendChild(document.createElement('div'));
+            tlab5.setAttribute('class','plugincategorylab');
+            tlab5.appendChild(document.createTextNode('Plugin presets:'));
             if( jsdevcfg.canplugins ){
                 if( inchannels[k]['plugins'] == null )
                     inchannels[k]['plugins'] = {};
-                cdiv.appendChild(document.createTextNode(' Plugin presets: '));
-                var el = cdiv.appendChild(document.createElement('input'));
+                var el = box5.appendChild(document.createElement('input'));
                 el.setAttribute('type','button');
                 el.setAttribute('value','direct');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',"{}");inputchannels_createUI();}');
-                var odrv = cdiv.appendChild(document.createElement('div'));
+                var odrv = box5.appendChild(document.createElement('div'));
                 odrv.setAttribute('class','plugincategory');
                 var odrvlab = odrv.appendChild(document.createElement('div'));
                 odrvlab.setAttribute('class','plugincategorylab');
@@ -326,7 +370,7 @@ function inputchannels_createUI( ) {
                 el.setAttribute('value','speaker');
                 //el.setAttribute('style','background-color: #c81c1d;');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(spksim1));inputchannels_createUI();}');
-                var flts = cdiv.appendChild(document.createElement('div'));
+                var flts = box5.appendChild(document.createElement('div'));
                 flts.setAttribute('class','plugincategory');
                 var fltslab = flts.appendChild(document.createElement('div'));
                 fltslab.setAttribute('class','plugincategorylab');
@@ -346,10 +390,30 @@ function inputchannels_createUI( ) {
                 el.setAttribute('value','40 Hz');
                 //el.setAttribute('style','background-color: #239617;');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(lo_cut40));inputchannels_createUI();}');
+                // plugin name list:
+                console.log(inchannels[k]['plugins']);
+                var divpn = box5.appendChild(document.createElement('div'));
+                divpn.setAttribute('class','pluginnamelist');
+                function add_plugname(optv){
+                    var opt = divpn.appendChild(document.createElement('div'));
+                    opt.setAttribute('class','pluginname');
+                    opt.appendChild(document.createTextNode(optv));
+                }
+                for( var plug in inchannels[k]['plugins'] )
+                    if( Object.prototype.hasOwnProperty.call(inchannels[k]['plugins'], plug ) )
+                        add_plugname(plug);
+                // expert settings:
                 var ediv = cdiv.appendChild(document.createElement('div'));
                 ediv.setAttribute('class','showexpertsettings');
                 if( !jsdevcfg.showexpertsettings )
                     ediv.setAttribute('style','display: none;');
+                var el = ediv.appendChild(document.createElement('label'));
+                el.appendChild(document.createTextNode('source port: '));
+                var el = ediv.appendChild(document.createElement('input'));
+                el.setAttribute('value',inchannels[k]['sourceport']);
+                el.setAttribute('onchange','{inputchannels_onedit_port('+k.toString(10)+',this.value);inputchannels_createUI();}');
+                el.setAttribute('title','source port name');
+                var el = ediv.appendChild(document.createElement('br'));
                 var el = ediv.appendChild(document.createElement('textarea'));
                 //el.setAttribute('type','edit');
                 el.setAttribute('rows','6');

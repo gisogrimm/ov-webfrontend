@@ -51,6 +51,7 @@ function defaults( $type )
       'position'=>array('x'=>0,'y'=>0,'z'=>0),
       'directivity'=>'omni',
       'plugins'=>array(),
+      'name'=>'',
     )),
     'jitterreceive'=>5,
     'jittersend'=>5,

@@ -635,9 +635,43 @@ a.adminarea:hover {
     border: 1px solid #666;
     border-radius:4px;
     padding: 4px;
+    margin: 1px;
     vertical-align: middle;
 }
 .plugincategorylab {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    display: block;
+    font-size: 60%;
+}
+.pluginnamelist {
+    margin: 0px;
+    padding: 0px;
+    overflow: clip;
+    display: block;
+    min-height: 0px;
+}
+.pluginname {
+    display: inline;
+    margin: 1px;
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 60%;
+    border-radius: 2px;
+    border: 1px solid #666;
+    background-color: #a99;
+}
+.toplabelbox {
+    display: inline-block;
+    border: 0px solid #666;
+    border-radius:4px;
+    padding: 2px;
+    vertical-align: top;
+}
+.toplabel {
     position: relative;
     top: 0;
     left: 0;
