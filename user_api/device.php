@@ -343,7 +343,7 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
-    xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $divex, $doc, $devprop);
+    xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $div, $doc, $devprop);
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
     $el->appendChild($doc->createTextNode('receiver type: '));

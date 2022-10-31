@@ -124,6 +124,12 @@ function inputchannels_onedit_z( rk, value ) {
     rest_setval_post( 'jsinputchannels', jsinputchannels.value );
 }
 
+function inputchannels_onedit_gain( rk, value ) {
+    inchannels[rk]['gain'] = Math.pow(10,0.05*Number.parseFloat(value));
+    jsinputchannels.value = JSON.stringify(inchannels);
+    rest_setval_post( 'jsinputchannels', jsinputchannels.value );
+}
+
 function inputchannels_onedit_name( rk, value ) {
     inchannels[rk]['name'] = value;
     jsinputchannels.value = JSON.stringify(inchannels);
@@ -336,6 +342,21 @@ function inputchannels_createUI( ) {
             el.setAttribute('type','button');
             el.setAttribute('onclick','{inputchannels_remove('+k.toString(10)+');inputchannels_createUI()}');
             cdiv.appendChild(el);
+            cdiv.appendChild(document.createElement('br'));
+            // gain:
+            var box4a = cdiv.appendChild(document.createElement('div'));
+            box4a.setAttribute('class','plugincategory');
+            var tlab4a = box4a.appendChild(document.createElement('div'));
+            tlab4a.setAttribute('class','toplabel');
+            tlab4a.appendChild(document.createTextNode('Gain:'));
+            el = box4a.appendChild(document.createElement('input'));
+            el.setAttribute('onchange','{inputchannels_onedit_gain('+k.toString(10)+',this.value);}');
+            el.setAttribute('title','channel gain in dB');
+            el.setAttribute('type','number');
+            el.setAttribute('min','-40');
+            el.setAttribute('max','20');
+            el.setAttribute('step','0.1');
+            el.setAttribute('value',20*Math.log10(Math.max(0.01,Number.parseFloat(inchannels[k].gain))).toFixed(1));
             cdiv.appendChild(document.createElement('br'));
             // plugins:
             var box5 = cdiv.appendChild(document.createElement('div'));

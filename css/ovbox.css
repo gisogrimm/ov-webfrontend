@@ -636,6 +636,7 @@ a.adminarea:hover {
     border-radius:4px;
     padding: 4px;
     margin: 1px;
+    margin-top: 4px;
     vertical-align: middle;
 }
 .plugincategorylab {
@@ -681,11 +682,13 @@ a.adminarea:hover {
 }
 .channelcfg {
     background-color: #99999950;
-    margin: 2px;
-    border: 1px solid #777;
+    margin: 4px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border: 2px solid #777;
     display: block;
     padding: 5px;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 @media (min-width: 1200px) {
     .ovcontent {
