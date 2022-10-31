@@ -138,11 +138,15 @@ $presetkeys = ['label',
                'echoc_level',
                'echoc_maxdist',
                'echoc_filterlen',
+               'emptysessionismonitor',
                'uselocmcrec',
                'locmcrecaddr',
                'locmcrecport',
                'locmcrecdevice',
-               'locmcrecchannels'];
+               'locmcrecchannels',
+               'locmcrecautoconnect',
+               'uselocmcsend',
+               'locmcsendchannels'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
         $presets = get_properties( $device, 'devpresets' );

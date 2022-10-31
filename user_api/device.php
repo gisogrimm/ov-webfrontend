@@ -343,6 +343,7 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
+    xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $divex, $doc, $devprop);
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
     $el->appendChild($doc->createTextNode('receiver type: '));
@@ -575,6 +576,7 @@ if( !empty($device) ){
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('step','1');
+    xml_add_checkbox( 'locmcrecautoconnect', 'Auto-connect receiver outputs to hardware outputs', $divex, $doc, $devprop );
     $divex->appendChild($doc->createElement('hr'));
     xml_add_checkbox( 'uselocmcsend', 'Start zita-j2n (sender)', $divex, $doc, $devprop, false, true );
     $el = xml_add_input_generic( 'locmcsendchannels','Number of sender channels:',$divex,$doc,$devprop);
