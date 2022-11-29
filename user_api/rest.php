@@ -190,6 +190,11 @@ if( isset($_GET['getrawjson']) ){
     header('Content-Type: application/json');
     echo(json_encode($dprop,JSON_PRETTY_PRINT));
 }
+if( isset($_POST['getrawjsondev']) ){
+    header('Content-Type: application/json');
+    $dpropraw = get_properties( $_POST['getrawjsondev'], 'device' );
+    echo(json_encode($dpropraw,JSON_PRETTY_PRINT));
+}
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );
 }

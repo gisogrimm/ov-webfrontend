@@ -484,7 +484,7 @@ function html_admin_db($type, $showfields = array())
   $tab = $root->appendChild($doc->createElement('table'));
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
-  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('owner','label'));
+  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('cfg','owner','label'));
   foreach( $headerfields as $field ){
     table_add_header($tr,$field,$sortkey,$doc,$type);
   }
@@ -504,6 +504,18 @@ function html_admin_db($type, $showfields = array())
       else
         $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dprop[$field]));
     }
+    // raw config link:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $frm = $td->appendChild($doc->createElement('form'));
+    $frm->setAttribute('action','/rest.php');
+    $frm->setAttribute('method','POST');
+    $inp = $frm->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','getrawjsondev');
+    $inp->setAttribute('value',$dev);
+    $inp = $frm->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','submit');
+    $inp->setAttribute('value','show');
     // user:
     $td = $tr->appendChild($doc->createElement('td'));
     $inp = $td->appendChild($doc->createElement('select'));
