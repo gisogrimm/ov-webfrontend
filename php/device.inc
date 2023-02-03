@@ -29,6 +29,7 @@ function get_dev_stage_settings( $device )
   $d['receivedownmix'] = boolval($dprop['receivedownmix']);
   $d['senddownmix'] = boolval($dprop['senddownmix']);
   $d['usetcptunnel'] = boolval($dprop['usetcptunnel']);
+  $d['nozita'] = boolval($dprop['nozita']);
   return $d;
 }
 

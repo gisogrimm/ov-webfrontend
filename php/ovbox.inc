@@ -59,6 +59,7 @@ function defaults( $type )
     'outputport1'=>'system:playback_1',
     'outputport2'=>'system:playback_2',
     'xport'=>'{}',
+    'nozita'=>false,
     'peer2peer'=>true,
     'usetcptunnel'=>false,
     'secrec'=>0,

@@ -625,6 +625,10 @@ if( !empty($device) ){
       $divex = add_expert_div($div, $doc, $devprop );
       xml_add_checkbox( 'usetcptunnel', 'use TCP tunnel to server (not in peer-to-peer mode)', $divex, $doc, $devprop );
     }
+    if( version_compare("ovclient-0.19.24",$devprop['version'])<0 ){
+      $divex = add_expert_div($div, $doc, $devprop );
+      xml_add_checkbox( 'nozita', 'do not use zita-njbridge for audio transmission (requires manual setup of network)', $divex, $doc, $devprop );
+    }
     // wifi
     if( $devprop['isovbox'] ){
       if( version_compare("ovclient-0.6.151",$devprop['version'])<0 ){
