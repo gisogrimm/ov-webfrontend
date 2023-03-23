@@ -101,6 +101,7 @@ function defaults( $type )
     'headtrackingtilturl'=>'',
     'headtrackingtiltpath'=>'/tilt',
     'headtrackingtiltmap'=>'0 0 180 180',
+    'headtrackingeogpath'=>'',
     'headtrackingautorefzonly'=>false,
     'sendlocal'=>true,
     'hwinputchannels'=>array('system:capture_1','system:capture_2'),

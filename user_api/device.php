@@ -519,6 +519,7 @@ if( !empty($device) ){
     xml_add_input_generic( 'headtrackingtilturl','URL for tilt data:',$divex,$doc,$devprop);
     xml_add_input_generic( 'headtrackingtiltpath','path for tilt data:',$divex,$doc,$devprop);
     xml_add_input_generic( 'headtrackingtiltmap','Value map for tilt data:',$divex,$doc,$devprop);
+    xml_add_input_generic( 'headtrackingeogpath','path for EOG data:',$divex,$doc,$devprop);
     // downmix:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));

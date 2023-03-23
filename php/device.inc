@@ -213,6 +213,7 @@ function get_room_session( $device, $devhash )
                                                          'tauref'=>floatval($devprop['headtrackingtauref']),
                                                          'tilturl'=>$devprop['headtrackingtilturl'],
                                                          'tiltpath'=>$devprop['headtrackingtiltpath'],
+                                                         'eogpath'=>$devprop['headtrackingeogpath'],
                                                          'autorefzonly'=>boolval($devprop['headtrackingautorefzonly']),
                                                          'tiltmap'=>$devprop['headtrackingtiltmap']),
                                       'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay']),
