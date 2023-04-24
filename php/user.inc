@@ -229,17 +229,28 @@ function set_dev_room_pos( $room )
   $roomdev = get_devices_in_room( $room, true );
   ksort($roomdev);
   $stagewidth = 360;
+  $numchairs = 0;
+  foreach( $roomdev as $chair => $dev ){
+    $dprop = get_properties( $dev, 'device' );
+    if( !$dprop['nochair'] )
+      $numchairs = $numchairs + 1;
+  }
   $az = 0;
-  $daz = $stagewidth/count($roomdev)*(pi()/180);
+  $daz = $stagewidth/$numchairs*(pi()/180);
   $az = $az*(pi()/180)-0.5*$daz;
   $radius = 1.2;
   foreach( $roomdev as $chair => $dev ){
-    $az = $az+$daz;
-    $pos_x = $radius * cos( -$az );
-    $pos_y = -$radius * sin( -$az );
     $dprop = get_properties( $dev, 'device' );
-    $dprop['position'] = array('x'=>$pos_x,'y'=>$pos_y,'z'=>0);
-    $dprop['orientation'] = array('z'=>(180/pi()*($az+pi())),'y'=>0,'x'=>0);
+    if( !$dprop['nochair'] ){
+      $az = $az+$daz;
+      $pos_x = $radius * cos( -$az );
+      $pos_y = -$radius * sin( -$az );
+      $dprop['position'] = array('x'=>$pos_x,'y'=>$pos_y,'z'=>0);
+      $dprop['orientation'] = array('z'=>(180/pi()*($az+pi())),'y'=>0,'x'=>0);
+    }else{
+      $dprop['position'] = array('x'=>0,'y'=>0,'z'=>0);
+      $dprop['orientation'] = array('z'=>0,'y'=>0,'x'=>0);
+    }
     set_properties( $dev, 'device', $dprop );
   }
 }

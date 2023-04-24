@@ -111,6 +111,7 @@ function defaults( $type )
     'isovbox'=>true,
     'lastfrontendconfig', array(),
     'frontendconfig', array(),
+    'nochair'=>false,
     'message'=>'',
     'metrobpm'=>120,
     'metrobpb'=>4,

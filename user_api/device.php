@@ -303,6 +303,7 @@ if( !empty($device) ){
     $divex = add_expert_div($div,$doc,$devprop);
     // raw mode:
     xml_add_checkbox( 'virtualacoustics', 'virtual acoustics', $divex, $doc, $devprop, false, true );
+    xml_add_checkbox( 'nochair', 'Do not use a place in the musician\'s circle', $divex, $doc, $devprop, false, true );
     //
     if( version_compare("ovclient-0.9.6",$devprop['version'])<0 ){
       $dsl = $div->appendChild($doc->createElement('p'));
