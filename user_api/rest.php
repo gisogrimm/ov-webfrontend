@@ -16,6 +16,24 @@ include '../php/ovbox.inc';
 
 include '../php/rest.inc';
 
+if( isset($_GET['showmixer']) ){
+    $prop = get_properties( $_GET['showmixer'], 'device' );
+    if( $prop['age']<20 ){
+        $shown = false;
+        foreach( array($prop['localip'],$prop['host']) as $mixer ){
+            if( !(empty($mixer)||$shown) ){
+                // device is active and we know the host name:
+                $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".'http://'.$mixer.':8080/');
+                die();
+            }
+        }
+    }
+    header( "Location: /");
+    die();
+}
+
+
 session_start();
 if( !isset($_SESSION['user']) )
     die();
