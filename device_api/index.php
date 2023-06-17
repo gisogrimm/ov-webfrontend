@@ -226,7 +226,7 @@ if ($user == 'device') {
                         $ch['position']['z'] = floatval($jsmsg['channels'][$chn]['z']);
                         $ch['gain'] = floatval($jsmsg['channels'][$chn]['gain']);
                     }
-                    $dprop['rvbgain'] = floatval($jsmsg['reverbgain']);
+                    $dprop['rvbgain'] = 20*log10(floatval($jsmsg['reverbgain']));
                     set_properties( $device, 'device', $dprop );
                 }
             }

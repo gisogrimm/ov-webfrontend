@@ -152,7 +152,8 @@ function get_room_session( $device, $devhash )
     modify_device_prop( $device, 'jackrestart', false );
   $room = array('host'=>'','port'=>0,'pin'=>0);
   $roomdev = array();
-  $room['reverb']= array('devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
+  $room['reverb']= array('roomgain'=>0.4,
+                         'devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
                          'gain'=>pow(10.0,0.05*($devprop['rvbgain'])));
   if( !empty($devprop['room']) ){
     $roomprop = get_room_prop( $devprop['room'] );
