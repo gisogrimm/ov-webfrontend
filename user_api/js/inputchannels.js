@@ -285,19 +285,19 @@ function inputchannels_createUI( ) {
             tlab2.setAttribute('class','toplabel');
             tlab2.appendChild(document.createTextNode('position:'));
             var el = document.createElement('input');
-            el.setAttribute('value',inchannels[k]['position']['x']);
+            el.setAttribute('value',(inchannels[k]['position']['x']).toFixed(2));
             el.setAttribute('onchange','{inputchannels_onedit_x('+k.toString(10)+',this.value);}');
             el.setAttribute('size','1');
             el.setAttribute('title','x position (positive values are in front of you)');
             box2.appendChild(el);
             var el = document.createElement('input');
-            el.setAttribute('value',inchannels[k]['position']['y']);
+            el.setAttribute('value',(inchannels[k]['position']['y']).toFixed(2));
             el.setAttribute('onchange','{inputchannels_onedit_y('+k.toString(10)+',this.value);}');
             el.setAttribute('size','1');
             el.setAttribute('title','y position (positive values are to your left)');
             box2.appendChild(el);
             var el = document.createElement('input');
-            el.setAttribute('value',inchannels[k]['position']['z']);
+            el.setAttribute('value',(inchannels[k]['position']['z']).toFixed(2));
             el.setAttribute('onchange','{inputchannels_onedit_z('+k.toString(10)+',this.value);}');
             el.setAttribute('size','1');
             el.setAttribute('title','z position (positive values are above your ears)');
@@ -356,7 +356,7 @@ function inputchannels_createUI( ) {
             el.setAttribute('min','-40');
             el.setAttribute('max','20');
             el.setAttribute('step','0.1');
-            el.setAttribute('value',20.0*Math.log10(Math.max(0.01,Number.parseFloat(inchannels[k].gain))).toFixed(1));
+            el.setAttribute('value',(20.0*Math.log10(Math.max(0.01,Number.parseFloat(inchannels[k].gain)))).toFixed(1));
             cdiv.appendChild(document.createElement('br'));
             // plugins:
             var box5 = cdiv.appendChild(document.createElement('div'));
