@@ -287,19 +287,19 @@ function inputchannels_createUI( ) {
             var el = document.createElement('input');
             el.setAttribute('value',(inchannels[k]['position']['x']).toFixed(2));
             el.setAttribute('onchange','{inputchannels_onedit_x('+k.toString(10)+',this.value);}');
-            el.setAttribute('size','1');
+            el.setAttribute('size','3');
             el.setAttribute('title','x position (positive values are in front of you)');
             box2.appendChild(el);
             var el = document.createElement('input');
             el.setAttribute('value',(inchannels[k]['position']['y']).toFixed(2));
             el.setAttribute('onchange','{inputchannels_onedit_y('+k.toString(10)+',this.value);}');
-            el.setAttribute('size','1');
+            el.setAttribute('size','3');
             el.setAttribute('title','y position (positive values are to your left)');
             box2.appendChild(el);
             var el = document.createElement('input');
             el.setAttribute('value',(inchannels[k]['position']['z']).toFixed(2));
             el.setAttribute('onchange','{inputchannels_onedit_z('+k.toString(10)+',this.value);}');
-            el.setAttribute('size','1');
+            el.setAttribute('size','3');
             el.setAttribute('title','z position (positive values are above your ears)');
             box2.appendChild(el);
             // source directivity:
