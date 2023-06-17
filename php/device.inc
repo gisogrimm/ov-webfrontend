@@ -152,6 +152,8 @@ function get_room_session( $device, $devhash )
     modify_device_prop( $device, 'jackrestart', false );
   $room = array('host'=>'','port'=>0,'pin'=>0);
   $roomdev = array();
+  $room['reverb']= array('devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
+                         'gain'=>pow(10.0,0.05*($devprop['rvbgain'])));
   if( !empty($devprop['room']) ){
     $roomprop = get_room_prop( $devprop['room'] );
     if( $roomprop['age'] < 3600 ) {
@@ -167,6 +169,8 @@ function get_room_session( $device, $devhash )
                              'damping'=>floatval($roomprop['rvbdamp']),
                              'gaindev'=>pow(10.0,0.05*($devprop['rvbgain'])),
                              'gainroom'=>pow(10.0,0.05*($roomprop['rvbgain'])),
+                             'roomgain'=>pow(10.0,0.05*($roomprop['rvbgain'])),
+                             'devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
                              'gain'=>pow(10.0,0.05*($roomprop['rvbgain']+$devprop['rvbgain'])));
       // get all devices in room:
       $rdevs = get_devices_in_room( $devprop['room'] );

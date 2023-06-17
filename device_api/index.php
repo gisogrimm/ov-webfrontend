@@ -208,6 +208,30 @@ if ($user == 'device') {
             }
         }
     }
+    if( isset($_GET['objmixcfg']) ){
+        $device = $_GET['objmixcfg'];
+        if( !empty($device) ){
+            $putdata = fopen("php://input", "r");
+            $jsmsg = '';
+            while ($data = fread($putdata,1024))
+                $jsmsg = $jsmsg . $data;
+            fclose($putdata);
+            $jsmsg = json_decode($jsmsg,true);
+            if( !is_null($jsmsg) && !is_null($jsmsg['channels']) ){
+                $dprop = get_properties($device,'device');
+                if( count($jsmsg['channels'])==count($dprop['inputchannels']) ){
+                    foreach($dprop['inputchannels'] as $chn => &$ch){
+                        $ch['position']['x'] = floatval($jsmsg['channels'][$chn]['x']);
+                        $ch['position']['y'] = floatval($jsmsg['channels'][$chn]['y']);
+                        $ch['position']['z'] = floatval($jsmsg['channels'][$chn]['z']);
+                        $ch['gain'] = floatval($jsmsg['channels'][$chn]['gain']);
+                    }
+                    $dprop['rvbgain'] = floatval($jsmsg['reverbgain']);
+                    set_properties( $device, 'device', $dprop );
+                }
+            }
+        }
+    }
     // register a device:
     if( isset($_GET['setver']) && isset($_GET['ver'])){
         $device = $_GET['setver'];
