@@ -356,7 +356,7 @@ function inputchannels_createUI( ) {
             el.setAttribute('min','-40');
             el.setAttribute('max','20');
             el.setAttribute('step','0.1');
-            el.setAttribute('value',20*Math.log10(Math.max(0.01,Number.parseFloat(inchannels[k].gain))).toFixed(1));
+            el.setAttribute('value',20.0*Math.log10(Math.max(0.01,Number.parseFloat(inchannels[k].gain))).toFixed(1));
             cdiv.appendChild(document.createElement('br'));
             // plugins:
             var box5 = cdiv.appendChild(document.createElement('div'));
