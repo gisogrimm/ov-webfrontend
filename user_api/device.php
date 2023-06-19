@@ -344,7 +344,25 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
+    // begin emptysessionmonitor
     xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $div, $doc, $devprop);
+    $divmon = add_expert_div($div,$doc,$devprop,'emptysessionismonitor');
+    $el = xml_add_input_generic( 'snmon_rvb_sx', 'Room length / m', $divmon, $doc, $devprop, false );
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','300');
+    $el->setAttribute('step','0.1');
+    $el = xml_add_input_generic( 'snmon_rvb_sy', 'Room width / m', $divmon, $doc, $devprop, false );
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','300');
+    $el->setAttribute('step','0.1');
+    $el = xml_add_input_generic( 'snmon_rvb_sz', 'Room height / m', $divmon, $doc, $devprop );
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','300');
+    $el->setAttribute('step','0.1');
+    // end emptysessionmonitor
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
     $el->appendChild($doc->createTextNode('receiver type: '));
