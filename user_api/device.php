@@ -347,6 +347,7 @@ if( !empty($device) ){
     // begin emptysessionmonitor
     xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $div, $doc, $devprop, false, true);
     $divmon = add_expert_div($div, $doc, $devprop, 'emptysessionismonitor');
+    $divmon->setAttribute('class',$divmon->getAttribute()+' devprop');
     $el = xml_add_input_generic( 'snmon_rvb_sx', 'Room length / m:', $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
@@ -362,6 +363,16 @@ if( !empty($device) ){
     $el->setAttribute('min','0');
     $el->setAttribute('max','300');
     $el->setAttribute('step','0.1');
+    $el = xml_add_input_generic( 'snmon_rvb_damp', 'Wall damping:', $divmon, $doc, $devprop );
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','1');
+    $el->setAttribute('step','0.01');
+    $el = xml_add_input_generic( 'snmon_rvb_abs', 'Wall absorption:', $divmon, $doc, $devprop );
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','1');
+    $el->setAttribute('step','0.01');
     // end emptysessionmonitor
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');

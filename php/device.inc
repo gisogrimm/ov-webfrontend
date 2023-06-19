@@ -152,9 +152,12 @@ function get_room_session( $device, $devhash )
     modify_device_prop( $device, 'jackrestart', false );
   $room = array('host'=>'','port'=>0,'pin'=>0);
   $roomdev = array();
-  $room['reverb']= array('roomgain'=>0.4,
+  $room['reverb']= array('absorption'=>floatval($devprop['snmon_rvb_abs']),
+                         'damping'=>floatval($devprop['snmon_rvb_damp']),
+                         'roomgain'=>0.4,
                          'devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
                          'gain'=>pow(10.0,0.05*($devprop['rvbgain'])));
+  $room['size'] = array('x'=>floatval($devprop['snmon_rvb_sx']),'y'=>floatval($devprop['snmon_rvb_sy']),'z'=>floatval($devprop['snmon_rvb_sz']));
   if( !empty($devprop['room']) ){
     $roomprop = get_room_prop( $devprop['room'] );
     if( $roomprop['age'] < 3600 ) {
