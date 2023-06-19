@@ -347,7 +347,7 @@ if( !empty($device) ){
     // begin emptysessionmonitor
     xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $div, $doc, $devprop, false, true);
     $divmon = add_expert_div($div, $doc, $devprop, 'emptysessionismonitor');
-    $divmon->setAttribute('class',$divmon->getAttribute()+' devprop');
+    $divmon->setAttribute('class',$divmon->getAttribute().' devprop');
     $el = xml_add_input_generic( 'snmon_rvb_sx', 'Room length / m:', $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
