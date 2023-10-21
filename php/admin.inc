@@ -175,7 +175,7 @@ function html_admin_users()
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   //
-  $headerfields = array('id','age','devage','numdev','numgrp','subscr','');
+  $headerfields = array('id','age','devage','numdev','numgrp','subscr','mail','');
   foreach( $headerfields as $field )
     table_add_header($tr,$field,$sortkey,$doc,'user');
   $tab->appendChild($doc->createTextNode("\n"));
@@ -224,6 +224,10 @@ function html_admin_users()
     if( $uprop['subscription'] )
       $val = 'subs';
     $td->appendChild($doc->createTextNode($val));
+    $td = $tr->appendChild($doc->createElement('td'));
+    $el = $td->appendChild($doc->createElement('div'));
+    $el->appendChild($doc->createTextNode($uprop['mail']));
+    $el->setAttribute('style','font-size: 60%;');
     $td = $tr->appendChild($doc->createElement('td'));
     $inp = $td->appendChild($doc->createElement('button'));
     $inp->appendChild($doc->createTextNode('Edit'));
@@ -735,6 +739,9 @@ function html_admin_edituser( $usr, $siteconfig )
   $root = $doc->appendChild($doc->createElement('div'));
   $div = create_section($root,$doc,$usr);
   xml_add_usr_checkbox('seesall','Sees public rooms',$div,$doc,$auprop,$usr);
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->setAttribute('class','roomctl');
+  $el->appendChild($doc->createTextNode($auprop['mail']));
   $usergroups = list_groups($usr);
   {
     // group settings:
