@@ -446,6 +446,12 @@ if( !empty($device) ){
     $el->setAttribute('max','50');
     $el->setAttribute('step','1');
     $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'fdnforwardstages','FDN feed forward path stages:',$divex,$doc,$devprop,false);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('max','5');
+    $el->setAttribute('step','1');
+    $divex->appendChild($doc->createElement('br'));
     // level metering:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
@@ -634,6 +640,25 @@ if( !empty($device) ){
     $el = $form->appendChild($doc->createElement('button'));
     $el->appendChild($doc->createTextNode('Save'));
     $el->setAttribute('onclick','rest_set_devprop("tscinclude",document.getElementById("tscinclude").value);');
+    // mhaconfig:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('openMHA configuration:'));
+    $form = $divex->appendChild($doc->createElement('div'));
+    $el = $form->appendChild($doc->createElement('textarea'));
+    $el->setAttribute('name','mhaconfig');
+    $el->setAttribute('rows','8');
+    $el->setAttribute('cols','60');
+    $el->setAttribute('id','mhaconfig');
+    $el->appendChild($doc->createTextNode($devprop['mhaconfig']));
+    $form->appendChild($doc->createElement('br'));
+    $el = $form->appendChild($doc->createElement('button'));
+    $el->appendChild($doc->createTextNode('Clear'));
+    $el->setAttribute('onclick','document.getElementById("mhaconfig").value="";rest_set_devprop("mhaconfig","");');
+    $el = $form->appendChild($doc->createElement('button'));
+    $el->appendChild($doc->createTextNode('Save'));
+    $el->setAttribute('onclick','rest_set_devprop("mhaconfig",document.getElementById("mhaconfig").value);');
   }
   {
     // network settings
@@ -800,6 +825,7 @@ from.'));
           $inp->setAttribute('onclick','if( confirm("Do you really want to update? This may take a long time. Please do not disconnect from power or internet until the device appears active again (typically 10-30 minutes).")){ rest_set_devprop("firmwareupdate",true); }');
           $inp->setAttribute('value','update now');
           $inp->setAttribute('class','uibutton');
+
         }else{
           $div->appendChild($doc->createTextNode('To update the firmware, please follow the instructions '));
           $a = $div->appendChild($doc->createElement('a'));
@@ -818,6 +844,15 @@ from.'));
     $inp->setAttribute('class','uibutton');
     $divex->appendChild($doc->createTextNode(' Force firmware and system update. Takes up to 30 minutes.'));
     $divex->appendChild($doc->createElement('br'));
+    // install hearing support (www.openmha.org):
+    $inp = $divex->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','button');
+    $inp->setAttribute('onclick','if( confirm("Do you really want to update and install hearing support? This may take a long time. Please do not disconnect from power or internet until the device appears active again (typically 10-30 minutes).")){ rest_set_devprop("installopenmha",true); }');
+    $inp->setAttribute('value','install hearing support');
+    $inp->setAttribute('class','uibutton');
+    $divex->appendChild($doc->createTextNode(' Install hearing support (www.openmha.org) and system update. Takes up to 30 minutes.'));
+    $divex->appendChild($doc->createElement('br'));
+
     // developer version:
     $inp = $divex->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');

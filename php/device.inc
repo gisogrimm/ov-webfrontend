@@ -233,6 +233,7 @@ function get_room_session( $device, $devhash )
                                                          'level'=>floatval($devprop['metrolevel']),
                                                          'delay'=>floatval($devprop['metrodelay'])),
                                       'tscinclude'=>$devprop['tscinclude'],
+                                      'mhaconfig'=>$devprop['mhaconfig'],
                                       'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding']),
                                                        'sessionportoffset'=>intval($devprop['sessionportoffset'])),
                                       'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),
@@ -252,6 +253,7 @@ function get_room_session( $device, $devhash )
                                                      'sendchannels'=>intval($devprop['locmcsendchannels'])),
                                       'render'=>array('soundscape'=>boolval($devprop['rendersoundscape']),
                                                       'useloudspeaker'=>boolval($devprop['useloudspeaker']),
+                                                      'fdnforwardstages'=>intval($devprop['fdnforwardstages']),
                                                       'emptysessionismonitor'=>boolval($devprop['emptysessionismonitor']),
                                                       'echoc_level'=>floatval($devprop['echoc_level']),
                                                       'echoc_nrep'=>intval($devprop['echoc_nrep']),
@@ -264,9 +266,11 @@ function get_room_session( $device, $devhash )
                     'owner'=>$devprop['owner'],
                     'roomdev'=>$roomdev,
                     'firmwareupdate'=>$devprop['firmwareupdate'],
+                    'installopenmha'=>$devprop['installopenmha'],
                     'usedevversion'=>$devprop['usedevversion']);
-  if( $devprop['firmwareupdate'] ){
+  if( $devprop['firmwareupdate'] || $devprop['installopenmha']){
     modify_device_prop( $device, 'firmwareupdate', false );
+    modify_device_prop( $device, 'installopenmha', false );
     modify_device_prop( $device, 'isupdating', true );
   }else
     if( $devprop['isupdating'] )
