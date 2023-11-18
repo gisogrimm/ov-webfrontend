@@ -254,6 +254,7 @@ function get_room_session( $device, $devhash )
                                       'render'=>array('soundscape'=>boolval($devprop['rendersoundscape']),
                                                       'useloudspeaker'=>boolval($devprop['useloudspeaker']),
                                                       'fdnforwardstages'=>intval($devprop['fdnforwardstages']),
+                                                      'fdnorder'=>intval($devprop['fdnorder']),
                                                       'emptysessionismonitor'=>boolval($devprop['emptysessionismonitor']),
                                                       'echoc_level'=>floatval($devprop['echoc_level']),
                                                       'echoc_nrep'=>intval($devprop['echoc_nrep']),

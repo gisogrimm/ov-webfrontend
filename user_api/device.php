@@ -452,6 +452,12 @@ if( !empty($device) ){
     $el->setAttribute('max','5');
     $el->setAttribute('step','1');
     $divex->appendChild($doc->createElement('br'));
+    $el = xml_add_input_generic( 'fdnorder','FDN order:',$divex,$doc,$devprop,false);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','3');
+    $el->setAttribute('max','11');
+    $el->setAttribute('step','1');
+    $divex->appendChild($doc->createElement('br'));
     // level metering:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));

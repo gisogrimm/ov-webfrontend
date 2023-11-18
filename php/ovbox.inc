@@ -83,6 +83,7 @@ function defaults( $type )
     'rectype'=>'hrtf',
     'decorr'=>0,
     'fdnforwardstages'=>0,
+    'fdnorder'=>5,
     'jackdevice'=>'highest',
     'jackplugdev'=>false,
     'jackrate'=>48000,
