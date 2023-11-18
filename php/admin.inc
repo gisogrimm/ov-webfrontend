@@ -184,14 +184,14 @@ function html_admin_users()
     $tr = $tab->appendChild($doc->createElement('tr'));
     if( $uprop['agreedterms'] ){
       if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600))) ){
+          ((($uprop['numdev']>0) && (($uprop['devage']>333*24*3600) && $uprop['age']>333*24*3600))) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
       }
       if( $uprop['validsubscription'] )
         $tr->setAttribute('style','background-color: #ffd072;');
     }else{
       if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600) && ($uprop['age']<3600*24*365*40)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
+          ((($uprop['numdev']>0) && (($uprop['devage']>333*24*3600) && $uprop['age']>333*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
         $tr->setAttribute('style','background-color: #ccaaaa;');
       }else{
         $tr->setAttribute('style','background-color: #aaaaaa;');

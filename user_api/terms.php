@@ -80,7 +80,7 @@ echo '<p>Inactive accounts are automatically deleted. Accounts without a
 linked device are considered inactive if the user has not logged on
 within the last 30 days. Accounts with a linked device are considered
 inactive if the user has not accessed the ovbox services within the
-last 180 days.</p>';
+last year.</p>';
 
 echo '</div>';
 

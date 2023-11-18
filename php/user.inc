@@ -797,7 +797,7 @@ function clean_userdb(){
   foreach($udb as $us=>$uprop){
     if( !$uprop['validsubscription'] ){
       if( (($uprop['numdev']==0) && ($uprop['age']>31*24*3600)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>181*24*3600) && $uprop['age']>181*24*3600))) ){
+          ((($uprop['numdev']>0) && (($uprop['devage']>365*24*3600) && $uprop['age']>365*24*3600))) ){
         $rmusers[] = $us;
       }
     }
