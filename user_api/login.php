@@ -99,12 +99,20 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         echo $gprop['preamble'];
         if( isset($_GET['fail']) )
             echo '<div class="failure">Sorry, invalid user name or password.</div>';
+        $dispuser = '';
+        $focuser = 'autofocus';
+        $focpw = '';
+        if( isset($_GET['usr']) ){
+            $dispuser = $_GET['usr'];
+            $focuser = '';
+            $focpw = 'autofocus';
+        }
         echo '<h2>Login:</h2>';
         echo '<form class="login" method="POST">';
         echo '<div class="loginlab">User name:</div>';
-        echo '<input class="logininp" type="text" name="username"><br>';
+        echo '<input class="logininp" type="text" name="username" value="'.$dispuser.'" '.$focuser.'><br>';
         echo '<div class="loginlab">Password:</div>';
-        echo '<input class="logininp" type="password" name="password"><br>';
+        echo '<input class="logininp" type="password" name="password" '.$focpw.'><br>';
         echo '<input type="hidden" name="login">';
         echo '<button class="uibutton">Login</button>';
         echo '</form>';
