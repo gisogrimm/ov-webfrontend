@@ -118,7 +118,7 @@ function submit_contact( $user, $contact, $msg )
   $mailmsg = 'From: '.$user.' ('.$contact.")\n\n".$msg."\n";
   file_put_contents( '../lastmailsg',$mailmsg);
   $sitecfg = get_properties('site','config');
-  mail( $sitecfg['mail'], 'ovbox contact from '.$user, $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+  mail( $sitecfg['mail'], 'ovbox contact from '.$user, $mailmsg, array('From'=>'info@ovbox.de') );
 }
 
 function set_getprop_post( &$prop, $key )

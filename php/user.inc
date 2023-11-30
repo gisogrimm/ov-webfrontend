@@ -479,7 +479,7 @@ function request_passwd_reset( $username )
   $mailmsg = "Please follow this link to reset the password of your ovbox acount ".$username.":\n\n" . $actual_link . "&pwreset=".$reghash .
            "\n\nThis link is valid for one hour.\n\nIf you did not request a password reset, please ignore this mail.\n";
   file_put_contents( '../lastmailsg',$mailmsg);
-  mail( $mail, 'ovbox password reset', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+  mail( $mail, 'ovbox password reset', $mailmsg, array('From'=>'info@ovbox.de') );
 }
 
 function register_new_user( $mail, $username, $password, $group, &$msg )
@@ -531,9 +531,9 @@ function register_new_user( $mail, $username, $password, $group, &$msg )
     $mailmsg = $mailmsg."\n"."from ".$mail."\n";
   file_put_contents( '../lastmailsg',$mailmsg);
   if( $site['moderation'] )
-    mail( $site['mail'], 'ovbox account activation request', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+    mail( $site['mail'], 'ovbox account activation request', $mailmsg, array('From'=>'info@ovbox.de') );
   else
-    mail( $mail, 'ovbox account activation', $mailmsg, array('From'=>'noreply@orlandoviols.com') );
+    mail( $mail, 'ovbox account activation', $mailmsg, array('From'=>'info@ovbox.de') );
   return true;
 }
 
@@ -594,7 +594,7 @@ function terminate_account( $user )
     $pws = json_decode( file_get_contents( $fname ), true );
   if( !array_key_exists($user,$pws) ){
     $sitecfg = get_properties('site','config');
-    mail( $sitecfg['mail'], 'manual ovbox account activation request', 'remove user '.$user, array('From'=>'noreply@orlandoviols.com') );
+    mail( $sitecfg['mail'], 'manual ovbox account activation request', 'remove user '.$user, array('From'=>'info@ovbox.de') );
   }
   unset($pws[$user]);
   file_put_contents( $fname, json_encode( $pws ));
