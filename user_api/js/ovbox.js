@@ -630,8 +630,9 @@ function update_room( user, device, room, droom )
 	              a = ctl.appendChild(document.createElement('a'));
 	              a.setAttribute('class','roomctl');
 	              a.setAttribute('href','sessionvid.php');
+	              a.setAttribute('target','blank');
 	              a.appendChild(document.createTextNode('videos'));
-                a.setAttribute('title','experimental video sharing (no audio)');
+                a.setAttribute('title','experimental video sharing in new tab/window (no audio)');
             }else{
 	              a = ctl.appendChild(document.createElement('a'));
 	              a.setAttribute('class','roomctl');
