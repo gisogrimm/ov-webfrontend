@@ -488,7 +488,7 @@ function html_admin_db($type, $showfields = array())
   $tab = $root->appendChild($doc->createElement('table'));
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
-  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('cfg','owner','label'));
+  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('vid','cfg','owner','label'));
   foreach( $headerfields as $field ){
     table_add_header($tr,$field,$sortkey,$doc,$type);
   }
@@ -508,6 +508,12 @@ function html_admin_db($type, $showfields = array())
       else
         $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dprop[$field]));
     }
+    // video receive link:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $a = $td->appendChild($doc->createElement('a'));
+    $a->setAttribute('href','https://vdo.ninja/?view='.hash('md5',$dev));
+    $a->setAttribute('target','blank');
+    $a->appendChild($doc->createTextNode('vid'));
     // raw config link:
     $td = $tr->appendChild($doc->createElement('td'));
     $frm = $td->appendChild($doc->createElement('form'));
