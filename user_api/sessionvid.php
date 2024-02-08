@@ -18,8 +18,9 @@ include '../php/user.inc';
 include '../php/rest.inc';
 include '../php/session.inc';
 
-print_head( $user, $style, $urlgroup );
+print_head( $user, $style, $urlgroup, false );
 
+echo '</div>';
 echo '<div class="sessionvid" id="sessionvid">';
 
 function rotate( $rcos, $rsin, &$x, &$y,$posx,$posy )
@@ -109,8 +110,6 @@ if( !empty($devprop['room'])){
   }
   echo $doc->saveHTML() . "\n";
 }
-
-echo '</div>';
 
 print_foot($style,false);
 
