@@ -160,6 +160,7 @@ function defaults( $type )
     'echoc_level'=>60.0,
     'echoc_maxdist'=>4.0,
     'echoc_filterlen'=>65,
+    'hiresping'=>false,
   );
   $defaults['room'] = array(
     'access'=>0,
