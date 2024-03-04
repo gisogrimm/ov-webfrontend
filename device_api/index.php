@@ -169,6 +169,8 @@ if ($user == 'device') {
                     $dprop['backendperiodsize'] = $jsmsg['backendperiodsize'];
                 if( isset($jsmsg['backendsrate']) )
                     $dprop['backendsrate'] = $jsmsg['backendsrate'];
+                if( isset($jsmsg['backendxruns']) )
+                    $dprop['backendxruns'] = $jsmsg['backendxruns'];
                 //if( isset($jsmsg['effectplugincfg']) && $jsmsg['effectplugincfg'] ){
                 //    error_log('-----');
                 //    error_log(json_encode($jsmsg['effectplugincfg']));

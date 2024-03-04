@@ -808,6 +808,8 @@ function update_devicestatus( user, device, owned_devices )
             if( device.backendperiodsize && (device.backendperiodsize > 0) &&
                 device.backendsrate && (device.backendsrate > 0)){
 		            devstat.appendChild(document.createTextNode(' ['+(device.backendperiodsize/device.backendsrate*1000).toFixed(1)+'ms/'+(device.backendsrate*0.001).toFixed(1)+'kHz]'));
+                if( device.backendxruns && (device.backendxruns > 0) )
+                    devstat.appendChild(document.createTextNode(' '+device.backendxruns.toFixed(0)+' xruns'));
             }
 	      }
 	      if( device.useproxy && (device.proxyip.length>0))

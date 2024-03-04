@@ -751,6 +751,7 @@ if( !empty($device) ){
       xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $divex, $doc, $devprop );
       xml_add_checkbox( 'useproxy', 'use an audio proxy if possible', $divex, $doc, $devprop );
     }
+    xml_add_checkbox( 'hiresping', 'increase frequency of ping measurements at cost of data usage', $divex, $doc, $devprop );
     //$divex = add_expert_div($div, $doc, $devprop );
     // frontend:
     // load frontends from database:
