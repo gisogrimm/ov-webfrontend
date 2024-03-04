@@ -798,7 +798,9 @@ function clean_userdb(){
   }
   foreach($udb as $us=>$uprop){
     if( !$uprop['validsubscription'] ){
-      if( (($uprop['numdev']==0) && ($uprop['age']>31*24*3600)) ||
+      // remove users without device after 5 days, and incactive users
+      // with devices after a year:
+      if( (($uprop['numdev']==0) && ($uprop['age']>5*24*3600)) ||
           ((($uprop['numdev']>0) && (($uprop['devage']>365*24*3600) && $uprop['age']>365*24*3600))) ){
         $rmusers[] = $us;
       }
