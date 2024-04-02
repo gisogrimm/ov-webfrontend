@@ -38,34 +38,59 @@ function cleanup_rooms()
 {
   $rooms = list_db('room');
   foreach( list_db('room') as $room=>$rprop ){
-    // only operate on unmanaged rooms which were not entered within the last hour:
-    if( empty($rprop['owner']) && ($rprop['enterage']>3600)){
+    if( $rprop['clearowned'] ){
+      // clear owned room, all except own device must go if inactive
+      // for more than 2 minutes:
       $devs = get_devices_in_room($room);
-      $age = 4000;
+      $kick = false;
       if( !empty($devs) ){
         foreach( $devs as $dev ){
           $dprop = get_properties( $dev, 'device' );
-          $age = min($age,$dprop['age']);
-        }
-        // if all devices are switched off for more than an hour or if
-        // they entered more than eight hours ago, kick them:
-        if( ($age > 3600)||($rprop['enterage']>8*3600) ){
-          foreach( $devs as $dev )
+          if( ($dprop['owner'] != $rprop['owner']) && ($dprop['age'] > 120 ) ){
             modify_device_prop( $dev, 'room', '');
-          if( $rprop['editable'] ){
-            unset($rprop['rvbgain']);
-            unset($rprop['rvbabs']);
-            unset($rprop['rvbdamp']);
-            unset($rprop['size']);
-            unset($rprop['ambientsound']);
-            unset($rprop['ambientlevel']);
-            set_properties( $room, 'room', $rprop );
+            $kick = true;
           }
         }
+        if( $kick && $rprop['editable'] ){
+          unset($rprop['rvbgain']);
+          unset($rprop['rvbabs']);
+          unset($rprop['rvbdamp']);
+          unset($rprop['size']);
+          unset($rprop['ambientsound']);
+          unset($rprop['ambientlevel']);
+          set_properties( $room, 'room', $rprop );
+        }
       }
-      // clear bulletin board when entered at least 4 hours ago:
-      if( ($rprop['enterage']>4*3600) && empty($devs) ){
-        modify_room_prop( $room, 'bulletinboard', '' );
+    }else{
+      if( empty($rprop['owner']) && ($rprop['enterage']>3600)){
+        // only operate on unmanaged rooms which were not entered within the last hour:
+        $devs = get_devices_in_room($room);
+        $age = 4000;
+        if( !empty($devs) ){
+          foreach( $devs as $dev ){
+            $dprop = get_properties( $dev, 'device' );
+            $age = min($age,$dprop['age']);
+          }
+          // if all devices are switched off for more than an hour or if
+          // they entered more than eight hours ago, kick them:
+          if( ($age > 3600)||($rprop['enterage']>8*3600) ){
+            foreach( $devs as $dev )
+              modify_device_prop( $dev, 'room', '');
+            if( $rprop['editable'] ){
+              unset($rprop['rvbgain']);
+              unset($rprop['rvbabs']);
+              unset($rprop['rvbdamp']);
+              unset($rprop['size']);
+              unset($rprop['ambientsound']);
+              unset($rprop['ambientlevel']);
+              set_properties( $room, 'room', $rprop );
+            }
+          }
+        }
+        // clear bulletin board when entered at least 4 hours ago:
+        if( ($rprop['enterage']>4*3600) && empty($devs) ){
+          modify_room_prop( $room, 'bulletinboard', '' );
+        }
       }
     }
   }
@@ -309,6 +334,7 @@ function get_room_session( $device, $devhash )
     echo $hash . "\n";
     echo $stagecfg;
   }
+  //cleanup_rooms();
 }
 
 function get_client_ip() {

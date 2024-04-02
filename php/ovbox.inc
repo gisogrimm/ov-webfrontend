@@ -184,6 +184,7 @@ function defaults( $type )
     'ambientlevel'=>50,
     'bulletinboard'=>'',
     'premium'=>false,
+    'clearowned'=>false,
     'version'=>'',
   );
   $defaults['user'] = array(
