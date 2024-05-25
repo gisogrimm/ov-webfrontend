@@ -164,7 +164,7 @@ if( !empty($device) ){
     $a->setAttribute('href','rest.php?getrawjson=');
     $a->setAttribute('target','blank');
     $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
-    $divex->appendChild($doc->createTextNode(' (device '.$device.')'));
+    $divex->appendChild($doc->createTextNode(' (device '.$device.' '.$devprop['uname_sysname'].' '.$devprop['uname_release'].' '.$devprop['uname_machine'].')'));
     $divex->appendChild($doc->createElement('br'));
     // video URLs
     $divex->appendChild($doc->createTextNode('Video: '));

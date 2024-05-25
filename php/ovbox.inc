@@ -161,6 +161,9 @@ function defaults( $type )
     'echoc_maxdist'=>4.0,
     'echoc_filterlen'=>65,
     'hiresping'=>false,
+    'uname_sysname'=>'',
+    'uname_release'=>'',
+    'uname_machine'=>'',
   );
   $defaults['room'] = array(
     'access'=>0,

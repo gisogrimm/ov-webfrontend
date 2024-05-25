@@ -143,6 +143,12 @@ if ($user == 'device') {
                 $dprop['access'] = time();
                 $dprop['alsadevs'] = $jsmsg['alsadevs'];
                 $dprop['bandwidth'] = $jsmsg['bandwidth'];
+                if( isset($jsmsg['uname_sysname']) )
+                    $dprop['uname_sysname'] = $jsmsg['uname_sysname'];
+                if( isset($jsmsg['uname_release']) )
+                    $dprop['uname_release'] = $jsmsg['uname_release'];
+                if( isset($jsmsg['uname_machine']) )
+                    $dprop['uname_machine'] = $jsmsg['uname_machine'];
                 if( isset($jsmsg['cpuload']) )
                     $dprop['cpuload'] = $jsmsg['cpuload'];
                 else
