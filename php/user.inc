@@ -698,7 +698,8 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    //echo '<div class="ad" style="text-align: center;">ORLANDO<i>viols</i> w&uuml;scht friedliche Feiertage und ein musikalisches und gesundes 2022!</div>'."\n";
+    echo '<div class="ad" style="text-align: center;">For enhanced security, the box.orlandoviols.com site has been successfully moved to a new server. We apologize for any inconvenience this may cause and are here to assist you. If you encounter any issues, please reach out to us at <a href="mailto:info@ovbox.de">info@ovbox.de</a>. Additionally, the installation of new devices experienced a brief disruption but has now been fixed. For more details, please visit  <a href="https://ovbox.de">ovbox.de</a>.
+</div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
