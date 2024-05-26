@@ -6,4 +6,12 @@ db/*.userdevice
 db/*.user
 db/*.pingstats
 db/*.devpresets
+db/*.group
+db/*.registration
+db/site.config
+db/groups
+db/ovpasswd
+db/*.sortkey
+db/clver
+db/frontends.db
 lock_*.txt
