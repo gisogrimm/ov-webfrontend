@@ -1,5 +1,5 @@
 AuthType Basic
 AuthName "House of Consort"
-AuthUserFile /home/ov/box/ov-webfrontend/ovboxusers
+AuthUserFile /home/ov/ov-webfrontend/ovboxusers
 #AuthUserFile /home/giso/ovbox/lobby/ovboxusers
 Require valid-user

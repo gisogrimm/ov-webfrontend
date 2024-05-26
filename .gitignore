@@ -1,2 +1,9 @@
 *~
 .htaccess
+db/*.device
+db/*.room
+db/*.userdevice
+db/*.user
+db/*.pingstats
+db/*.devpresets
+lock_*.txt
