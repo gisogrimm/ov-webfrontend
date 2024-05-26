@@ -487,8 +487,6 @@ button.uibutton:hover {
     padding: 15px;
     border-radius: 13px;
     border: 2px solid #4f3327;
-    font-size: 130%;
-    font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia, serif;
     color: #000;
 }
 .ovhead {
