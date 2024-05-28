@@ -2,17 +2,18 @@
 
 function table_add_header( &$tr, $field, $sortkey, &$doc, $type )
 {
+  $dispfield = $field;
+  $dispfield = str_replace('uname_machine','arch',$dispfield);
+  $dispfield = str_replace('uname_release','kernel',$dispfield);
+  $dispfield = str_replace('uname_sysname','OS',$dispfield);
+  $dispfield = str_replace('clearowned','clear',$dispfield);
   $th = $tr->appendChild($doc->createElement('th'));
   if( $field == $sortkey ){
-    $th->appendChild($doc->createTextNode('['.$field.']'));
+    $th->appendChild($doc->createTextNode('['.$dispfield.']'));
   }else{
     $a = $th->appendChild($doc->createElement('a'));
     $a->setAttribute('href','?sortby='.$field.'&category='.$type);
-    $field = str_replace('uname_machine','arch',$field);
-    $field = str_replace('uname_release','kernel',$field);
-    $field = str_replace('uname_sysname','OS',$field);
-    $field = str_replace('clearowned','clear',$field);
-    $a->appendChild($doc->createTextNode($field));
+    $a->appendChild($doc->createTextNode($dispfield));
   }
 }
 
