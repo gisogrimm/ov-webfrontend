@@ -327,8 +327,11 @@ function get_properties( $id, $type )
 {
   $fname = '../db/'.$id.'.'.$type;
   $prop = defaults($type);
-  if( !empty($id) && file_exists( $fname ) )
-    $prop = array_merge($prop, json_decode( file_get_contents( $fname ), true ));
+  if( !empty($id) && file_exists( $fname ) ){
+    $filec = json_decode( file_get_contents( $fname ), true );
+    if( is_array($filec) )
+      $prop = array_merge($prop, $filec);
+  }
   postproc_prop( $prop, $type );
   return $prop;
 }
