@@ -144,7 +144,7 @@ if( isset($_GET['adm']) ){
 }
 
 if( $adm == 'devices' ){
-    html_admin_db('device',array('version'));
+    html_admin_db('device',array('version','uname_machine','uname_release'));
     echo '<form><input type="hidden" name="rmolddevs"/><button>Remove inactive unclaimed devices</button></form>';
 }
 if( $adm == 'rooms' ){

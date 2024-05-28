@@ -8,6 +8,10 @@ function table_add_header( &$tr, $field, $sortkey, &$doc, $type )
   }else{
     $a = $th->appendChild($doc->createElement('a'));
     $a->setAttribute('href','?sortby='.$field.'&category='.$type);
+    $field = str_replace('uname_machine','arch',$field);
+    $field = str_replace('uname_release','kernel',$field);
+    $field = str_replace('uname_sysname','OS',$field);
+    $field = str_replace('clearowned','clear',$field);
     $a->appendChild($doc->createTextNode($field));
   }
 }
