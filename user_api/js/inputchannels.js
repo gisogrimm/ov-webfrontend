@@ -23,6 +23,24 @@ const lo_cut40 = {
     }
 }
 
+const eq_300 = {
+    'filter' : {
+        'mode':'equalizer',
+        'fc':300,
+        'Q':1,
+        'gain':3
+    }
+}
+
+const eq_6000 = {
+    'filter' : {
+        'mode':'equalizer',
+        'fc':6000,
+        'Q':1,
+        'gain':-3
+    }
+}
+
 const tube_green = {
     'filter' : {
         'mode':'highpass',
@@ -399,18 +417,29 @@ function inputchannels_createUI( ) {
                 var el = flts.appendChild(document.createElement('input'));
                 el.setAttribute('type','button');
                 el.setAttribute('value','120 Hz');
-                //el.setAttribute('style','background-color: #239617;');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(lo_cut));inputchannels_createUI();}');
                 var el = flts.appendChild(document.createElement('input'));
                 el.setAttribute('type','button');
                 el.setAttribute('value','80 Hz');
-                //el.setAttribute('style','background-color: #239617;');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(lo_cut80));inputchannels_createUI();}');
                 var el = flts.appendChild(document.createElement('input'));
                 el.setAttribute('type','button');
                 el.setAttribute('value','40 Hz');
-                //el.setAttribute('style','background-color: #239617;');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(lo_cut40));inputchannels_createUI();}');
+                // equalizers:
+                var flts = box5.appendChild(document.createElement('div'));
+                flts.setAttribute('class','plugincategory');
+                var fltslab = flts.appendChild(document.createElement('div'));
+                fltslab.setAttribute('class','plugincategorylab');
+                fltslab.appendChild(document.createTextNode('equalizers'));
+                var el = flts.appendChild(document.createElement('input'));
+                el.setAttribute('type','button');
+                el.setAttribute('value','EQ 300 +3 (warm)');
+                el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(eq_300));inputchannels_createUI();}');
+                var el = flts.appendChild(document.createElement('input'));
+                el.setAttribute('type','button');
+                el.setAttribute('value','EQ 6kHz -3 (hiss)');
+                el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(eq_6000));inputchannels_createUI();}');
                 // plugin name list:
                 console.log(inchannels[k]['plugins']);
                 var divpn = box5.appendChild(document.createElement('div'));

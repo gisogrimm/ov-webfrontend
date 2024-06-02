@@ -215,6 +215,13 @@ if ($user == 'device') {
                 $dprop = get_properties($device,'device');
                 foreach($dprop['inputchannels'] as $chn => &$ch){
                     foreach($ch['plugins'] as $key=>&$plug){
+                        if( $key == 'filter' ){
+                            if( isset($jsmsg[$chn][$key]['q']) ){
+                                $val = $jsmsg[$chn][$key]['q'];
+                                unset($jsmsg[$chn][$key]['q']);
+                                $jsmsg[$chn][$key]['Q'] = $val;
+                            }
+                        }
                         $plug = array_merge($plug,$jsmsg[$chn][$key]);
                     }
                 }
