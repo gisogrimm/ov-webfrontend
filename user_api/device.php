@@ -346,6 +346,7 @@ if( !empty($device) ){
     $divex = add_expert_div($divva,$doc,$devprop);
     // begin emptysessionmonitor
     xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $div, $doc, $devprop, false, true);
+    xml_add_checkbox('usebcf2000','Use BCF2000 DAW controller (see wiki)', $div, $doc, $devprop, false, true);
     $divmon = add_expert_div($div, $doc, $devprop, 'emptysessionismonitor');
     $divmon->setAttribute('class',$divmon->getAttribute('class').' devprop');
     $el = xml_add_input_generic( 'snmon_rvb_sx', 'Room length / m:', $divmon, $doc, $devprop );

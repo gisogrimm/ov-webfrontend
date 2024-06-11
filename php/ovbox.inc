@@ -148,6 +148,7 @@ function defaults( $type )
     'locmcrecautoconnect'=>false,
     'locmcsendchannels'=>2,
     'emptysessionismonitor'=>false,
+    'usebcf2000'=>false,
     'snmon_rvb_sx'=>25,
     'snmon_rvb_sy'=>13,
     'snmon_rvb_sz'=>7.5,

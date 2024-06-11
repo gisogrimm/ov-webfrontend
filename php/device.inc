@@ -286,6 +286,7 @@ function get_room_session( $device, $devhash )
                                                       'echoc_nrep'=>intval($devprop['echoc_nrep']),
                                                       'echoc_filterlen'=>intval($devprop['echoc_filterlen']),
                                                       'echoc_maxdist'=>floatval($devprop['echoc_maxdist']),
+                                                      'usebcf2000'=>boolval($devprop['usebcf2000']),
                                                       'zitasampleformat'=>$devprop['zitasampleformat']));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,
