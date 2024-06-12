@@ -303,6 +303,7 @@ if( !empty($device) ){
     $divex = add_expert_div($div,$doc,$devprop);
     // raw mode:
     xml_add_checkbox( 'virtualacoustics', 'virtual acoustics', $divex, $doc, $devprop, false, true );
+    xml_add_checkbox('usebcf2000','Use BCF2000 DAW controller', $divex, $doc, $devprop, false, true);
     xml_add_checkbox( 'nochair', 'Do not use a place in the musician\'s circle', $divex, $doc, $devprop, false, true );
     //
     if( version_compare("ovclient-0.9.6",$devprop['version'])<0 ){
@@ -374,7 +375,6 @@ if( !empty($device) ){
     $el->setAttribute('max','1');
     $el->setAttribute('step','0.01');
     // end emptysessionmonitor
-    xml_add_checkbox('usebcf2000','Use BCF2000 DAW controller', $divex, $doc, $devprop, false, true);
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','rectype');
     $el->appendChild($doc->createTextNode('receiver type: '));
