@@ -566,6 +566,7 @@ a.adminarea:hover {
     padding-bottom: 3px;
     border-top: 1px solid #777;
     bottom: 0px;
+    left: 0px;
     width: calc(100% - 20px);
     position: fixed;
 }
