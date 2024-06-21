@@ -31,6 +31,12 @@ function rotate( $rcos, $rsin, &$x, &$y,$posx,$posy )
     $y = $tmpy + $posy;
 }
 
+function get_devh( $device, $room )
+{
+  $dh = hash('md5',$device . $room);
+  return $dh;
+}
+
 if( !empty($devprop['room'])){
 
   $rdevs = get_devices_in_room( $devprop['room'], true, true );
@@ -43,7 +49,8 @@ if( !empty($devprop['room'])){
   foreach( $rdevs as $did=>$dprop ){
     $idx = $idx+1;
     $d = $dprop['id'];
-    $dh = hash('md5',$d);
+    //$dh = hash('md5',$d);
+    $dh = get_devh( $d, $devprop['room']);
     $x = 50*($dprop['position']['x']-$x0)/2.4;
     $y = 50*($dprop['position']['y']-$y0)/2.4;
     rotate($rcos,$rsin,$x,$y,0,0);
@@ -81,7 +88,8 @@ if( !empty($devprop['room'])){
     foreach($row as $vid){
       $k = $k+1;
       $d = $vid['id'];
-      $dh = hash('md5',$d);
+      //$dh = hash('md5',$d);
+      $dh = get_devh( $d, $devprop['room']);
       if( ($k > 1) && ($r > 1) ){
         $divv = $divr->appendChild($doc->createElement('div'));
         $divv->setAttribute('class','vidspacer');
