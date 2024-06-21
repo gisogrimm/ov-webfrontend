@@ -49,7 +49,6 @@ if( !empty($devprop['room'])){
   foreach( $rdevs as $did=>$dprop ){
     $idx = $idx+1;
     $d = $dprop['id'];
-    //$dh = hash('md5',$d);
     $dh = get_devh( $d, $devprop['room']);
     $x = 50*($dprop['position']['x']-$x0)/2.4;
     $y = 50*($dprop['position']['y']-$y0)/2.4;
@@ -57,22 +56,9 @@ if( !empty($devprop['room'])){
     $x = round($x);
     $y = round($y);
     $vids[-$x][-$y] = $dprop;
-    error_log('x='.$x.' y='.$y.' '.$dprop['label']);
+    //error_log('x='.$x.' y='.$y.' '.$dprop['label']);
     $y = -0.78*$y+50-11;
     $x = 50-$x;
-    $url = 'https://vdo.ninja/?view='.$dh;
-    $allow = '';
-    $zidx = 'z-index:'.$idx.'; ';
-    if( $d == $device ){
-      $url = 'https://vdo.ninja/?push='.$dh.'&ad=0';
-      $allow = ' allow="camera; display-capture" ';
-      $zidx = 'z-index:0; ';
-    }
-    $url = 'https://orlandoviols.com/';
-    //echo '<div id="vcon.'.$d.'" class="vidcont" style="'.$zidx.'left:'.$y.'%; top:'.$x.'%;">';
-    //echo '<iframe id="vid'.$d.'" style="position: absolute; height: 100%; border: none" width="100%" height="100%" '.$allow.' src="'.$url.'"></iframe>';
-    //echo '<input class="viddevlabel" value="'.$dprop['label'].'" type="button" onclick="vid_toggle_max(\''.$d.'\');"></input>';
-    //echo '</div>';
   }
   ksort($vids);
   $doc = new DOMDocument('1.0');
@@ -88,7 +74,6 @@ if( !empty($devprop['room'])){
     foreach($row as $vid){
       $k = $k+1;
       $d = $vid['id'];
-      //$dh = hash('md5',$d);
       $dh = get_devh( $d, $devprop['room']);
       if( ($k > 1) && ($r > 1) ){
         $divv = $divr->appendChild($doc->createElement('div'));
@@ -101,7 +86,7 @@ if( !empty($devprop['room'])){
       $url = 'https://vdo.ninja/?view='.$dh;
       $zidx = 'z-index:'.$idx.'; ';
       if( $d == $device ){
-        $ifr->setAttribute('allow','camera');
+        $ifr->setAttribute('allow','camera;display-capture');
         $url = 'https://vdo.ninja/?push='.$dh.'&ad=0';
       }
       //$url = 'https://orlandoviols.com/';
@@ -113,7 +98,7 @@ if( !empty($devprop['room'])){
       $dname->setAttribute('value',$vid['label']);
       $dname->setAttribute('type','button');
       $dname->setAttribute('onclick','vid_toggle_max("'.$d.'");');
-      error_log($vid['label']);
+      //error_log($vid['label']);
     }
   }
   echo $doc->saveHTML() . "\n";
