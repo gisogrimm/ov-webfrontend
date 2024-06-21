@@ -65,7 +65,7 @@ if( !empty($devprop['room'])){
     $zidx = 'z-index:'.$idx.'; ';
     if( $d == $device ){
       $url = 'https://vdo.ninja/?push='.$dh.'&ad=0';
-      $allow = ' allow="camera" ';
+      $allow = ' allow="camera; display-capture" ';
       $zidx = 'z-index:0; ';
     }
     $url = 'https://orlandoviols.com/';
