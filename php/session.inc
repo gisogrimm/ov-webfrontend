@@ -2,8 +2,13 @@
 
 session_start();
 
+// style settings:
+$urlgroup = '';
+if( isset($_GET['grp'] ) )
+  $urlgroup = get_group_by_hash($_GET['grp']);
+
 if( !isset($_SESSION['user']) ){
-  header( "Location: /login.php" );
+  header( "Location: /login.php?grp=".grouphash($urlgroup) );
   die();
 }
 
@@ -44,10 +49,6 @@ flock($fp_dev, LOCK_UN );
 if( empty($devprop['owner']) )
   $devprop['owner'] = $user;
 
-// style settings:
-$urlgroup = '';
-if( isset($_GET['grp'] ) )
-  $urlgroup = get_group_by_hash($_GET['grp']);
 $style = '';
 if( !empty($urlgroup) ){
   $gprop = get_properties( $urlgroup, 'group' );
