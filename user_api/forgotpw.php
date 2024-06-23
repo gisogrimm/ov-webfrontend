@@ -20,7 +20,7 @@ echo '<h2>Reset password:</h2>';
 echo '<p>If you registered with a valid email address, you may reset your password. A confirmation mail will be sent to the address linked to your account.</p>';
 echo '<form class="login" action="/login.php?grp='.grouphash($urlgroup).'" method="POST">';
 echo '<label>User name:</label><br>';
-echo '<input type="text" name="pwrusername" pattern="[a-zA-Z0-9-_]*" title="only letters and numbers"><br>';
+echo '<input type="text" name="pwrusername" pattern="[a-zA-Z0-9\-_]*" title="only letters and numbers"><br>';
 echo '<input type="hidden" name="forgotpw">';
 echo '<button>Request password reset</button>';
 echo '</form>';

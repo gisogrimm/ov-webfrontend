@@ -441,7 +441,6 @@ function inputchannels_createUI( ) {
                 el.setAttribute('value','EQ 6kHz -3 (hiss)');
                 el.setAttribute('onclick','{inputchannels_onedit_plugins('+k.toString(10)+',JSON.stringify(eq_6000));inputchannels_createUI();}');
                 // plugin name list:
-                console.log(inchannels[k]['plugins']);
                 var divpn = box5.appendChild(document.createElement('div'));
                 divpn.setAttribute('class','pluginnamelist');
                 function add_plugname(optv){

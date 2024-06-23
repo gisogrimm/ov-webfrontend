@@ -351,7 +351,7 @@ function html_admin_rooms()
     $inp = $form->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','text');
     $inp->setAttribute('name','label');
-    $inp->setAttribute('pattern','[a-zA-Z0-9-_]*');
+    $inp->setAttribute('pattern','[a-zA-Z0-9\-_]*');
     $inp->setAttribute('value',$dprop['label']);
     $form->appendChild($doc->createElement('button'))->appendChild($doc->createTextNode('Save'));
     // delete
@@ -393,7 +393,7 @@ function html_admin_groups()
   $el = $form->appendChild($doc->createElement('input'));
   $el->setAttribute('name','addgroup');
   $el->setAttribute('type','text');
-  $el->setAttribute('pattern','[a-zA-Z0-9-_]*');
+  $el->setAttribute('pattern','[a-zA-Z0-9\-_]*');
   $el = $form->appendChild($doc->createElement('button'));
   $el->appendChild($doc->createTextNode('add group'));
   $tab = $root->appendChild($doc->createElement('table'));
@@ -564,7 +564,7 @@ function html_admin_db($type, $showfields = array())
     $inp = $form->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','text');
     $inp->setAttribute('name','label');
-    $inp->setAttribute('pattern','[a-zA-Z0-9-_]*');
+    $inp->setAttribute('pattern','[a-zA-Z0-9\-_]*');
     $inp->setAttribute('value',$dprop['label']);
     $form->appendChild($doc->createElement('button'))->appendChild($doc->createTextNode('Save'));
     // delete

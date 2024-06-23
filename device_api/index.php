@@ -159,6 +159,10 @@ if ($user == 'device') {
                     $dprop['cpuload'] = $jsmsg['cpuload'];
                 else
                     $dprop['cpuload'] = 0;
+                if( isset($jsmsg['thermal']) )
+                    $dprop['thermal'] = $jsmsg['thermal'];
+                else
+                    $dprop['thermal'] = array();
                 if( isset($jsmsg['localip']) )
                     $dprop['localip'] = $jsmsg['localip'];
                 else

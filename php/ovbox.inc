@@ -93,6 +93,7 @@ function defaults( $type )
     'alsadevs'=>array(),
     'bandwidth'=>array('tx'=>0,'rx'=>0),
     'cpuload'=>0,
+    'thermal'=>array(),
     'lmetertc'=>0.5,
     'lmeterfw'=>'Z',
     'headtracking'=>false,
@@ -275,7 +276,7 @@ function postproc_prop( &$prop, $type )
     }
     if( empty($prop['label']) && (!empty($prop['owner'])))
       $prop['label'] = $prop['owner'];
-    $prop['label'] = preg_replace('/[^a-zA-Z0-9-_]*/','',$prop['label']);
+    $prop['label'] = preg_replace('/[^a-zA-Z0-9\-_]*/','',$prop['label']);
     $dim = explode(" ",$prop['srcshiftxyz']);
     if( count($dim)==3)
       $prop['srcshift'] = array('x'=>floatval($dim[0]),'y'=>floatval($dim[1]),'z'=>floatval($dim[2]));

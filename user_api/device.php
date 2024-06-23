@@ -142,7 +142,7 @@ if( !empty($device) ){
     $el->setAttribute('id','label');
     $el->setAttribute('name','label');
     $el->setAttribute('type','text');
-    $el->setAttribute('pattern','[a-zA-Z0-9-_]*');
+    $el->setAttribute('pattern','[a-zA-Z0-9\-_]*');
     $el->setAttribute('value',$devprop['label']);
     $el->setAttribute('onchange','rest_set_devprop("label",event.target.value);');
     $div->appendChild($doc->createElement('br'));

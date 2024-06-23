@@ -803,7 +803,13 @@ function update_devicestatus( user, device, owned_devices )
 		            devstat.appendChild(document.createTextNode(' sending: '+txstr+', receiving: '+rxstr));
 	          }
 	          if( device.cpuload && (device.cpuload > 0) ){
-		            devstat.appendChild(document.createTextNode(' CPU load: '+(100*device.cpuload).toFixed(1)+'%'));
+		      devstat.appendChild(document.createTextNode(' CPU: '+(100*device.cpuload).toFixed(1)+'%'));
+	          }
+	          if( device.thermal ){
+                      for (var k = 0; k < device.thermal.length; ++k) {
+                          const temp = device.thermal[k];
+		          devstat.appendChild(document.createTextNode(' '+temp.toFixed(1)+'°C'));
+                      }
 	          }
             if( device.backendperiodsize && (device.backendperiodsize > 0) &&
                 device.backendsrate && (device.backendsrate > 0)){
