@@ -761,10 +761,27 @@ function update_devicestatus(user, device, owned_devices) {
           .cpuload).toFixed(1) + '%'));
       }
       if (device.thermal) {
-        for (var k = 0; k < device.thermal.length; ++k) {
-          const temp = device.thermal[k];
-          devstat.appendChild(document.createTextNode(' ' + temp.toFixed(1) +
-            '°C'));
+        if (device.thermal.length > 3) {
+          var sorted_thermal = device.thermal;
+          sorted_thermal.sort();
+          var new_thermal = [];
+          new_thermal.push(sorted_thermal[Math.floor(0.25 * sorted_thermal
+            .length)]);
+          new_thermal.push(sorted_thermal[Math.floor(0.5 * sorted_thermal
+            .length)]);
+          new_thermal.push(sorted_thermal[Math.floor(0.75 * sorted_thermal
+            .length)]);
+          for (var k = 0; k < new_thermal.length; ++k) {
+            const temp = new_thermal[k];
+            devstat.appendChild(document.createTextNode(' ' + temp.toFixed(1) +
+              '°C'));
+          }
+        } else {
+          for (var k = 0; k < device.thermal.length; ++k) {
+            const temp = device.thermal[k];
+            devstat.appendChild(document.createTextNode(' ' + temp.toFixed(1) +
+              '°C'));
+          }
         }
       }
       if (device.backendperiodsize && (device.backendperiodsize > 0) && device
