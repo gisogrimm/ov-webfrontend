@@ -763,7 +763,7 @@ function update_devicestatus(user, device, owned_devices) {
         else
         if (device.cpuload > 0.6) txtcpu.setAttribute('class', 'cputempwarn');
         txtcpu.appendChild(document.createTextNode(' CPU: ' + (100 * device
-          .cpuload).toFixed(1) + '%'));
+          .cpuload).toFixed(1) + '% '));
       }
       if (device.thermal) {
         if (device.thermal.length > 3) {
@@ -779,7 +779,7 @@ function update_devicestatus(user, device, owned_devices) {
           for (var k = 0; k < new_thermal.length; ++k) {
             const temp = new_thermal[k];
             devstat.appendChild(document.createTextNode(' ' + temp.toFixed(1) +
-              '°C'));
+              '°C '));
           }
         } else {
           for (var k = 0; k < device.thermal.length; ++k) {
@@ -789,7 +789,7 @@ function update_devicestatus(user, device, owned_devices) {
             else
             if (temp > 50) txtcpu.setAttribute('class', 'cputempwarn');
             txtcpu.appendChild(document.createTextNode(' ' + temp.toFixed(1) +
-              '°C'));
+              '°C '));
           }
         }
       }
