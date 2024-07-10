@@ -513,7 +513,6 @@ button.uibutton:hover {
 .navbaricon {
     height: 40px;
     margin-top: 0px;
-    
 }
 h1.navbar {
     float: left;
@@ -693,6 +692,13 @@ a.adminarea:hover {
     padding: 5px;
     border-radius: 6px;
 }
+.cputempwarn {
+    background-color: #ffb30050;
+}
+.cputempcritical {
+    background-color: #ff000050;
+}
+
 @media (min-width: 1200px) {
     .ovcontent {
 	width: 1200px;
