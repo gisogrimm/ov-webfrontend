@@ -1,5 +1,20 @@
 var roomvaluechanged = false;
 
+/**
+ * Compares two version strings.
+ *
+ * @param {string} v1 - The first version string to compare.
+ * @param {string} v2 - The second version string to compare.
+ * @param {object} [options] - Optional options object.
+ * @param {boolean} [options.lexicographical=false] - Whether to perform a lexicographical comparison (i.e., consider non-numeric characters as part of the version).
+ * @param {boolean} [options.zeroExtend=false] - Whether to zero-extend the shorter version string to match the length of the longer version string.
+ *
+ * @returns {number} - The result of the comparison:
+ *   - `1` if `v1` is greater than `v2`.
+ *   - `-1` if `v1` is less than `v2`.
+ *   - `0` if `v1` and `v2` are equal.
+ *   - `NaN` if either version string contains invalid parts.
+ */
 function versionCompare(v1, v2, options) {
   var lexicographical = options && options.lexicographical,
     zeroExtend = options && options.zeroExtend,
@@ -417,7 +432,7 @@ function update_room(user, device, room, droom) {
     ', managed by ' + room.owner));
   if (room['editable']) span.appendChild(document.createTextNode(
     ', acoustics can be changed'));
-  if (room.version.startsWith('0.18.32')) {
+  if (room.version.startsWith('0.18.32') || room.version.startsWith('0.24')) {
     span.appendChild(document.createTextNode(' TCP '));
   }
   var srvjit = Number(room['srvjit']);
