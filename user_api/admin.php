@@ -133,7 +133,12 @@ if( $loadavg || $cpuload ){
     if( $cpuload )
         echo 'Server CPU load: '.round($cpuload,1).'% ';
     if( $loadavg )
-        echo 'Load average: '.$loadavg[0].'/'.$loadavg[1].'/'.$loadavg[2];
+        echo 'Load average: ' .
+                              number_format($loadavg[0], 2, '.', '') .
+                              '/' .
+                              number_format($loadavg[1], 2, '.', '') .
+                              '/' .
+                              number_format($loadavg[2], 2, '.', '');
     echo '</p>';
 }
 
