@@ -781,7 +781,11 @@ function create_section( $parent, $doc, $title ){
 }
 
 function clean_userdb(){
-  $rmusers = array();
+  // number constants for time intervals:
+  $fiveDaysInSeconds = 5*24*3600;
+  $oneYearInSeconds = 365*24*3600;
+  //
+  $users_to_remove = array();
   $users = list_users();
   $udb = array();
   $alldev = list_devices();
@@ -797,16 +801,18 @@ function clean_userdb(){
     $udb[$us] = $uprop;
   }
   foreach($udb as $us=>$uprop){
-    if( !$uprop['validsubscription'] ){
+    // do not remove users who have a valid subscription or are part of an institution:
+    if( (!$uprop['validsubscription']) and (!$uprop['institution']) ){
       // remove users without device after 5 days, and incactive users
       // with devices after a year:
-      if( (($uprop['numdev']==0) && ($uprop['age']>5*24*3600)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>365*24*3600) && $uprop['age']>365*24*3600))) ){
-        $rmusers[] = $us;
+      if( (($uprop['numdev']==0) && ($uprop['age']>$fiveDaysInSeconds)) ||
+          ((($uprop['numdev']>0) && (($uprop['devage']>$oneYearInSeconds) && $uprop['age']>$oneYearInSeconds))) ){
+        $users_to_remove[] = $us;
       }
     }
   }
-  foreach( $rmusers as $us ){
+  foreach( $users_to_remove as $us ){
+    // terminate the account of the user $us:
     terminate_account( $us );
   }
 }

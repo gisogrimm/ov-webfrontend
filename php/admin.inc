@@ -194,6 +194,9 @@ function html_admin_users()
       }
       if( $uprop['validsubscription'] )
         $tr->setAttribute('style','background-color: #ffd072;');
+      else
+        if( $uprop['institution'] )
+          $tr->setAttribute('style','background-color: #5e9af3;');
     }else{
       if( (($uprop['numdev']==0) && ($uprop['age']>1*24*3600) && ($uprop['age']<3600*24*365*40)) ||
           ((($uprop['numdev']>0) && (($uprop['devage']>333*24*3600) && $uprop['age']>333*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
@@ -225,9 +228,14 @@ function html_admin_users()
     if( $uprop['subscr'] > 0 )
       $val = numage2str($uprop['subscr']);
     else
-      $val = 'no';
+      if( $uprop['institution'] )
+        $val = '';
+      else
+        $val = 'no';
     if( $uprop['subscription'] )
       $val = 'subs';
+    if( $uprop['institution'] )
+      $val = $val . ' inst';
     $td->appendChild($doc->createTextNode($val));
     $td = $tr->appendChild($doc->createElement('td'));
     $el = $td->appendChild($doc->createElement('div'));
@@ -757,6 +765,7 @@ function html_admin_edituser( $usr, $siteconfig )
   $root = $doc->appendChild($doc->createElement('div'));
   $div = create_section($root,$doc,$usr);
   xml_add_usr_checkbox('seesall','Sees public rooms',$div,$doc,$auprop,$usr);
+  xml_add_usr_checkbox('institution','Is institutional account',$div,$doc,$auprop,$usr);
   $el = $div->appendChild($doc->createElement('label'));
   $el->setAttribute('class','roomctl');
   $el->appendChild($doc->createTextNode($auprop['mail']));

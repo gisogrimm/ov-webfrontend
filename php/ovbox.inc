@@ -205,6 +205,7 @@ function defaults( $type )
     'subscription'=>false,
     'subscriptionend'=>0,
     'allowninja'=>false,
+    'institution'=>false,
   );
   $defaults['group'] = array(
     'style'=>'default',
