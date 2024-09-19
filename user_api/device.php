@@ -75,7 +75,7 @@ if( isset($_GET['claim']) ){
 
 print_head( $user, $style, $urlgroup );
 
-echo '<div><span class="ovtitle">Device settings</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
+echo '<div><span class="ovtitle">'.translate('Device settings').'</span><div class="help">'.translate('Need help?').' - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
 
@@ -86,7 +86,7 @@ if( !empty($device) ){
   $root = $doc->appendChild($doc->createElement('div'));
   {
     // presets:
-    $div = create_section($root, $doc,'Presets');
+    $div = create_section($root, $doc,translate('Presets'));
     $presets = get_properties( $device, 'devpresets' );
     $div_presets = $div->appendChild($doc->createElement('div'));
     unset($presets['now']);
@@ -132,11 +132,11 @@ if( !empty($device) ){
   }
   {
     // general settings
-    $div = create_section($root, $doc,'General settings');
+    $div = create_section($root, $doc,translate('General settings'));
     $span = $div->appendChild($doc->createElement('div'));
     $span->setAttribute('class','expert');
-    xml_add_checkbox( 'showexpertsettings', 'show expert settings (danger zone)', $span, $doc, $devprop, false, true );
-    $div->appendChild($doc->createTextNode('device label (appears in rooms and the mixer of the others): '));
+    xml_add_checkbox( 'showexpertsettings', translate('show expert settings (danger zone)'), $span, $doc, $devprop, false, true );
+    $div->appendChild($doc->createTextNode(translate('device label (appears in rooms and the mixer of the others): ')));
     $div->appendChild($doc->createElement('br'));
     $el = $div->appendChild($doc->createElement('input'));
     $el->setAttribute('id','label');
@@ -157,13 +157,13 @@ if( !empty($device) ){
     $inp = $div->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
     $inp->setAttribute('onclick','if( confirm("Do you really want to reset settings of this device?")) rest_setval_post_reload("devreset","");');
-    $inp->setAttribute('value','Reset all device settings to default values');
+    $inp->setAttribute('value',translate('Reset all device settings to default values'));
     $inp->setAttribute('class','uibutton');
     $divex = add_expert_div( $div, $doc, $devprop );
     $a = $divex->appendChild($doc->createElement('a'));
     $a->setAttribute('href','rest.php?getrawjson=');
     $a->setAttribute('target','blank');
-    $a->appendChild($doc->createTextNode('show raw device configuration in new tab'));
+    $a->appendChild($doc->createTextNode(translate('show raw device configuration in new tab')));
     $divex->appendChild($doc->createTextNode(' (device '.$device.' '.$devprop['uname_sysname'].' '.$devprop['uname_release'].' '.$devprop['uname_machine'].')'));
     $divex->appendChild($doc->createElement('br'));
     // video URLs
@@ -198,7 +198,7 @@ if( !empty($device) ){
   }
   {
     // Audio interface
-    $div = create_section($root, $doc,'Audio interface');
+    $div = create_section($root, $doc,translate('Audio interface'));
     // jack device:
     $el = $div->appendChild($doc->createElement('select'));
     $el->setAttribute('id','jackdevice');
@@ -217,7 +217,7 @@ if( !empty($device) ){
     $div->appendChild($doc->createElement('br'));
     // end of alsa device.
     $divex = add_expert_div( $div, $doc, $devprop );
-    $el = add_input_element( $divex, $doc, $devprop, 'jackrate', 'number','Sampling rate in Hz: ',false);
+    $el = add_input_element( $divex, $doc, $devprop, 'jackrate', 'number',translate('Sampling rate in Hz: '),false);
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     // use plughw device:
     $el = $divex->appendChild($doc->createElement('input'));
@@ -230,10 +230,10 @@ if( !empty($device) ){
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('title','activate to use sampling rates not supported by hardware (reduces quality)');
     $el->setAttribute('for','jackplugdev');
-    $el->appendChild($doc->createTextNode('use plugin device layer'));
+    $el->appendChild($doc->createTextNode(translate('use plugin device layer')));
     // sampling rate list:
     $el = $div->appendChild($doc->createElement('label'));
-    $el->appendChild($doc->createTextNode('Sampling rate: '));
+    $el->appendChild($doc->createTextNode(translate('Sampling rate: ')));
     $el = $div->appendChild($doc->createElement('select'));
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el->setAttribute('onchange','update_jack_rate( this.value );');
@@ -247,31 +247,31 @@ if( !empty($device) ){
     }
     $div->appendChild($doc->createElement('br'));
     $divex = add_expert_div( $div, $doc, $devprop );
-    $el = add_input_element( $divex, $doc, $devprop, 'jackperiod', 'number','Period size in samples: (typically 2ms, i.e. 96 for 48000 Hz Sampling rate)');
+    $el = add_input_element( $divex, $doc, $devprop, 'jackperiod', 'number',translate('Period size in samples: (typically 2ms, i.e. 96 for 48000 Hz Sampling rate)'));
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
-    $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number','Number of buffers (typically 2): ');
+    $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number',translate('Number of buffers (typically 2): '));
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el->setAttribute('min',2);
     $el = $div->appendChild($doc->createElement('input'));
     $el->setAttribute('class','uibutton');
     $el->setAttribute('type','button');
-    $el->setAttribute('value','Apply settings');
+    $el->setAttribute('value',translate('Apply settings'));
     $el->setAttribute('id','jackvaluechanged');
     $el->setAttribute('onclick','apply_jack_settings();');
     if( version_compare("ovclient-0.5.11-8cc47fd",$devprop['version'])<0 ){
       $el = $div->appendChild($doc->createElement('input'));
-      $el->setAttribute('value','restart audio system');
+      $el->setAttribute('value',translate('restart audio system'));
       $el->setAttribute('type','button');
       $el->setAttribute('onclick','rest_set_devprop("jackrestart",true);');
     }
   }
   {
     // connections
-    $div = create_section($root, $doc,'Input connections');
+    $div = create_section($root, $doc,translate('Input connections'));
     create_inputportcfg( $doc, $div, $devprop );
     $divex = add_expert_div($div, $doc, $devprop);
     $el = $divex->appendChild($doc->createElement('label'));
-    $el->appendChild($doc->createTextNode('output ports (to which your headphones are connected): '));
+    $el->appendChild($doc->createTextNode(translate('output ports (to which your headphones are connected): ')));
     $divex->appendChild($doc->createElement('br'));
     $el = $divex->appendChild($doc->createElement('input'));
     $el->setAttribute('type','text');
@@ -299,7 +299,7 @@ if( !empty($device) ){
   }
   {
     // gains
-    $div = create_section($root, $doc,'Gains and acoustic rendering');
+    $div = create_section($root, $doc,translate('Gains and acoustic rendering'));
     $divex = add_expert_div($div,$doc,$devprop);
     // raw mode:
     xml_add_checkbox( 'virtualacoustics', 'virtual acoustics', $divex, $doc, $devprop, false, true );
@@ -308,16 +308,16 @@ if( !empty($device) ){
     //
     if( version_compare("ovclient-0.9.6",$devprop['version'])<0 ){
       $dsl = $div->appendChild($doc->createElement('p'));
-      $dsl->appendChild($doc->createTextNode('Output: '));
-      xml_add_checkbox( 'receive', 'Receive audio from other members', $dsl, $doc, $devprop, true );
+      $dsl->appendChild($doc->createTextNode(translate('Output: ')));
+      xml_add_checkbox( 'receive', translate('Receive audio from other members'), $dsl, $doc, $devprop, true );
     }
-    $el = xml_add_input_generic( 'playbackgain', 'playback gain in dB (equivalent to changing the input gain): ', $div, $doc, $devprop );
+    $el = xml_add_input_generic( 'playbackgain', translate('playback gain in dB (equivalent to changing the input gain): '), $div, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','-20');
     $el->setAttribute('max','20');
     $el->setAttribute('step','0.1');
     // master gain:
-    $el = xml_add_input_generic( 'mastergain', 'master gain in dB (equivalent to changing the headphone gain):', $div, $doc, $devprop );
+    $el = xml_add_input_generic( 'mastergain', translate('master gain in dB (equivalent to changing the headphone gain): '), $div, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','-20');
     $el->setAttribute('max','20');
@@ -325,20 +325,20 @@ if( !empty($device) ){
     // ego monitor:
     // switch egomonitor
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
-    xml_add_checkbox( 'selfmonitor', 'enable self monitoring', $divva, $doc, $devprop, false, true );
+    xml_add_checkbox( 'selfmonitor', translate('enable self monitoring'), $divva, $doc, $devprop, false, true );
     $divmon = add_expert_div($divva,$doc,$devprop,'selfmonitor');
-    $el = xml_add_input_generic( 'egogain', 'ego monitor gain in dB (how much of your own microphone is added to your headphone):', $divmon, $doc, $devprop, false );
+    $el = xml_add_input_generic( 'egogain', translate('ego monitor gain in dB (how much of your own microphone is added to your headphone):'), $divmon, $doc, $devprop, false );
     $el->setAttribute('type','number');
     $el->setAttribute('min','-20');
     $el->setAttribute('max','20');
     $el->setAttribute('step','0.1');
     if( version_compare("ovclient-0.9.20-751bc89",$devprop['version'])<0 ){
       $divmon->appendChild($doc->createElement('br'));
-      xml_add_checkbox( 'selfmonitoronlyreverb', 'only reverb, no direct sound in self monitor', $divmon, $doc, $devprop );
+      xml_add_checkbox( 'selfmonitoronlyreverb', translate('only reverb, no direct sound in self monitor'), $divmon, $doc, $devprop );
     }
     $divex = add_expert_div($divmon,$doc,$devprop);
     // ego monitor delay:
-    $el = xml_add_input_generic( 'selfmonitordelay', 'self monitor delay in milliseconds:', $divex, $doc, $devprop );
+    $el = xml_add_input_generic( 'selfmonitordelay', translate('self monitor delay in milliseconds:'), $divex, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','1000');
@@ -346,30 +346,30 @@ if( !empty($device) ){
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     $divex = add_expert_div($divva,$doc,$devprop);
     // begin emptysessionmonitor
-    xml_add_checkbox('emptysessionismonitor','Create monitor session instead of announcement when no room is selected', $div, $doc, $devprop, false, true);
+    xml_add_checkbox('emptysessionismonitor',translate('Create a live mixer when no room is selected'), $div, $doc, $devprop, false, true);
     $divmon = add_expert_div($div, $doc, $devprop, 'emptysessionismonitor');
     $divmon->setAttribute('class',$divmon->getAttribute('class').' devprop');
-    $el = xml_add_input_generic( 'snmon_rvb_sx', 'Room length / m:', $divmon, $doc, $devprop );
+    $el = xml_add_input_generic( 'snmon_rvb_sx', translate('Room length / m:'), $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','300');
     $el->setAttribute('step','0.1');
-    $el = xml_add_input_generic( 'snmon_rvb_sy', 'Room width / m:', $divmon, $doc, $devprop );
+    $el = xml_add_input_generic( 'snmon_rvb_sy', translate('Room width / m:'), $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','300');
     $el->setAttribute('step','0.1');
-    $el = xml_add_input_generic( 'snmon_rvb_sz', 'Room height / m:', $divmon, $doc, $devprop );
+    $el = xml_add_input_generic( 'snmon_rvb_sz', translate('Room height / m:'), $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','300');
     $el->setAttribute('step','0.1');
-    $el = xml_add_input_generic( 'snmon_rvb_damp', 'Wall damping:', $divmon, $doc, $devprop );
+    $el = xml_add_input_generic( 'snmon_rvb_damp', translate('Wall damping:'), $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','1');
     $el->setAttribute('step','0.01');
-    $el = xml_add_input_generic( 'snmon_rvb_abs', 'Wall absorption:', $divmon, $doc, $devprop );
+    $el = xml_add_input_generic( 'snmon_rvb_abs', translate('Wall absorption:'), $divmon, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','1');
@@ -669,21 +669,21 @@ if( !empty($device) ){
   }
   {
     // network settings
-    $div = create_section($root, $doc,'Network settings');
+    $div = create_section($root, $doc,translate('Network settings'));
     // jitter (send):
-    $el = xml_add_input_generic( 'jittersend','sender jitter (affects buffer length of others):',$div,$doc,$devprop);
+    $el = xml_add_input_generic( 'jittersend',translate('sender jitter (affects buffer length of others):'),$div,$doc,$devprop);
     $el->setAttribute('type','number');
     $el->setAttribute('min','1');
     $el->setAttribute('max','250');
     $el->setAttribute('step','1');
     // jitter (receive):
-    $el = xml_add_input_generic( 'jitterreceive','receiver jitter (affects your own buffer length):',$div,$doc,$devprop);
+    $el = xml_add_input_generic( 'jitterreceive',translate('receiver jitter (affects your own buffer length):'),$div,$doc,$devprop);
     $el->setAttribute('type','number');
     $el->setAttribute('min','1');
     $el->setAttribute('max','250');
     $el->setAttribute('step','1');
     // peer-to-peer:
-    xml_add_checkbox( 'peer2peer', 'peer-to-peer mode', $div, $doc, $devprop );
+    xml_add_checkbox( 'peer2peer', translate('peer-to-peer mode'), $div, $doc, $devprop );
     if( version_compare("ovclient-0.18.20",$devprop['version'])<0 ){
       $divex = add_expert_div($div, $doc, $devprop );
       xml_add_checkbox( 'usetcptunnel', 'use TCP tunnel to server (not in peer-to-peer mode)', $divex, $doc, $devprop );
@@ -774,8 +774,8 @@ if( !empty($device) ){
       $opt->appendChild($doc->createTextNode($frontend['label']));
     }
     $div->appendChild($doc->createElement('br'));
-    $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode('Warning: '));;
-    $div->appendChild($doc->createTextNode('Before changing the front end, make sure you have registered an account on the new website. Without an account, you can lock your device by selecting a front end. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.'));
+    $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode(translate('Warning: ')));;
+    $div->appendChild($doc->createTextNode(translate('Before changing the front end, make sure you have registered an account on the new website. Without an account, you can lock your device by selecting a front end. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.')));
     $div->appendChild($doc->createElement('br'));
   }
   {
@@ -784,15 +784,15 @@ if( !empty($device) ){
     $clver = '';
     if( file_exists( $fname ) )
       $clver = trim(file_get_contents( $fname ));
-    $div = create_section($root, $doc,'Firmware version');
+    $div = create_section($root, $doc,translate('Firmware version'));
     if( !empty($devprop['version']) ){
       $span = $div->appendChild($doc->createElement('span'));
       $span->setAttribute('id','devfirmwareversion');
       $span->appendChild($doc->createTextNode($devprop['version']));
-      if( version_compare($clver,$devprop['version'])==0 )
-        $div->appendChild($doc->createTextNode(' - your device is up to date.'));
+      if( version_compare($clver,$devprop['version'])<=0 )
+        $div->appendChild($doc->createTextNode(translate(' - your device is up to date.')));
       if( version_compare("ovclient-0.5.50",$devprop['version'])>0 ){
-        $div->appendChild($doc->createTextNode(' - update is highly recommended.'));
+        $div->appendChild($doc->createTextNode(translate(' - update is highly recommended.')));
       }
     }
     if( $devprop['isovbox'] ){
@@ -800,13 +800,10 @@ if( !empty($device) ){
            (version_compare($clver,$devprop['version'])==1)){
         $el = $div->appendChild($doc->createElement('div'));
         $el->setAttribute('class','devproptitle');
-        $el->appendChild($doc->createTextNode('Firmware update:'));
+        $el->appendChild($doc->createTextNode(translate('Firmware update:')));
         $div->appendChild($doc->createTextNode('Your device is running version '.$devprop['version'].', the latest version is '.$clver.'. '));
         if( (version_compare($devprop['version'],'ovclient-0.7.6')==1) ){
-          $div->appendChild($doc->createTextNode('Before starting the firmware update, please connect your device with a
-network cable. Once started, do not disconnect your device from the
-power supply or network until the firmware update is complete. The
-update may take up to 30 minutes.'));
+          $div->appendChild($doc->createTextNode(translate('Before starting the firmware update, please connect your device with a network cable. Once started, do not disconnect your device from the power supply or network until the firmware update is complete. The update may take up to 30 minutes.')));
           $div->appendChild($doc->createElement('br'));
           if( version_compare("ovclient-0.6.141",$devprop['version'])>0 ){
             $bold = $div->appendChild($doc->createElement('b'));
@@ -850,7 +847,7 @@ from.'));
     $inp->setAttribute('onclick','rest_set_devprop("firmwareupdate",true);');
     $inp->setAttribute('value','force firmware update');
     $inp->setAttribute('class','uibutton');
-    $divex->appendChild($doc->createTextNode(' Force firmware and system update. Takes up to 30 minutes.'));
+    $divex->appendChild($doc->createTextNode(translate(' Force firmware and system update. Takes up to 30 minutes.')));
     $divex->appendChild($doc->createElement('br'));
     // install hearing support (www.openmha.org):
     $inp = $divex->appendChild($doc->createElement('input'));
@@ -887,7 +884,7 @@ from.'));
   }
   {
     // device ownership:
-    $div = create_section($root, $doc,'Device ownership');
+    $div = create_section($root, $doc,translate('Device ownership'));
     $form = $div->appendChild($doc->createElement('form'));
     $form->setAttribute('method','POST');
     $el = $form->appendChild($doc->createElement('label'));

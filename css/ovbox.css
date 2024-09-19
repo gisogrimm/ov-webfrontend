@@ -542,6 +542,15 @@ a.navbar:hover {
     margin-left: 5px;
     margin-right: 5px;
 }
+.langsel {
+    float: right;
+    display: block;
+    overflow: auto;
+    font-size: 100%;
+    margin-top: 4px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 .ovlogout {
     float: right;
     display: block;

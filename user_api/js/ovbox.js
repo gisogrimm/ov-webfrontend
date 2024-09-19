@@ -154,8 +154,13 @@ function rest_set_devprop(name, value) {
   else request.send('setdevprop=' + name + '&' + name + '=' + value);
 }
 
-function rest_set_userprop(name, value) {
+function rest_set_userprop(name, value, reload = false) {
   let request = new XMLHttpRequest();
+  if (reload) {
+    request.onload = function() {
+      location.reload(true);
+    };
+  }
   request.open('POST', '/rest.php', true);
   request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   if (typeof value === "boolean") request.send('setuserpropbool=' + name + '&' +

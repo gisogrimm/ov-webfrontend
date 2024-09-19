@@ -49,7 +49,7 @@ if( isset($_POST['contact']) ){
 
 print_head( $user, $style, $urlgroup );
 
-echo '<div><span class="ovtitle">User profile</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
+echo '<div><span class="ovtitle">User profile</span><div class="help">'.translate('Need help?').' - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 $doc = new DOMDocument('1.0');
 $root = $doc->appendChild($doc->createElement('div'));

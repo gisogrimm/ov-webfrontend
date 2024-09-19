@@ -23,6 +23,18 @@ if( !in_array($user,list_users()) ){
   die();
 }
 $userprop = get_properties( $user, 'user' );
+
+// internationalization:
+$GLOBALS['langdb'] = array();
+$GLOBALS['userlang'] = $userprop['lang'];
+$fname = '../db/'.$GLOBALS['userlang'].'.lang';
+if( file_exists( $fname ) ){
+  $filec = json_decode( file_get_contents( $fname ), true );
+  if( is_array($filec) )
+    $GLOBALS['langdb'] = array_merge($GLOBALS['langdb'], $filec);
+}
+// end internationalization.
+
 $device = get_device( $user );
 $owneddevices = array_keys(owned_devices($user));
 if( !in_array($device,$owneddevices) )

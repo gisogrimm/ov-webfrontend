@@ -667,6 +667,24 @@ function html_show_my_pwreset($user, $style, $urlgroup, $userprop){
   }
 }
 
+function html_show_language_selector(){
+  $doc = new DOMDocument('1.0');
+  $div = $doc->appendChild($doc->createElement('div'));
+  //$div->appendChild($doc->createTextNode($GLOBALS['userlang']));
+  $inp = $div->appendChild($doc->createElement('select'));
+  $inp->setAttribute('class','navbar langsel');
+  $inp->setAttribute('oninput','rest_set_userprop("lang", event.target.value, true);');
+  $langs = get_languages();
+  foreach($langs as $us){
+    $opt = $inp->appendChild($doc->createElement('option'));
+    $opt->setAttribute('value',$us);
+    $opt->appendChild($doc->createTextNode($us));
+    if( $GLOBALS['userlang'] == $us )
+      $opt->setAttribute('selected','');
+  }
+  echo $doc->saveHTML();
+}
+
 function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true )
 {
   $sitecfg = get_properties('site','config');
@@ -716,8 +734,8 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
       echo '<a class="ovlogout" href="/?grp='.grouphash($urlgroup).'&logout"><img src="logout.png" alt="Logout" class="navbaricon"/></a>';
       echo '</span>';
       echo '<span class="ovnavh" id="ovnavh">';
-      echo '<a class="navbar ovnav" href="/?grp='.grouphash($urlgroup).'">Session</a>';
-      echo '<a class="navbar ovnav" href="/device.php?grp='.grouphash($urlgroup).'">Device settings</a>';
+      echo '<a class="navbar ovnav" href="/?grp='.grouphash($urlgroup).'">'.translate('Session').'</a>';
+      echo '<a class="navbar ovnav" href="/device.php?grp='.grouphash($urlgroup).'">'.translate('Device settings').'</a>';
       if( $isadmin ){
         echo '<a class="navbar ovnav adminarea" href="admin.php?adm=devices">Devices</a>';
         echo '<a class="navbar ovnav adminarea" href="admin.php?adm=rooms">Rooms</a>';
@@ -725,6 +743,8 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
         echo '<a class="navbar ovnav adminarea" href="admin.php?adm=groups">Groups</a>';
       }
       echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$user.'</a>' . "\n";
+      //echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$GLOBALS['userlang'].'</a>' . "\n";
+      html_show_language_selector();
       echo '</span>';
       echo '</div>'. "\n";
     }
@@ -763,7 +783,7 @@ function print_foot($style = '',$show_donate = -1)
   }
   echo '</div>'. "\n";// ovcontent
   echo '<div class="ovfoot">'. "\n";
-  echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a>.</div>';
+  echo '<div class="ovstage">'.translate('A service by').' <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a>.</div>';
   echo '<div class="foto">'.$credits.'</div>';
   echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerklärung</a></div>';
   echo '</div>'. "\n";// ovfoot

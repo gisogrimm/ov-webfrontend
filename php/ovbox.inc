@@ -206,6 +206,7 @@ function defaults( $type )
     'subscriptionend'=>0,
     'allowninja'=>false,
     'institution'=>false,
+    'lang'=>'US',
   );
   $defaults['group'] = array(
     'style'=>'default',
@@ -649,6 +650,29 @@ function remove_user_from_group( $user, $group )
       }
     }
   }
+}
+
+
+// internationalization:
+
+function get_languages()
+{
+  $languages = array();
+  foreach( glob( '../db/*.lang' ) as $language_file){
+    $language = basename( $language_file, '.lang' );
+    $languages[] = $language;
+  }
+  ksort( $languages );
+  return $languages;
+}
+
+function translate( $from )
+{
+  if( array_key_exists( $from, $GLOBALS['langdb'] ) )
+    return $GLOBALS['langdb'][$from];
+  if( $GLOBALS['userlang'] != 'US' )
+    error_log('missing translation for "'.$from.'" for language "'.$GLOBALS['userlang'].'"');
+  return $from;
 }
 
 
