@@ -38,5 +38,13 @@
   "Create a live mixer when no room is selected":"Erstelle einen Live-Mixer, wenn kein Raum ausgewählt ist",
   "enable self monitoring":"Monitorsignal",
   "Output: ":"Ausgabe: ",
-  "A service by":"Bereitgestellt von"
+  "A service by":"Bereitgestellt von",
+  "<div>The <em>ovbox</em> is a remote music collaboration system developed by the ORLANDOviols ensemble during the Covid19 pandemic.</div>":"<div>Die <em>ovbox</em> ist ein System zum Musizieren über das Internet, das vom ORLANDOviols-Ensemble während der Covid-19-Pandemie entwickelt wurde.</div>",
+  "Login:":"Login:",
+  "login":"anmelden",
+  "User name:":"Nutzername:",
+  "Password:":"Passwort:",
+  "Register as new user":"Neu registrieren",
+  "I forgot my password":"Passwort vergessen?",
+  "If you have not used your account for more than one year, you must re-register as a new user to use the system again.":"Wenn du dein Konto länger als ein Jahr nicht benutzt hast, musst du dich erneut registrieren, um das System wieder nutzen zu können."
 }

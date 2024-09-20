@@ -23,8 +23,7 @@ if( !in_array($user,list_users()) ){
   die();
 }
 $userprop = get_properties( $user, 'user' );
-
-// internationalization:
+// session-specific language:
 $GLOBALS['langdb'] = array();
 $GLOBALS['userlang'] = $userprop['lang'];
 $fname = '../db/'.$GLOBALS['userlang'].'.lang';
@@ -33,8 +32,7 @@ if( file_exists( $fname ) ){
   if( is_array($filec) )
     $GLOBALS['langdb'] = array_merge($GLOBALS['langdb'], $filec);
 }
-// end internationalization.
-
+// end language
 $device = get_device( $user );
 $owneddevices = array_keys(owned_devices($user));
 if( !in_array($device,$owneddevices) )

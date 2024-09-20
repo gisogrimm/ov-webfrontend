@@ -1,5 +1,35 @@
 <?php
 
+// internationalization:
+$langs = get_languages();
+$GLOBALS['browserlang'] = 'US';
+foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
+  $pattern = '/^(?P<primarytag>[a-zA-Z]{2,8})'.
+           '(?:-(?P<subtag>[a-zA-Z]{2,8}))?(?:(?:;q=)'.
+           '(?P<quantifier>\d\.\d))?$/';
+    
+  $splits = array();
+  if (preg_match($pattern, $lang, $splits)) {
+    if( in_array( strtoupper($splits['subtag']), $langs ) ){
+      $GLOBALS['browserlang'] = strtoupper($splits['subtag']);
+      break;
+    }
+  }
+}
+if( !array_key_exists( 'langdb', $GLOBALS) ){
+  // user browser settings only if no session
+  $GLOBALS['userlang'] = $GLOBALS['browserlang'];
+  $GLOBALS['langdb'] = array();
+  $fname = '../db/'.$GLOBALS['userlang'].'.lang';
+  if( file_exists( $fname ) ){
+    $filec = json_decode( file_get_contents( $fname ), true );
+    if( is_array($filec) ){
+      $GLOBALS['langdb'] = array_merge($GLOBALS['langdb'], $filec);
+    }
+  }
+}
+// end internationalization.
+
 $fp_dev = fopen("../lock_dev.txt", "a+");
 $fp_user = fopen("../lock_user.txt", "a+");
 $fp_register = fopen("../lock_reg.txt", "a+");
@@ -7,214 +37,227 @@ $fp_authfail = fopen("../lock_auth.txt", "a+");
 
 function defaults( $type )
 {
-  $defaults = array();
-  $defaults['sortkey'] = array(
-    'user'=>'id',
-    'room'=>'id',
-    'device'=>'id',
-  );
-  $defaults['config'] = array(
-    'mail'=>'',
-    'admin'=>array(),
-    'subscriptionadmin'=>array(),
-    'pagetitle'=>'House of Consort',
-    'basecss'=>'ovbox.css',
-    'credits'=>'Background image by Johannes Gontarski.',
-    'moderation'=>false,
-    'forcehttps'=>true,
-    'subscriptionrate'=>3.0,
-  );
-  $defaults['style'] = array(
-    'credits'=>'',
-    'css'=>'ovbox.css',
-    'pagetitle'=>'House of Consort',
-    'showdonate'=>true,
-  );
-  $defaults['device'] = array(
-    'inittime'=>'',
-    'access'=>0,
-    'onlineaccess'=>0,
-    'chair'=>-1,
-    'label'=>'',
-    'owner'=>'',
-    'version'=>'',
-    'selfmonitor'=>true,
-    'egogain'=>0,
-    'selfmonitordelay'=>0,
-    'selfmonitoronlyreverb'=>false,
-    'host'=>'',
-    'localip'=>'',
-    'externalip'=>'',
-    'inputchannels'=>array(array(
-      'sourceport'=>'system:capture_1',
-      'gain'=>1,
+  switch( $type ){
+  case 'sortkey':
+    return array(
+      'user'=>'id',
+      'room'=>'id',
+      'device'=>'id',
+    );
+    break;
+  case 'config':
+    return array(
+      'mail'=>'',
+      'admin'=>array(),
+      'subscriptionadmin'=>array(),
+      'pagetitle'=>'House of Consort',
+      'basecss'=>'ovbox.css',
+      'credits'=>'Background image by Johannes Gontarski.',
+      'moderation'=>false,
+      'forcehttps'=>true,
+      'subscriptionrate'=>3.0,
+    );
+    break;
+  case 'style':
+    return array(
+      'credits'=>'',
+      'css'=>'ovbox.css',
+      'pagetitle'=>'House of Consort',
+      'showdonate'=>true,
+    );
+    break;
+  case 'device':
+    return array(
+      'inittime'=>'',
+      'access'=>0,
+      'onlineaccess'=>0,
+      'chair'=>-1,
+      'label'=>'',
+      'owner'=>'',
+      'version'=>'',
+      'selfmonitor'=>true,
+      'egogain'=>0,
+      'selfmonitordelay'=>0,
+      'selfmonitoronlyreverb'=>false,
+      'host'=>'',
+      'localip'=>'',
+      'externalip'=>'',
+      'inputchannels'=>array(array(
+        'sourceport'=>'system:capture_1',
+        'gain'=>1,
+        'position'=>array('x'=>0,'y'=>0,'z'=>0),
+        'directivity'=>'omni',
+        'plugins'=>array(),
+        'name'=>'',
+      )),
+      'jitterreceive'=>5,
+      'jittersend'=>5,
+      'expeditedforwarding'=>false,
+      'outputport1'=>'system:playback_1',
+      'outputport2'=>'system:playback_2',
+      'xport'=>'{}',
+      'nozita'=>false,
+      'peer2peer'=>true,
+      'usetcptunnel'=>false,
+      'secrec'=>0,
+      'xrecport'=>array(),
+      'sessionportoffset'=>0,
       'position'=>array('x'=>0,'y'=>0,'z'=>0),
-      'directivity'=>'omni',
-      'plugins'=>array(),
-      'name'=>'',
-    )),
-    'jitterreceive'=>5,
-    'jittersend'=>5,
-    'expeditedforwarding'=>false,
-    'outputport1'=>'system:playback_1',
-    'outputport2'=>'system:playback_2',
-    'xport'=>'{}',
-    'nozita'=>false,
-    'peer2peer'=>true,
-    'usetcptunnel'=>false,
-    'secrec'=>0,
-    'xrecport'=>array(),
-    'sessionportoffset'=>0,
-    'position'=>array('x'=>0,'y'=>0,'z'=>0),
-    'orientation'=>array('z'=>0,'y'=>0,'x'=>0),
-    'srcshiftxyz'=>'0 0 0',
-    'virtualacoustics'=>true,
-    'receive'=>true,
-    'reverb'=>true,
-    'renderism'=>false,
-    'rendersoundscape'=>true,
-    'distancelaw'=>false,
-    'delaycomp'=>2.4,
-    'rvbgain'=>0,
-    'mastergain'=>0,
-    'playbackgain'=>0,
-    'room'=>'',
-    'roomenter'=>0,
-    'rectype'=>'hrtf',
-    'decorr'=>0,
-    'fdnforwardstages'=>0,
-    'fdnorder'=>5,
-    'jackdevice'=>'highest',
-    'jackplugdev'=>false,
-    'jackrate'=>48000,
-    'jackperiod'=>96,
-    'jackbuffers'=>2,
-    'jackrestart'=>false,
-    'alsadevs'=>array(),
-    'bandwidth'=>array('tx'=>0,'rx'=>0),
-    'cpuload'=>0,
-    'thermal'=>array(),
-    'lmetertc'=>0.5,
-    'lmeterfw'=>'Z',
-    'headtracking'=>false,
-    'headtrackingrot'=>true,
-    'headtrackingrotsrc'=>true,
-    'headtrackingport'=>0,
-    'headtrackingtauref'=>33.315,
-    'headtrackingtilturl'=>'',
-    'headtrackingtiltpath'=>'/tilt',
-    'headtrackingtiltmap'=>'0 0 180 180',
-    'headtrackingeogpath'=>'',
-    'headtrackingautorefzonly'=>false,
-    'sendlocal'=>true,
-    'hwinputchannels'=>array('system:capture_1','system:capture_2'),
-    'firmwareupdate'=>false,
-    'installopenmha'=>false,
-    'isupdating'=>false,
-    'usedevversion'=>false,
-    'isovbox'=>true,
-    'lastfrontendconfig', array(),
-    'frontendconfig', array(),
-    'nochair'=>false,
-    'message'=>'',
-    'metrobpm'=>120,
-    'metrobpb'=>4,
-    'metrodelay'=>40,
-    'metroactive'=>false,
-    'metrolevel'=>55,
-    'preset'=>'',
-    'isproxy'=>false,
-    'useproxy'=>false,
-    'proxyip'=>'',
-    'showexpertsettings'=>false,
-    'wifi'=>false,
-    'wifissid'=>'',
-    'wifipasswd'=>'',
-    'wifiupdate'=>false,
-    'usehifiberry'=>'',
-    'receivedownmix'=>false,
-    'senddownmix'=>false,
-    'tscinclude'=>'',
-    'mhaconfig'=>'',
-    'jackrecsampleformat'=>'PCM_16',
-    'jackrecfileformat'=>'WAV',
-    'showmczita'=>false,
-    'uselocmcrec'=>false,
-    'uselocmcsend'=>false,
-    'locmcrecaddr'=>'239.255.0.10',
-    'locmcrecport'=>10007,
-    'locmcrecdevice'=>'',
-    'locmcrecbuffer'=>10,
-    'locmcrecchannels'=>[1,2],
-    'locmcrecautoconnect'=>false,
-    'locmcsendchannels'=>2,
-    'emptysessionismonitor'=>false,
-    'usebcf2000'=>false,
-    'snmon_rvb_sx'=>25,
-    'snmon_rvb_sy'=>13,
-    'snmon_rvb_sz'=>7.5,
-    'snmon_rvb_abs'=>0.6,
-    'snmon_rvb_damp'=>0.7,
-    'networkdevices'=>array(),
-    'zitasampleformat'=>'16bit',
-    'useloudspeaker'=>false,
-    'echoc_nrep'=>64,
-    'echoc_level'=>60.0,
-    'echoc_maxdist'=>4.0,
-    'echoc_filterlen'=>65,
-    'hiresping'=>false,
-    'uname_sysname'=>'',
-    'uname_release'=>'',
-    'uname_machine'=>'',
-  );
-  $defaults['room'] = array(
-    'access'=>0,
-    'label'=>'',
-    'owner'=>'',
-    'group'=>'',
-    'lat'=>array(),
-    'host'=>'',
-    'lock'=>false,
-    'pin'=>0,
-    'port'=>'',
-    'private'=>false,
-    'rvbabs'=>0.6,
-    'rvbdamp'=>0.7,
-    'rvbgain'=>-8,
-    'size'=>'25 13 7.5',
-    'editable'=>true,
-    'deventer'=>0,
-    'srvjit'=>-1,
-    'ambientsound'=>'',
-    'ambientlevel'=>50,
-    'bulletinboard'=>'',
-    'premium'=>false,
-    'clearowned'=>false,
-    'version'=>'',
-  );
-  $defaults['user'] = array(
-    'group'=>'',
-    'seesall'=>true,
-    'maingroup'=>'',
-    'access'=>0,
-    'agreedterms'=>false,
-    'agreedprivacy'=>false,
-    'validpw'=>true,
-    'mail'=>'',
-    'devverwarn'=>0,
-    'subscription'=>false,
-    'subscriptionend'=>0,
-    'allowninja'=>false,
-    'institution'=>false,
-    'lang'=>'US',
-  );
-  $defaults['group'] = array(
-    'style'=>'default',
-    'preamble'=>'<div>The <em>ovbox</em> is a remote music collaboration system developed by
+      'orientation'=>array('z'=>0,'y'=>0,'x'=>0),
+      'srcshiftxyz'=>'0 0 0',
+      'virtualacoustics'=>true,
+      'receive'=>true,
+      'reverb'=>true,
+      'renderism'=>false,
+      'rendersoundscape'=>true,
+      'distancelaw'=>false,
+      'delaycomp'=>2.4,
+      'rvbgain'=>0,
+      'mastergain'=>0,
+      'playbackgain'=>0,
+      'room'=>'',
+      'roomenter'=>0,
+      'rectype'=>'hrtf',
+      'decorr'=>0,
+      'fdnforwardstages'=>0,
+      'fdnorder'=>5,
+      'jackdevice'=>'highest',
+      'jackplugdev'=>false,
+      'jackrate'=>48000,
+      'jackperiod'=>96,
+      'jackbuffers'=>2,
+      'jackrestart'=>false,
+      'alsadevs'=>array(),
+      'bandwidth'=>array('tx'=>0,'rx'=>0),
+      'cpuload'=>0,
+      'thermal'=>array(),
+      'lmetertc'=>0.5,
+      'lmeterfw'=>'Z',
+      'headtracking'=>false,
+      'headtrackingrot'=>true,
+      'headtrackingrotsrc'=>true,
+      'headtrackingport'=>0,
+      'headtrackingtauref'=>33.315,
+      'headtrackingtilturl'=>'',
+      'headtrackingtiltpath'=>'/tilt',
+      'headtrackingtiltmap'=>'0 0 180 180',
+      'headtrackingeogpath'=>'',
+      'headtrackingautorefzonly'=>false,
+      'sendlocal'=>true,
+      'hwinputchannels'=>array('system:capture_1','system:capture_2'),
+      'firmwareupdate'=>false,
+      'installopenmha'=>false,
+      'isupdating'=>false,
+      'usedevversion'=>false,
+      'isovbox'=>true,
+      'lastfrontendconfig', array(),
+      'frontendconfig', array(),
+      'nochair'=>false,
+      'message'=>'',
+      'metrobpm'=>120,
+      'metrobpb'=>4,
+      'metrodelay'=>40,
+      'metroactive'=>false,
+      'metrolevel'=>55,
+      'preset'=>'',
+      'isproxy'=>false,
+      'useproxy'=>false,
+      'proxyip'=>'',
+      'showexpertsettings'=>false,
+      'wifi'=>false,
+      'wifissid'=>'',
+      'wifipasswd'=>'',
+      'wifiupdate'=>false,
+      'usehifiberry'=>'',
+      'receivedownmix'=>false,
+      'senddownmix'=>false,
+      'tscinclude'=>'',
+      'mhaconfig'=>'',
+      'jackrecsampleformat'=>'PCM_16',
+      'jackrecfileformat'=>'WAV',
+      'showmczita'=>false,
+      'uselocmcrec'=>false,
+      'uselocmcsend'=>false,
+      'locmcrecaddr'=>'239.255.0.10',
+      'locmcrecport'=>10007,
+      'locmcrecdevice'=>'',
+      'locmcrecbuffer'=>10,
+      'locmcrecchannels'=>[1,2],
+      'locmcrecautoconnect'=>false,
+      'locmcsendchannels'=>2,
+      'emptysessionismonitor'=>false,
+      'usebcf2000'=>false,
+      'snmon_rvb_sx'=>25,
+      'snmon_rvb_sy'=>13,
+      'snmon_rvb_sz'=>7.5,
+      'snmon_rvb_abs'=>0.6,
+      'snmon_rvb_damp'=>0.7,
+      'networkdevices'=>array(),
+      'zitasampleformat'=>'16bit',
+      'useloudspeaker'=>false,
+      'echoc_nrep'=>64,
+      'echoc_level'=>60.0,
+      'echoc_maxdist'=>4.0,
+      'echoc_filterlen'=>65,
+      'hiresping'=>false,
+      'uname_sysname'=>'',
+      'uname_release'=>'',
+      'uname_machine'=>'',
+    );
+    break;
+  case 'room':
+    return array(
+      'access'=>0,
+      'label'=>'',
+      'owner'=>'',
+      'group'=>'',
+      'lat'=>array(),
+      'host'=>'',
+      'lock'=>false,
+      'pin'=>0,
+      'port'=>'',
+      'private'=>false,
+      'rvbabs'=>0.6,
+      'rvbdamp'=>0.7,
+      'rvbgain'=>-8,
+      'size'=>'25 13 7.5',
+      'editable'=>true,
+      'deventer'=>0,
+      'srvjit'=>-1,
+      'ambientsound'=>'',
+      'ambientlevel'=>50,
+      'bulletinboard'=>'',
+      'premium'=>false,
+      'clearowned'=>false,
+      'version'=>'',
+    );
+    break;
+  case 'user':
+    return array(
+      'group'=>'',
+      'seesall'=>true,
+      'maingroup'=>'',
+      'access'=>0,
+      'agreedterms'=>false,
+      'agreedprivacy'=>false,
+      'validpw'=>true,
+      'mail'=>'',
+      'devverwarn'=>0,
+      'subscription'=>false,
+      'subscriptionend'=>0,
+      'allowninja'=>false,
+      'institution'=>false,
+      'lang'=>$GLOBALS['browserlang'],
+    );
+    break;
+  case 'group':
+    return array(
+      'style'=>'default',
+      'preamble'=>'<div>The <em>ovbox</em> is a remote music collaboration system developed by
 the ORLANDOviols ensemble during the Covid19 pandemic.</div>'."\n"
-  );
-  if( array_key_exists( $type, $defaults ) )
-    return $defaults[$type];
+    );
+    break;
+  }
   return array();
 }
 
@@ -668,10 +711,12 @@ function get_languages()
 
 function translate( $from )
 {
-  if( array_key_exists( $from, $GLOBALS['langdb'] ) )
-    return $GLOBALS['langdb'][$from];
-  if( $GLOBALS['userlang'] != 'US' )
-    error_log('missing translation for "'.$from.'" for language "'.$GLOBALS['userlang'].'"');
+  if( array_key_exists( 'langdb', $GLOBALS) ){
+    if( array_key_exists( $from, $GLOBALS['langdb'] ) )
+      return $GLOBALS['langdb'][$from];
+    if( $GLOBALS['userlang'] != 'US' )
+      error_log('missing translation for "'.$from.'" for language "'.$GLOBALS['userlang'].'"');
+  }
   return $from;
 }
 
