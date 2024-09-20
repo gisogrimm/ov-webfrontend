@@ -1,5 +1,12 @@
 var roomvaluechanged = false;
 
+function translate( from ) {
+    if( langdb.hasOwnProperty( from ) )
+        return langdb[from];
+    console.log('missing translation: "'+from+'"');
+    return from;
+}
+
 /**
  * Compares two version strings.
  *
@@ -288,7 +295,7 @@ function create_room_div(device, room) {
   if (device.owner == room.owner) {
     form.appendChild(document.createTextNode('Name: '));
     inp = add_input_to_form(form, id, 'label', 'text');
-    inp.setAttribute('pattern', '[a-zA-Z0-9-_]*');
+    inp.setAttribute('pattern', '[a-zA-Z0-9\\-_]*');
     inp.setAttribute('value', room.label);
     form.appendChild(document.createElement('br'));
   }
@@ -423,20 +430,20 @@ function update_room(user, device, room, droom) {
   sup = span.appendChild(document.createElement('sub'));
   sup.appendChild(document.createTextNode('60'));
   var soundscape = '';
-  if (room.ambientsound.length > 0) soundscape = ', sound scape';
+    if (room.ambientsound.length > 0) soundscape = ', '+translate('sound scape');
   span.appendChild(document.createTextNode(': ' + room['t60'].toFixed(2) +
     ' s' + soundscape + ')'));
-  if (room['private']) span.appendChild(document.createTextNode(' private'));
+    if (room['private']) span.appendChild(document.createTextNode(' '+translate('private')));
   else {
     if (room['group'].length == 0) span.appendChild(document.createTextNode(
-      ' public'));
-    else span.appendChild(document.createTextNode(' group \'' + room['group'] +
+      ''));
+      else span.appendChild(document.createTextNode(' '+translate('group')+' \'' + room['group'] +
       '\''));
   }
   if (room.owner.length > 0) span.appendChild(document.createTextNode(
-    ', managed by ' + room.owner));
+      ', '+translate('managed by')+' ' + room.owner));
   if (room['editable']) span.appendChild(document.createTextNode(
-    ', acoustics can be changed'));
+      ', '+translate('acoustics can be changed')));
   if (room.version.startsWith('0.18.32') || room.version.startsWith('0.24')) {
     span.appendChild(document.createTextNode(' TCP '));
   }
@@ -592,36 +599,36 @@ function update_room(user, device, room, droom) {
       var a = ctl.appendChild(document.createElement('a'));
       a.setAttribute('href', '?enterroom=');
       a.setAttribute('class', 'roomctl');
-      a.appendChild(document.createTextNode('leave room'));
+        a.appendChild(document.createTextNode(translate('leave room')));
       a = ctl.appendChild(document.createElement('a'));
       a.setAttribute('class', 'roomctl');
       if (room.lock) {
         a.setAttribute('href', '?lockroom=' + encodeURI(room.id) + '&lck=0');
-        a.appendChild(document.createTextNode('unlock room'));
+          a.appendChild(document.createTextNode(translate('unlock room')));
       } else {
         a.setAttribute('href', '?lockroom=' + encodeURI(room.id) + '&lck=1');
-        a.appendChild(document.createTextNode('lock room'));
+          a.appendChild(document.createTextNode(translate('lock room')));
       }
       a = ctl.appendChild(document.createElement('a'));
       a.setAttribute('class', 'roomctl');
       a.setAttribute('href', 'sessionmap.php');
-      a.appendChild(document.createTextNode('map'));
+        a.appendChild(document.createTextNode(translate('map')));
       a = ctl.appendChild(document.createElement('a'));
       a.setAttribute('class', 'roomctl');
       a.setAttribute('href', 'sessionstat.php');
-      a.appendChild(document.createTextNode('statistics'));
+        a.appendChild(document.createTextNode(translate('statistics')));
       if (user.allowninja) {
         a = ctl.appendChild(document.createElement('a'));
         a.setAttribute('class', 'roomctl');
         a.setAttribute('href', 'sessionvid.php');
         a.setAttribute('target', 'blank');
-        a.appendChild(document.createTextNode('videos'));
+          a.appendChild(document.createTextNode(translate('videos')));
         a.setAttribute('title',
           'experimental video sharing in new tab/window (no audio)');
       } else {
         a = ctl.appendChild(document.createElement('a'));
         a.setAttribute('class', 'roomctl');
-        a.appendChild(document.createTextNode('[videos disabled]'));
+          a.appendChild(document.createTextNode('['+translate('videos disabled')+']'));
         a.setAttribute('href', 'account.php');
         a.setAttribute('title',
           'See account settings to enable experimental video sharing');
@@ -629,19 +636,19 @@ function update_room(user, device, room, droom) {
     } else {
       if (room.premium && (!user.validsubscription)) {
         ctl.appendChild(document.createTextNode(
-          'Premium room, available only for donors. '));
+            translate('Premium room, available only for donors.')+' '));
         a = ctl.appendChild(document.createElement('a'));
         a.setAttribute('class', 'roomctl');
         a.setAttribute('href', 'account.php');
-        a.appendChild(document.createTextNode('check account'));
+          a.appendChild(document.createTextNode(translate('check account')));
       } else {
         if (room.lock) {
-          ctl.appendChild(document.createTextNode('room is locked.'));
+            ctl.appendChild(document.createTextNode(translate('room is locked.')));
         } else {
           a = ctl.appendChild(document.createElement('a'));
           a.setAttribute('class', 'roomctl');
           a.setAttribute('href', '?enterroom=' + encodeURI(room.id));
-          a.appendChild(document.createTextNode('enter'));
+            a.appendChild(document.createTextNode(translate('enter')));
         }
       }
     }
@@ -664,7 +671,7 @@ function update_room(user, device, room, droom) {
     tog.setAttribute('class', 'roomsettingstoggle uibutton');
     tog.setAttribute('onclick', 'toggledisplay("' + room.id +
       ':cfg","room settings");');
-    tog.setAttribute('value', 'show room settings');
+      tog.setAttribute('value', translate('show room settings'));
   }
   if (!roomvaluechanged) {
     for (const [key, value] of Object.entries(room)) {
@@ -753,7 +760,7 @@ function update_devicestatus(user, device, owned_devices) {
     if (device.age < 20) {
       dclass = 'actmember';
     } else {
-      lastseen = lastseen + ' inactive since ' + numage2str(device.age) + '.';
+        lastseen = lastseen + ' ' + translate('inactive since')+' ' + numage2str(device.age) + '.';
       var oact = false;
       for (const od in owned_devices) {
         if (owned_devices[od].age < 20) oact = true;

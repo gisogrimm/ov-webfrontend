@@ -298,7 +298,7 @@ function html_show_device( $user, $device, $devprop )
     if( $devprop['metroactive'] )
       $inpactive->setAttribute('checked','');
     $inpactive->setAttribute('onchange','setmetro(\'active\',this.checked);');
-    $div->appendChild($doc->createTextNode(' metronome '));
+    $div->appendChild($doc->createTextNode(' '.translate('metronome').' '));
     $div = $div->appendChild($doc->createElement('div'));
     $div->setAttribute('id','metrocontrols');
     if( $devprop['metroactive'] )
@@ -710,6 +710,7 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
     echo file_get_contents( '../css/'.$css );
   }
   echo '</style>';
+  echo '<script>const langdb = '.json_encode($GLOBALS['langdb']).';</script>'."\n";
   echo '<script src="/js/ovbox.js"></script>'."\n";
   echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
   echo '</head><body onload="starttimer();">';

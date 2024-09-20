@@ -760,7 +760,7 @@ if( !empty($device) ){
     // end load.
     $el = $div->appendChild($doc->createElement('hr'));
     $el = $div->appendChild($doc->createElement('label'));
-    $el->appendChild($doc->createTextNode('Switch configuration website: '));
+    $el->appendChild($doc->createTextNode(translate('Switch configuration website').': '));
     $el = $div->appendChild($doc->createElement('select'));
     $el->setAttribute('name','jsfrontendconfig');
     $el->setAttribute('onchange','switch_to_frontend(event.target.value);');
