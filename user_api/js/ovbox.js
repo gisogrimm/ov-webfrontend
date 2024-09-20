@@ -661,7 +661,7 @@ function update_room(user, device, room, droom) {
       if (numdevs > 0) {
         a = ctl.appendChild(document.createElement('a'));
         a.setAttribute('href', '?clearroom=' + encodeURI(room.id));
-        a.appendChild(document.createTextNode('kick all'));
+          a.appendChild(document.createTextNode(translate('kick all')));
         a.setAttribute('class', 'roomctl');
       }
     }
