@@ -897,10 +897,10 @@ function update_devicestatus(user, device, owned_devices) {
       a.setAttribute('rel', 'noopener noreferrer');
       a.setAttribute('class', 'mixer');
       webm.setAttribute('class', 'mixer');
-      a.appendChild(document.createTextNode('open mixer'));
-      webm.appendChild(document.createTextNode(
-        ' (works only when your browser is in the same network as your device)'
-        ));
+        a.appendChild(document.createTextNode(translate('open mixer')));
+        webm.appendChild(document.createTextNode(
+            ' '+translate('(works only when your browser is in the same network as your device)')
+      ));
     } else {
       webm.setAttribute('style', 'display: none;');
     }

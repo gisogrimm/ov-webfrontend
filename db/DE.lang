@@ -7,7 +7,7 @@
   "Reset all device settings to default values":"Alle Geräteeinstellungen auf Standardwerte zurücksetzen",
   "Sampling rate in Hz: ":"Abtastrate in Hz: ",
   "Sampling rate: ":"Abtastrate: ",
-  "Session":"Sitzung",
+  "Session":"Räume",
   "device label (appears in rooms and the mixer of the others): ":"Name (erscheint in Räumen und im Mixer der anderen): ",
   "show expert settings (danger zone)":"Experten-Einstellungen anzeigen (Gefahrenzone)",
   "show raw device configuration in new tab":"Rohdaten in neuem Tab anzeigen",
@@ -49,7 +49,7 @@
   "If you have not used your account for more than one year, you must re-register as a new user to use the system again.":"Wenn du dein Konto länger als ein Jahr nicht benutzt hast, musst du dich erneut registrieren, um das System wieder nutzen zu können.",
   "inactive since":"zuletzt verwendet vor",
   "metronome":"Metronom",
-  "acoustics can be changed":"Akoustik einstellbar",
+  "acoustics can be changed":"Akustik einstellbar",
   "group":"Gruppe",
   "enter":"eintreten",
   "kick all":"alle rauswerfen",
@@ -82,5 +82,7 @@
   "overdrives":"Verzerrung",
   "low cuts":"Hochpass",
   "equalizers":"Equalizer",
-  "Switch configuration website":"Alternativer Server"
+  "Switch configuration website":"Alternativer Server",
+  "open mixer":"Mischpult und Aufnahmegerät",
+  "(works only when your browser is in the same network as your device)":"(nur möglich, wenn dein Browser im gleichen Netzwerk ist wie die ovbox)"
 }

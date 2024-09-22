@@ -3,6 +3,7 @@
 // internationalization:
 $langs = get_languages();
 $GLOBALS['browserlang'] = 'US';
+if( array_key_exists( 'HTTP_ACCEPT_LANGUAGE', $_SERVER ) ){
 foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
   $pattern = '/^(?P<primarytag>[a-zA-Z]{2,8})'.
            '(?:-(?P<subtag>[a-zA-Z]{2,8}))?(?:(?:;q=)'.
@@ -15,6 +16,7 @@ foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
       break;
     }
   }
+}
 }
 if( !array_key_exists( 'langdb', $GLOBALS) ){
   // user browser settings only if no session

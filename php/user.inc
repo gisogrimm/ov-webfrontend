@@ -236,7 +236,9 @@ function set_dev_room_pos( $room )
       $numchairs = $numchairs + 1;
   }
   $az = 0;
-  $daz = $stagewidth/$numchairs*(pi()/180);
+  $daz = pi();
+  if( $numchairs > 0 )
+    $daz = $stagewidth/$numchairs*(pi()/180);
   $az = $az*(pi()/180)-0.5*$daz;
   $radius = 1.2;
   foreach( $roomdev as $chair => $dev ){
