@@ -294,6 +294,8 @@ function html_admin_rooms()
       if( empty($dprop['owner']) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
         $cnt_old = $cnt_old+1;
+      }else{
+        $tr->setAttribute('style','background-color: #aaaaaa;');
       }
     }
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dev));
