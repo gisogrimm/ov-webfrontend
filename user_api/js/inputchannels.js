@@ -73,6 +73,24 @@ const spksim1 = {
     'wet': 1
   }
 }
+const synth1 = {
+    'simplesynth':{
+        'autoconnect': 'true',
+        'level': 73
+    }
+}
+const synth2 = {
+    'simplesynth': {
+        'autoconnect': 'true',
+        'decay': 20,
+        'decaydamping': 0.07,
+        'decayoffset': 0.2,
+        'detune': -6.25,
+        'f0': 440,
+        'level': 79.2969,
+        'onset': 0.04
+    }
+}
 
 function inputchannels_add() {
   inchannels.push({
@@ -559,6 +577,24 @@ function inputchannels_createUI() {
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(eq_6000));inputchannels_createUI();}');
+        // synths:
+        var flts = box5.appendChild(document.createElement('div'));
+        flts.setAttribute('class', 'plugincategory');
+        var fltslab = flts.appendChild(document.createElement('div'));
+        fltslab.setAttribute('class', 'plugincategorylab');
+          fltslab.appendChild(document.createTextNode(translate('synths')));
+        var el = flts.appendChild(document.createElement('input'));
+        el.setAttribute('type', 'button');
+        el.setAttribute('value', 'synth1');
+        el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
+          .toString(10) +
+          ',JSON.stringify(synth1));inputchannels_createUI();}');
+        var el = flts.appendChild(document.createElement('input'));
+        el.setAttribute('type', 'button');
+        el.setAttribute('value', 'synth2');
+        el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
+          .toString(10) +
+          ',JSON.stringify(synth2));inputchannels_createUI();}');
         // plugin name list:
         var divpn = box5.appendChild(document.createElement('div'));
         divpn.setAttribute('class', 'pluginnamelist');
