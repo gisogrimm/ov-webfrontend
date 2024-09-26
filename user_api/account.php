@@ -89,10 +89,12 @@ $root->setAttribute('class','userarea');
     $msg = 'As a permanent supporter you have premium access.';
   else if( $userprop['validsubscription'] )
     $msg = 'You have premium access until '.date('Y-m-d',floatval($userprop['subscriptionend'])).' (yyyy-mm-dd).';
-  else
-    $msg = 'You do not have premium access. Please consider a donation; your donation of '.$site['subscriptionrate'].' €/month allows us to rent a powerful server.';
+  else{
+    if( !$userprop['institution'] )
+      $msg = 'You do not have premium access. Please consider a donation; your donation of '.$site['subscriptionrate'].' €/month allows us to rent a powerful server.';
+  }
   $supp->appendChild($doc->createTextNode($msg));
-  if( !$userprop['subscription'] ){
+  if( (!$userprop['subscription']) && (!$userprop['institution']) ){
     $form = $div->appendChild($doc->createElement('form'));
     $form->setAttribute('action','https://www.paypal.com/donate');
     $form->setAttribute('method','post');

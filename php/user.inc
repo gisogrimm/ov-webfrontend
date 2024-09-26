@@ -783,6 +783,9 @@ function print_foot($style = '',$show_donate = -1)
     echo '<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />';
     echo '</form>';
     echo '</div>';
+  }else{
+    echo '<div class="donate">';
+    echo '</div>';
   }
   echo '</div>'. "\n";// ovcontent
   echo '<div class="ovfoot">'. "\n";

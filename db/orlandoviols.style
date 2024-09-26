@@ -2,5 +2,5 @@
   "pagetitle": "House of Consort",
   "credits": "Background image by Johannes Gontarski.",
   "css": "ovbox.css",
-  "showdonate": true
+  "showdonate": false
 }
