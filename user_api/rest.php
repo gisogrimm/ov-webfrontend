@@ -1,15 +1,38 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        header( "Location: ".$actual_link );
-        die();
+include '../php/ovbox.inc';
+{
+    $sitecfg = get_properties('site','config');
+    if( $sitecfg['forcehttps'] ){
+        if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+            if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+                $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".$actual_link );
+                die();
+            }
+        }
     }
 }
 
-include '../php/ovbox.inc';
 include '../php/rest.inc';
+
+if( isset($_GET['showmixer']) ){
+    $prop = get_properties( $_GET['showmixer'], 'device' );
+    if( $prop['age']<20 ){
+        $shown = false;
+        foreach( array($prop['localip'],$prop['host']) as $mixer ){
+            if( !(empty($mixer)||$shown) ){
+                // device is active and we know the host name:
+                $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".'http://'.$mixer.':8080/');
+                die();
+            }
+        }
+    }
+    header( "Location: /");
+    die();
+}
+
 
 session_start();
 if( !isset($_SESSION['user']) )
@@ -40,6 +63,7 @@ if( isset($_GET['getdev']) ){
     unset($dprop['outputport1']);
     unset($dprop['outputport2']);
     unset($dprop['firmwareupdate']);
+    unset($dprop['installopenmha']);
     echo(json_encode($dprop));
     flock($fp_dev, LOCK_UN );
     die();
@@ -72,6 +96,7 @@ if( isset($_GET['getrooms']) ){
     $dprop['issender'] = issender($dprop);
     $dprop['usergroups'] = $usergroups;
     $jsrooms = array('user'=>$user,
+                     'userprop'=>$uprop,
                      'device'=>$dprop,
                      'owned_devices'=>owned_devices($user),
                      'rooms'=>get_rooms_user( $user, $uprop, $usergroups, $dprop['room'] ),
@@ -80,6 +105,8 @@ if( isset($_GET['getrooms']) ){
 }
 $presetkeys = ['label',
                'selfmonitor',
+               'selfmonitoronlyreverb',
+               'selfmonitordelay',
                'egogain',
                'inputchannels',
                'jitterreceive',
@@ -88,9 +115,11 @@ $presetkeys = ['label',
                'outputport2',
                'xport',
                'peer2peer',
+               'usetcptunnel',
                'secrec',
                'xrecport',
-               'rawmode',
+               'virtualacoustics',
+               'receive',
                'reverb',
                'renderism',
                'rvbgain',
@@ -109,13 +138,43 @@ $presetkeys = ['label',
                'headtrackingrotsrc',
                'headtrackingport',
                'headtrackingtauref',
+               'headtrackingautorefzonly',
+               'headtrackingtilturl',
+               'headtrackingtiltpath',
+               'headtrackingtiltmap',
+               'headtrackingeogpath',
                'sendlocal',
                'isproxy',
                'useproxy',
                'decorr',
+               'fdnforwardstages',
+               'fdnorder',
                'receivedownmix',
                'senddownmix',
-               'showexpertsettings'];
+               'tscinclude',
+               'mhaconfig',
+               'showexpertsettings',
+               'jackrecfileformat',
+               'jackrecsampleformat',
+               'useloudspeaker',
+               'echoc_nrep',
+               'echoc_level',
+               'echoc_maxdist',
+               'echoc_filterlen',
+               'emptysessionismonitor',
+               'snmon_rvb_sx',
+               'snmon_rvb_sy',
+               'snmon_rvb_sz',
+               'snmon_rvb_abs',
+               'snmon_rvb_damp',
+               'uselocmcrec',
+               'locmcrecaddr',
+               'locmcrecport',
+               'locmcrecdevice',
+               'locmcrecchannels',
+               'locmcrecautoconnect',
+               'uselocmcsend',
+               'locmcsendchannels'];
 if( isset($_GET['devpresetsave']) ){
     if( !empty($_GET['devpresetsave']) ){
         $presets = get_properties( $device, 'devpresets' );
@@ -159,6 +218,11 @@ if( isset($_GET['getrawjson']) ){
     header('Content-Type: application/json');
     echo(json_encode($dprop,JSON_PRETTY_PRINT));
 }
+if( isset($_POST['getrawjsondev']) ){
+    header('Content-Type: application/json');
+    $dpropraw = get_properties( $_POST['getrawjsondev'], 'device' );
+    echo(json_encode($dpropraw,JSON_PRETTY_PRINT));
+}
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );
 }
@@ -184,6 +248,7 @@ if( isset($_POST['updatepassword']) ){
 if( isset($_POST['mypwreset']) ){
     modify_user_prop( $user, 'validpw', false);
 }
+// set device properties:
 if( isset($_POST['setdevprop']) ){
     if( isset($_POST[$_POST['setdevprop']])){
         if($_POST['setdevprop']=='xrecport')
@@ -200,12 +265,36 @@ if( isset($_POST['setdevpropfloat']) ){
     if( in_array($_POST['setdevpropfloat'],$presetkeys) )
         modify_device_prop($device,'preset','');
 }
+if( isset($_POST['setdevpropobj']) ){
+    if( isset($_POST[$_POST['setdevpropobj']]))
+        modify_device_prop($device,$_POST['setdevpropobj'],json_decode($_POST[$_POST['setdevpropobj']]));
+    if( in_array($_POST['setdevpropobj'],$presetkeys) )
+        modify_device_prop($device,'preset','');
+}
 if( isset($_POST['setdevpropbool']) ){
     if( isset($_POST[$_POST['setdevpropbool']]))
         modify_device_prop($device,$_POST['setdevpropbool'],$_POST[$_POST['setdevpropbool']]=='true');
     if( in_array($_POST['setdevpropbool'],$presetkeys) )
     modify_device_prop($device,'preset','');
 }
+// set user properties:
+if( isset($_POST['setuserprop']) ){
+    if( isset($_POST[$_POST['setuserprop']]))
+        modify_user_prop($user,$_POST['setuserprop'],$_POST[$_POST['setuserprop']]);
+}
+if( isset($_POST['setuserpropfloat']) ){
+    if( isset($_POST[$_POST['setuserpropfloat']]))
+        modify_user_prop($user,$_POST['setuserpropfloat'],floatval($_POST[$_POST['setuserpropfloat']]));
+}
+if( isset($_POST['setuserpropobj']) ){
+    if( isset($_POST[$_POST['setuserpropobj']]))
+        modify_user_prop($user,$_POST['setuserpropobj'],json_decode($_POST[$_POST['setuserpropobj']]));
+}
+if( isset($_POST['setuserpropbool']) ){
+    if( isset($_POST[$_POST['setuserpropbool']]))
+        modify_user_prop($user,$_POST['setuserpropbool'],$_POST[$_POST['setuserpropbool']]=='true');
+}
+//
 if( isset($_POST['jsinputchannels']) ){
     modify_device_prop($device,'inputchannels',json_decode($_POST['jsinputchannels']));
     modify_device_prop($device,'preset','');
@@ -288,6 +377,43 @@ if( isset($_GET['getsessionstat']) ){
     }
     echo(json_encode(array('room'=>$rprop['label'],'names'=>$names,'stats'=>$stats,'chairs'=>$chairs,'versions'=>$versions,
                            'fragsize'=>$fragsize,'n'=>count($roomdevs),'p2p'=>$p2p)));
+}
+
+$site = get_properties('site','config');
+if( in_array($user,$site['admin']) ){
+    // below this point only admin functions are available:
+    // modify properties of other users defined in 'admusr':
+    if( isset($_POST['admusrprop']) && isset($_POST['admusr']) && isset($_POST[$_POST['admusrprop']]) && in_array(isset($_POST['admusr']),list_users()) ){
+        $value = $_POST[$_POST['admusrprop']];
+        if( isset($_POST['type']) ){
+            if( $_POST['type']=='bool' )
+                $value = $value == 'true';
+            if( $_POST['type']=='float' )
+                $value = floatval($value);
+        }
+        modify_user_prop($_POST['admusr'],$_POST['admusrprop'],$value);
+    }
+    if( isset($_POST['addpayment']) && isset($_POST['admusr']) && in_array(isset($_POST['admusr']),list_users()) ){
+        $upr = get_properties($_POST['admusr'],'user');
+        $starttime = max($upr['subscriptionend'],time());
+        modify_user_prop($_POST['admusr'],'subscriptionend',$starttime+floatval($_POST['addpayment'])/floatval($site['subscriptionrate'])*30.5*24*3600);
+    }
+    if( isset($_POST['admroomprop']) && isset($_POST['admroom']) && isset($_POST[$_POST['admroomprop']]) ){
+        $value = $_POST[$_POST['admroomprop']];
+        if( isset($_POST['type']) ){
+            if( $_POST['type']=='bool' )
+                $value = $value == 'true';
+            if( $_POST['type']=='float' )
+                $value = floatval($value);
+        }
+        modify_room_prop($_POST['admroom'],$_POST['admroomprop'],$value);
+    }
+    if( isset($_POST['admaddusertogroup']) && isset($_POST['admaddusertogroupgroup']) && isset($_POST['admaddusertogroupval']) ){
+        if( $_POST['admaddusertogroupval'] == 'true' )
+            add_user_to_group( $_POST['admaddusertogroup'], $_POST['admaddusertogroupgroup'] );
+        else
+            remove_user_from_group( $_POST['admaddusertogroup'], $_POST['admaddusertogroupgroup'] );
+    }
 }
 
 ?>

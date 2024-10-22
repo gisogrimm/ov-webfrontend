@@ -104,6 +104,79 @@ div {
 .devproptitle {
     font-weight: bold;
 }
+.sessionvid {
+    overflow: clip;
+    margin:0;
+    padding:0;
+    border: none;
+}
+.sessionvidmax {
+    padding-top: 0;
+}
+.vidrow {
+    text-align: center;
+    overflow: clip;
+    margin:0;
+    padding:0;
+    border: none;
+}
+.vidcont {
+    position: relative;
+    width: 45%;
+    background-color: #000;
+    border: 1px solid #666;
+    border-radius: 22px;
+    display: inline-block;
+    margin: 0;
+    text-align: left;
+    overflow: clip;
+}
+.vidcont:after {
+  content: "";
+  display: block;
+  padding-bottom: 57%;
+}
+.vidspacer {
+    width: 8%;
+    display: inline-block;
+}
+.vidcontmax {
+    position: fixed;
+    width: 100vw;
+    height: calc(100vh - 30px);
+    background-color: #000000;
+    border: 0px solid #666;
+    border-radius: 0px;
+    left: 0;
+    top: 0;
+    text-align: left;
+    overflow: clip;
+    margin: 0;
+    padding: 0;
+}
+.filldiv {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+.viddevlabel {
+    background-color: #aaaaaa90;
+    border-radius: 0px;
+    color: #000;
+    padding-top: 2px;
+    text-align: center;
+    font-size: 80%;
+    position: absolute;
+    bottom: 0%;
+    width: 100%;
+    height: 5%;
+    min-height: 22px;
+    border: none;
+    margin: 0;
+}
 .devprop {
     background-color: #D8DBE890;
     margin-left: 0px;
@@ -232,9 +305,16 @@ div.mixer {
 .latency {
     font-size: x-small;
 }
+.showexpertsettings {
+    background-color: #b7776750;
+    border: 2px solid #d92020;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding: 2px;
+}
 .expert {
-    background-color: #77777750;
-    border: 2px solid #a02020;
+    background-color: #b7776750;
+    border: 2px solid #d92020;
     margin-top: 3px;
     margin-bottom: 3px;
     padding: 2px;
@@ -254,8 +334,12 @@ div.mixer {
 .srvjit {
     font-size: 150%;
     font-weight: bold;
-		margin-left: 3px;
-		margin-right: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+.premium {
+    color: #bf8613;
+    font-size: 160%;
 }
 /* Hide default HTML checkbox */
 .switch input {
@@ -364,6 +448,8 @@ input:checked + .slider:before {
     padding: 1px;
     padding-left: 3px;
     padding-right: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
     color: #700000;
     font-weight: bold;
 }
@@ -402,8 +488,6 @@ button.uibutton:hover {
     padding: 15px;
     border-radius: 13px;
     border: 2px solid #4f3327;
-    font-size: 130%;
-    font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia, serif;
     color: #000;
 }
 .ovhead {
@@ -429,7 +513,6 @@ button.uibutton:hover {
 .navbaricon {
     height: 40px;
     margin-top: 0px;
-    
 }
 h1.navbar {
     float: left;
@@ -459,6 +542,15 @@ a.navbar:hover {
     margin-left: 5px;
     margin-right: 5px;
 }
+.langsel {
+    float: right;
+    display: block;
+    overflow: auto;
+    font-size: 100%;
+    margin-top: 4px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 .ovlogout {
     float: right;
     display: block;
@@ -478,9 +570,13 @@ a.adminarea:hover {
 .ovfoot {
     background-color: #e1e5e0d0;
     padding: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     border-top: 1px solid #777;
-    margin-top: 10px;
-    position: relative;
+    bottom: 0px;
+    left: 0px;
+    width: calc(100% - 20px);
+    position: fixed;
 }
 .ovtitle {
     float: left;
@@ -545,6 +641,87 @@ a.adminarea:hover {
     border:2px solid #666;
     border-radius:4px;
 }
+.plugincategory {
+    display: inline-block;
+    border: 1px solid #666;
+    border-radius:4px;
+    padding: 4px;
+    margin: 1px;
+    margin-top: 4px;
+    vertical-align: middle;
+}
+.plugincategorylab {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    display: block;
+    font-size: 60%;
+}
+.pluginnamelist {
+    margin: 0px;
+    padding: 0px;
+    overflow: clip;
+    display: block;
+    min-height: 0px;
+}
+.pluginname {
+    display: inline;
+    margin: 1px;
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 60%;
+    border-radius: 2px;
+    border: 1px solid #666;
+    background-color: #a99;
+}
+.toplabelbox {
+    display: inline-block;
+    border: 0px solid #666;
+    border-radius:4px;
+    padding: 2px;
+    vertical-align: top;
+}
+.toplabel {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    display: block;
+    font-size: 60%;
+}
+.channelcfg {
+    background-color: #99999950;
+    margin: 4px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border: 2px solid #777;
+    display: block;
+    padding: 5px;
+    border-radius: 6px;
+}
+.cputempwarn {
+    background-color: #ffb30050;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid #000;
+}
+.cputempcritical {
+    background-color: #ff000050;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid #000;
+}
+
 @media (min-width: 1200px) {
     .ovcontent {
 	width: 1200px;
@@ -585,6 +762,26 @@ a.adminarea:hover {
     .foto {
 	font-size: x-small;
 	margin: 2px;
+    }
+    .vidspacer {
+        width: 2%;
+        display: inline-block;
+    }
+    .vidcont {
+        position: relative;
+        width: 48%;
+        background-color: #000;
+        border: 1px solid #666;
+        border-radius: 22px;
+        display: inline-block;
+        margin: 0;
+        text-align: left;
+        overflow: clip;
+    }
+    .vidcont:after {
+        content: "";
+        display: block;
+        padding-bottom: 160%;
     }
 }
 @media (min-width: 980px) {

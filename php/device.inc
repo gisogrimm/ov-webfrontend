@@ -28,6 +28,9 @@ function get_dev_stage_settings( $device )
   $d['externalip'] = $dprop['externalip'];
   $d['receivedownmix'] = boolval($dprop['receivedownmix']);
   $d['senddownmix'] = boolval($dprop['senddownmix']);
+  $d['usetcptunnel'] = boolval($dprop['usetcptunnel']);
+  $d['nozita'] = boolval($dprop['nozita']);
+  $d['hiresping'] = boolval($dprop['hiresping']);
   return $d;
 }
 
@@ -35,34 +38,59 @@ function cleanup_rooms()
 {
   $rooms = list_db('room');
   foreach( list_db('room') as $room=>$rprop ){
-    // only operate on unmanaged rooms which were not entered within the last hour:
-    if( empty($rprop['owner']) && ($rprop['enterage']>3600)){
+    if( $rprop['clearowned'] ){
+      // clear owned room, all except own device must go if inactive
+      // for more than 2 minutes:
       $devs = get_devices_in_room($room);
-      $age = 4000;
+      $kick = false;
       if( !empty($devs) ){
         foreach( $devs as $dev ){
           $dprop = get_properties( $dev, 'device' );
-          $age = min($age,$dprop['age']);
-        }
-        // if all devices are switched off for more than an hour or if
-        // they entered more than eight hours ago, kick them:
-        if( ($age > 3600)||($rprop['enterage']>8*3600) ){
-          foreach( $devs as $dev )
+          if( ($dprop['owner'] != $rprop['owner']) && ($dprop['age'] > 120 ) ){
             modify_device_prop( $dev, 'room', '');
-          if( $rprop['editable'] ){
-            unset($rprop['rvbgain']);
-            unset($rprop['rvbabs']);
-            unset($rprop['rvbdamp']);
-            unset($rprop['size']);
-            unset($rprop['ambientsound']);
-            unset($rprop['ambientlevel']);
-            set_properties( $room, 'room', $rprop );
+            $kick = true;
           }
         }
+        if( $kick && $rprop['editable'] ){
+          unset($rprop['rvbgain']);
+          unset($rprop['rvbabs']);
+          unset($rprop['rvbdamp']);
+          unset($rprop['size']);
+          unset($rprop['ambientsound']);
+          unset($rprop['ambientlevel']);
+          set_properties( $room, 'room', $rprop );
+        }
       }
-      // clear bulletin board when entered at least 4 hours ago:
-      if( ($rprop['enterage']>4*3600) && empty($devs) ){
-        modify_room_prop( $room, 'bulletinboard', '' );
+    }else{
+      if( empty($rprop['owner']) && ($rprop['enterage']>3600)){
+        // only operate on unmanaged rooms which were not entered within the last hour:
+        $devs = get_devices_in_room($room);
+        $age = 4000;
+        if( !empty($devs) ){
+          foreach( $devs as $dev ){
+            $dprop = get_properties( $dev, 'device' );
+            $age = min($age,$dprop['age']);
+          }
+          // if all devices are switched off for more than an hour or if
+          // they entered more than eight hours ago, kick them:
+          if( ($age > 3600)||($rprop['enterage']>8*3600) ){
+            foreach( $devs as $dev )
+              modify_device_prop( $dev, 'room', '');
+            if( $rprop['editable'] ){
+              unset($rprop['rvbgain']);
+              unset($rprop['rvbabs']);
+              unset($rprop['rvbdamp']);
+              unset($rprop['size']);
+              unset($rprop['ambientsound']);
+              unset($rprop['ambientlevel']);
+              set_properties( $room, 'room', $rprop );
+            }
+          }
+        }
+        // clear bulletin board when entered at least 4 hours ago:
+        if( ($rprop['enterage']>4*3600) && empty($devs) ){
+          modify_room_prop( $room, 'bulletinboard', '' );
+        }
       }
     }
   }
@@ -78,7 +106,7 @@ function update_room_lat( $host, $port, $src, $dest, $lat, $jit )
   set_properties( $room, 'room', $dprop );
 }
 
-function update_room( $host, $port, $name, $pin, $group, $srvjit = -1 )
+function update_room( $host, $port, $name, $pin, $group, $version, $srvjit = -1 )
 {
   $room = $host . ':' . $port;
   $dprop = get_room_prop( $room );
@@ -89,6 +117,7 @@ function update_room( $host, $port, $name, $pin, $group, $srvjit = -1 )
   $dprop['pin'] = $pin;
   $dprop['access'] = time();
   $dprop['srvjit'] = $srvjit;
+  $dprop['version'] = $version;
   set_properties( $room, 'room', $dprop );
   cleanup_rooms();
 }
@@ -114,13 +143,16 @@ function get_room_session( $device, $devhash )
   }
   $rendersettings['xport'] = $nxp;
   $rendersettings['peer2peer'] = boolval($devprop['peer2peer']);
+  $rendersettings['usetcptunnel'] = boolval($devprop['usetcptunnel']);
   $rendersettings['renderreverb'] = boolval($devprop['reverb']);
   $rendersettings['renderism'] = boolval($devprop['renderism']);
-  $rendersettings['mastergain'] = pow(10.0,0.05*$devprop['mastergain']);
+  $rendersettings['outputgain'] = pow(10.0,0.05*$devprop['mastergain']);
+  $rendersettings['mastergain'] = $rendersettings['outputgain'];
   $rendersettings['rectype'] = $devprop['rectype'];
   $rendersettings['decorr'] = floatval($devprop['decorr']);
   $rendersettings['secrec'] = floatval($devprop['secrec']);
   $rendersettings['rawmode'] = boolval($devprop['rawmode']);
+  $rendersettings['receive'] = boolval($devprop['receive']);
   $rendersettings['distancelaw'] = boolval($devprop['distancelaw']);
   $rendersettings['delaycomp'] = floatval($devprop['delaycomp']);
   $rendersettings['xrecport'] = $devprop['xrecport'];
@@ -146,6 +178,12 @@ function get_room_session( $device, $devhash )
     modify_device_prop( $device, 'jackrestart', false );
   $room = array('host'=>'','port'=>0,'pin'=>0);
   $roomdev = array();
+  $room['reverb']= array('absorption'=>floatval($devprop['snmon_rvb_abs']),
+                         'damping'=>floatval($devprop['snmon_rvb_damp']),
+                         'roomgain'=>0.4,
+                         'devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
+                         'gain'=>pow(10.0,0.05*($devprop['rvbgain'])));
+  $room['size'] = array('x'=>floatval($devprop['snmon_rvb_sx']),'y'=>floatval($devprop['snmon_rvb_sy']),'z'=>floatval($devprop['snmon_rvb_sz']));
   if( !empty($devprop['room']) ){
     $roomprop = get_room_prop( $devprop['room'] );
     if( $roomprop['age'] < 3600 ) {
@@ -159,6 +197,10 @@ function get_room_session( $device, $devhash )
       $room['ambientlevel'] = floatval($roomprop['ambientlevel']);
       $room['reverb']= array('absorption'=>floatval($roomprop['rvbabs']),
                              'damping'=>floatval($roomprop['rvbdamp']),
+                             'gaindev'=>pow(10.0,0.05*($devprop['rvbgain'])),
+                             'gainroom'=>pow(10.0,0.05*($roomprop['rvbgain'])),
+                             'roomgain'=>pow(10.0,0.05*($roomprop['rvbgain'])),
+                             'devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
                              'gain'=>pow(10.0,0.05*($roomprop['rvbgain']+$devprop['rvbgain'])));
       // get all devices in room:
       $rdevs = get_devices_in_room( $devprop['room'] );
@@ -202,27 +244,61 @@ function get_room_session( $device, $devhash )
                                                          'applyrec'=>boolval($devprop['headtrackingrot']),
                                                          'applysrc'=>boolval($devprop['headtrackingrotsrc']),
                                                          'port'=>intval($devprop['headtrackingport']),
-                                                         'tauref'=>floatval($devprop['headtrackingtauref'])),
-                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay'])),
+                                                         'tauref'=>floatval($devprop['headtrackingtauref']),
+                                                         'tilturl'=>$devprop['headtrackingtilturl'],
+                                                         'tiltpath'=>$devprop['headtrackingtiltpath'],
+                                                         'eogpath'=>$devprop['headtrackingeogpath'],
+                                                         'autorefzonly'=>boolval($devprop['headtrackingautorefzonly']),
+                                                         'tiltmap'=>$devprop['headtrackingtiltmap']),
+                                      'monitor'=>array('delay'=>floatval($devprop['selfmonitordelay']),
+                                                       'active'=>boolval($devprop['selfmonitor']),
+                                                       'onlyreverb'=>boolval($devprop['selfmonitoronlyreverb'])),
                                       'metronome'=>array('active'=>boolval($devprop['metroactive']),
                                                          'bpm'=>floatval($devprop['metrobpm']),
                                                          'bpb'=>intval($devprop['metrobpb']),
                                                          'level'=>floatval($devprop['metrolevel']),
                                                          'delay'=>floatval($devprop['metrodelay'])),
-                                      'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding'])),
+                                      'tscinclude'=>$devprop['tscinclude'],
+                                      'mhaconfig'=>$devprop['mhaconfig'],
+                                      'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding']),
+                                                       'sessionportoffset'=>intval($devprop['sessionportoffset'])),
                                       'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),
                                                      'useproxy'=>!empty($proxyip),
                                                      'proxyip'=>$proxyip,
                                                      'clients'=>$proxyclients),
-                                      'render'=>array('soundscape'=>boolval($devprop['rendersoundscape'])));
+                                      'jackrec'=>array('sampleformat'=>$devprop['jackrecsampleformat'],
+                                                       'fileformat'=>$devprop['jackrecfileformat']),
+                                      'mcrec'=>array('use'=>boolval($devprop['uselocmcrec']),
+                                                     'usesender'=>boolval($devprop['uselocmcsend']),
+                                                     'addr'=>$devprop['locmcrecaddr'],
+                                                     'port'=>intval($devprop['locmcrecport']),
+                                                     'device'=>$devprop['locmcrecdevice'],
+                                                     'buffer'=>intval($devprop['locmcrecbuffer']),
+                                                     'channels'=>$devprop['locmcrecchannels'],
+                                                     'autoconnectrec'=>boolval($devprop['locmcrecautoconnect']),
+                                                     'sendchannels'=>intval($devprop['locmcsendchannels'])),
+                                      'render'=>array('soundscape'=>boolval($devprop['rendersoundscape']),
+                                                      'useloudspeaker'=>boolval($devprop['useloudspeaker']),
+                                                      'fdnforwardstages'=>intval($devprop['fdnforwardstages']),
+                                                      'fdnorder'=>intval($devprop['fdnorder']),
+                                                      'emptysessionismonitor'=>boolval($devprop['emptysessionismonitor']),
+                                                      'echoc_level'=>floatval($devprop['echoc_level']),
+                                                      'echoc_nrep'=>intval($devprop['echoc_nrep']),
+                                                      'echoc_filterlen'=>intval($devprop['echoc_filterlen']),
+                                                      'echoc_maxdist'=>floatval($devprop['echoc_maxdist']),
+                                                      'usebcf2000'=>boolval($devprop['usebcf2000']),
+                                                      'zitasampleformat'=>$devprop['zitasampleformat']));
   $stagecfg = array('rendersettings'=>$rendersettings,
                     'audiocfg'=>$audio,
                     'room'=>$room,
+                    'owner'=>$devprop['owner'],
                     'roomdev'=>$roomdev,
                     'firmwareupdate'=>$devprop['firmwareupdate'],
+                    'installopenmha'=>$devprop['installopenmha'],
                     'usedevversion'=>$devprop['usedevversion']);
-  if( $devprop['firmwareupdate'] ){
+  if( $devprop['firmwareupdate'] || $devprop['installopenmha']){
     modify_device_prop( $device, 'firmwareupdate', false );
+    modify_device_prop( $device, 'installopenmha', false );
     modify_device_prop( $device, 'isupdating', true );
   }else
     if( $devprop['isupdating'] )
@@ -246,6 +322,9 @@ function get_room_session( $device, $devhash )
     }
     modify_device_prop( $device, 'wifiupdate', false );
   }
+  $stagecfg['usehifiberry'] = $devprop['usehifiberry'];
+  if( !empty($stagecfg['usehifiberry']) )
+    modify_device_prop( $device, 'usehifiberry', '' );
   //if( $devprop['wifipasswd'] != '*****' )
   //  modify_device_prop( $device, 'wifipasswd', '*****' );
   if( $devprop['proxyip'] != $proxyip )
@@ -256,6 +335,7 @@ function get_room_session( $device, $devhash )
     echo $hash . "\n";
     echo $stagecfg;
   }
+  //cleanup_rooms();
 }
 
 function get_client_ip() {

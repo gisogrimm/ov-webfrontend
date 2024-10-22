@@ -2,13 +2,18 @@
 
 function table_add_header( &$tr, $field, $sortkey, &$doc, $type )
 {
+  $dispfield = $field;
+  $dispfield = str_replace('uname_machine','arch',$dispfield);
+  $dispfield = str_replace('uname_release','kernel',$dispfield);
+  $dispfield = str_replace('uname_sysname','OS',$dispfield);
+  $dispfield = str_replace('clearowned','clear',$dispfield);
   $th = $tr->appendChild($doc->createElement('th'));
   if( $field == $sortkey ){
-    $th->appendChild($doc->createTextNode('['.$field.']'));
+    $th->appendChild($doc->createTextNode('['.$dispfield.']'));
   }else{
     $a = $th->appendChild($doc->createElement('a'));
     $a->setAttribute('href','?sortby='.$field.'&category='.$type);
-    $a->appendChild($doc->createTextNode($field));
+    $a->appendChild($doc->createTextNode($dispfield));
   }
 }
 
@@ -92,25 +97,6 @@ function rm_group( $group )
   }
 }
 
-function remove_user_from_group( $user, $group )
-{
-  if( !(empty($group)||empty($user)) ){
-    $fname = '../db/groups';
-    if( file_exists( $fname ) ){
-      $groups = json_decode( file_get_contents( $fname ), true );
-      if( array_key_exists( $group, $groups ) ){
-        $users = $groups[$group];
-        $us = array_search( $user, $users );
-        if( $us !== false ){
-          unset($users[$us]);
-          $groups[$group] = $users;
-          file_put_contents( $fname, json_encode( $groups ));
-        }
-      }
-    }
-  }
-}
-
 function modify_group_prop( $group, $key, $value )
 {
   $dprop = get_properties( $group, 'group' );
@@ -161,6 +147,10 @@ function html_admin_users()
     $uprop['newdb'] = array_key_exists($us,$pws);
     $uprop['olddb'] = in_array($us,$oldusers);
     $uprop['uname'] = $us;
+    $uprop['subscr'] = max(0,$uprop['subscriptionend']-$uprop['now']);
+    if( $uprop['subscription'] )
+      $uprop['subscr'] = $uprop['now'] + 24*365*3600;
+    $uprop['subscr'] = -$uprop['subscr'];
     $devage = 3600*24*365*40*2;
     foreach($uprop['owneddev'] as $d=>$dprop){
       $devage = min($devage,$dprop['age']);
@@ -190,7 +180,7 @@ function html_admin_users()
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   //
-  $headerfields = array('id','age','devage','numdev','numgrp','maingroup');
+  $headerfields = array('id','age','devage','numdev','numgrp','subscr','mail','');
   foreach( $headerfields as $field )
     table_add_header($tr,$field,$sortkey,$doc,'user');
   $tab->appendChild($doc->createTextNode("\n"));
@@ -198,13 +188,18 @@ function html_admin_users()
   foreach($udb as $us=>$uprop){
     $tr = $tab->appendChild($doc->createElement('tr'));
     if( $uprop['agreedterms'] ){
-      if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600))) ){
+      if( (($uprop['numdev']==0) && ($uprop['age']>1*24*3600)) ||
+          ((($uprop['numdev']>0) && (($uprop['devage']>333*24*3600) && $uprop['age']>333*24*3600))) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
       }
+      if( $uprop['validsubscription'] )
+        $tr->setAttribute('style','background-color: #ffd072;');
+      else
+        if( $uprop['institution'] )
+          $tr->setAttribute('style','background-color: #5e9af3;');
     }else{
-      if( (($uprop['numdev']==0) && ($uprop['age']>23*24*3600) && ($uprop['age']<3600*24*365*40)) ||
-          ((($uprop['numdev']>0) && (($uprop['devage']>173*24*3600) && $uprop['age']>173*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
+      if( (($uprop['numdev']==0) && ($uprop['age']>1*24*3600) && ($uprop['age']<3600*24*365*40)) ||
+          ((($uprop['numdev']>0) && (($uprop['devage']>333*24*3600) && $uprop['age']>333*24*3600)) && ($uprop['age']<3600*24*365*40)) ){
         $tr->setAttribute('style','background-color: #ccaaaa;');
       }else{
         $tr->setAttribute('style','background-color: #aaaaaa;');
@@ -228,36 +223,28 @@ function html_admin_users()
     $td = $tr->appendChild($doc->createElement('td'));
     $td->appendChild($doc->createTextNode($uprop['numgrp']));
     $td = $tr->appendChild($doc->createElement('td'));
-    $form = $td->appendChild($doc->createElement('form'));
-    $inp = $form->appendChild($doc->createElement('input'));
-    $inp->setAttribute('type','hidden');
-    $inp->setAttribute('name','moduser');
-    $inp->setAttribute('value',$us);
-    $inp = $form->appendChild($doc->createElement('input'));
-    $inp->setAttribute('title','If checked, the user can see all public rooms, otherwise only the owned rooms.');
-    $inp->setAttribute('type','checkbox');
-    $inp->setAttribute('name','seesall');
-    $inp->setAttribute('id','seesall');
-    if( $uprop['seesall'] )
-      $inp->setAttribute('checked','');
-    $inp = $form->appendChild($doc->createElement('label'));
-    $inp->setAttribute('for','seesall');
-    $inp->appendChild($doc->createTextNode(' sees public rooms '));
-
-    $inp = $form->appendChild($doc->createElement('select'));
-    $inp->setAttribute('name','maingroup');
-    $opt = $inp->appendChild($doc->createElement('option'));
-    $opt->setAttribute('value','');
-    $opt->appendChild($doc->createTextNode(' -- no main group -- '));
-    foreach($usgroups as $grp){
-      $opt = $inp->appendChild($doc->createElement('option'));
-      $opt->setAttribute('value',$grp);
-      $opt->appendChild($doc->createTextNode($grp));
-      if( $uprop['maingroup'] == $grp )
-        $opt->setAttribute('selected','');
-    }
-    $inp = $form->appendChild($doc->createElement('button'));
-    $inp->appendChild($doc->createTextNode('Save'));
+    // subscription
+    $uprop['subscr'] = -$uprop['subscr'];
+    if( $uprop['subscr'] > 0 )
+      $val = numage2str($uprop['subscr']);
+    else
+      if( $uprop['institution'] )
+        $val = '';
+      else
+        $val = 'no';
+    if( $uprop['subscription'] )
+      $val = 'subs';
+    if( $uprop['institution'] )
+      $val = $val . ' inst';
+    $td->appendChild($doc->createTextNode($val));
+    $td = $tr->appendChild($doc->createElement('td'));
+    $el = $td->appendChild($doc->createElement('div'));
+    $el->appendChild($doc->createTextNode($uprop['mail']));
+    $el->setAttribute('style','font-size: 60%;');
+    $td = $tr->appendChild($doc->createElement('td'));
+    $inp = $td->appendChild($doc->createElement('button'));
+    $inp->appendChild($doc->createTextNode('Edit'));
+    $inp->setAttribute('onclick','location.href="?adm=edituser&admusr='.$us.'";');
     $tab->appendChild($doc->createTextNode("\n"));
     $td = $tr->appendChild($doc->createElement('td'));
     $form = $td->appendChild($doc->createElement('form'));
@@ -274,6 +261,7 @@ function html_admin_rooms()
 {
   $showfields = array();
   $showfields[] = 'srvjit';
+  $showfields[] = 'version';
   $sortprop = get_properties('list','sortkey');
   $sortkey = $sortprop['room'];
   $rooms = list_db('room');
@@ -294,7 +282,7 @@ function html_admin_rooms()
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
   // room id:
-  $headerfields = array_merge(array('id','age','deventer'),$showfields,array('owner','group','label'));
+  $headerfields = array_merge(array('id','age','deventer'),$showfields,array('premium','clearowned','owner','group','label'));
   foreach( $headerfields as $field )
     table_add_header($tr,$field,$sortkey,$doc,'room');
   $users = list_users();
@@ -306,6 +294,8 @@ function html_admin_rooms()
       if( empty($dprop['owner']) ){
         $tr->setAttribute('style','background-color: #ffaaaa;');
         $cnt_old = $cnt_old+1;
+      }else{
+        $tr->setAttribute('style','background-color: #aaaaaa;');
       }
     }
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dev));
@@ -315,6 +305,20 @@ function html_admin_rooms()
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($deventer));
     foreach( $showfields as $field )
       $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dprop[$field]));
+    // premium:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $inp = $td->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','checkbox');
+    if( $dprop['premium'] )
+      $inp->setAttribute('checked','');
+    $inp->setAttribute('oninput','rest_admroomprop("'.$dev.'","premium",event.target.checked);');
+    // clearowned:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $inp = $td->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','checkbox');
+    if( $dprop['clearowned'] )
+      $inp->setAttribute('checked','');
+    $inp->setAttribute('oninput','rest_admroomprop("'.$dev.'","clearowned",event.target.checked);');
     // user:
     $td = $tr->appendChild($doc->createElement('td'));
     $inp = $td->appendChild($doc->createElement('select'));
@@ -357,7 +361,7 @@ function html_admin_rooms()
     $inp = $form->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','text');
     $inp->setAttribute('name','label');
-    $inp->setAttribute('pattern','[a-zA-Z0-9-_]*');
+    $inp->setAttribute('pattern','[a-zA-Z0-9\-_]*');
     $inp->setAttribute('value',$dprop['label']);
     $form->appendChild($doc->createElement('button'))->appendChild($doc->createTextNode('Save'));
     // delete
@@ -399,7 +403,7 @@ function html_admin_groups()
   $el = $form->appendChild($doc->createElement('input'));
   $el->setAttribute('name','addgroup');
   $el->setAttribute('type','text');
-  $el->setAttribute('pattern','[a-zA-Z0-9-_]*');
+  $el->setAttribute('pattern','[a-zA-Z0-9\-_]*');
   $el = $form->appendChild($doc->createElement('button'));
   $el->appendChild($doc->createTextNode('add group'));
   $tab = $root->appendChild($doc->createElement('table'));
@@ -506,7 +510,7 @@ function html_admin_db($type, $showfields = array())
   $tab = $root->appendChild($doc->createElement('table'));
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
-  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('owner','label'));
+  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('vid','cfg','owner','label'));
   foreach( $headerfields as $field ){
     table_add_header($tr,$field,$sortkey,$doc,$type);
   }
@@ -526,6 +530,24 @@ function html_admin_db($type, $showfields = array())
       else
         $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dprop[$field]));
     }
+    // video receive link:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $a = $td->appendChild($doc->createElement('a'));
+    $a->setAttribute('href','https://vdo.ninja/?view='.hash('md5',$dev));
+    $a->setAttribute('target','blank');
+    $a->appendChild($doc->createTextNode('vid'));
+    // raw config link:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $frm = $td->appendChild($doc->createElement('form'));
+    $frm->setAttribute('action','/rest.php');
+    $frm->setAttribute('method','POST');
+    $inp = $frm->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','getrawjsondev');
+    $inp->setAttribute('value',$dev);
+    $inp = $frm->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','submit');
+    $inp->setAttribute('value','show');
     // user:
     $td = $tr->appendChild($doc->createElement('td'));
     $inp = $td->appendChild($doc->createElement('select'));
@@ -552,7 +574,7 @@ function html_admin_db($type, $showfields = array())
     $inp = $form->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','text');
     $inp->setAttribute('name','label');
-    $inp->setAttribute('pattern','[a-zA-Z0-9-_]*');
+    $inp->setAttribute('pattern','[a-zA-Z0-9\-_]*');
     $inp->setAttribute('value',$dprop['label']);
     $form->appendChild($doc->createElement('button'))->appendChild($doc->createTextNode('Save'));
     // delete
@@ -677,6 +699,124 @@ function getServerLoad()
   }
 
   return $load;
+}
+
+function xml_add_usr_checkbox( $id, $msg, $div, $doc, $uprop, $usr )
+{
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('id',$id);
+  $el->setAttribute('type','checkbox');
+  if( $uprop[$id] )
+    $el->setAttribute('checked','');
+  $el->setAttribute('onchange','rest_admusrprop("'.$usr.'","'.$id.'",event.target.checked);');
+  $ellab = $div->appendChild($doc->createElement('label'));
+  $ellab->setAttribute('for',$id);
+  $ellab->appendChild($doc->createTextNode($msg));
+  $div->appendChild($doc->createElement('br'));
+  return $el;
+}
+
+function xml_add_usr_generic( $id, $msg, $div, $doc, $uprop, $usr )
+{
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode($msg));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  if( is_array($uprop[$id]) )
+    $el->setAttribute('value',implode(" ",$uprop[$id]));
+  else
+    $el->setAttribute('value',$uprop[$id]);
+  $el->setAttribute('onchange','rest_admusrprop("'.$usr.'","'.$id.'",event.target.value);');
+  return $el;
+}
+
+function xml_add_usr_date( $id, $msg, $div, $doc, $uprop, $usr )
+{
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode($msg));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('type','date');
+  $el->setAttribute('value',date('Y-m-d',floatval($uprop[$id])));
+  $el->setAttribute('min',date('Y-m-d',floatval(time()-24*3600)));
+  $el->setAttribute('onchange','var somedate=new Date(event.target.value);rest_admusrprop("'.$usr.'","'.$id.'",0.001*somedate.getTime());');
+  return $el;
+}
+
+function xml_add_usr_select( $id, $msg, $div, $doc, $uprop, $usr, $options, $optlabels )
+{
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode($msg));
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('select'));
+  foreach($options as $key=>$opt){
+    $eopt = $el->appendChild($doc->createElement('option'));
+    $eopt->setAttribute('value',$opt);
+    $eopt->appendChild($doc->createTextNode($optlabels[$key]));
+    if( $uprop[$id] == $opt )
+      $eopt->setAttribute('selected','');
+  }
+  $el->setAttribute('onchange','rest_admusrprop("'.$usr.'","'.$id.'",event.target.value);');
+  return $el;
+}
+
+function html_admin_edituser( $usr, $siteconfig )
+{
+  $auprop = get_properties( $usr, 'user' );
+  $doc = new DOMDocument('1.0');
+  $root = $doc->appendChild($doc->createElement('div'));
+  $div = create_section($root,$doc,$usr);
+  xml_add_usr_checkbox('seesall','Sees public rooms',$div,$doc,$auprop,$usr);
+  xml_add_usr_checkbox('institution','Is institutional account',$div,$doc,$auprop,$usr);
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->setAttribute('class','roomctl');
+  $el->appendChild($doc->createTextNode($auprop['mail']));
+  $usergroups = list_groups($usr);
+  {
+    // group settings:
+    $div = create_section($root,$doc,'Groups');
+    $grplist = $div->appendChild($doc->createElement('div'));
+    foreach( $usergroups as $grp ){
+      $p1 = $grplist->appendChild($doc->createElement('span'));
+      $p1->appendChild($doc->createTextNode($grp.' '));
+    }
+    // main group selector:
+    $el = xml_add_usr_select('maingroup','Primary group:',$div,$doc,$auprop,$usr,
+                             array_merge(array(''),$usergroups),
+                             array_merge(array(' -- no group -- '),$usergroups));
+    $grplist = $div->appendChild($doc->createElement('div'));
+    $allgroups = list_groups();
+    foreach( $allgroups as $grp ){
+      $el = $div->appendChild($doc->createElement('input'));
+      $el->setAttribute('type','checkbox');
+      if( in_array( $grp, $usergroups ) )
+        $el->setAttribute('checked','');
+      $el->setAttribute('onchange','rest_admusergroup( "'.$usr.'", "'.$grp.'", event.target.checked );');
+      $ellab = $div->appendChild($doc->createElement('label'));
+      $ellab->appendChild($doc->createTextNode($grp));
+      $div->appendChild($doc->createElement('br'));
+      
+    }
+    // end of group settings
+  }
+  $div = create_section($root,$doc,'Subscription');
+  $el = xml_add_usr_checkbox('subscription','Permanent subscriber',$div,$doc,$auprop,$usr);
+  $el = xml_add_usr_date('subscriptionend','Paid until:',$div,$doc,$auprop,$usr);
+  // add payment button:
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('value','0');
+  $el->setAttribute('type','number');
+  $el->setAttribute('step','0.01');
+  $el->setAttribute('min','0');
+  $el->setAttribute('id','addpayment');
+  $el = $div->appendChild($doc->createElement('label'));
+  $el->appendChild($doc->createTextNode('€ '));
+  $el = $div->appendChild($doc->createElement('button'));
+  $el->appendChild($doc->createTextNode('add payment'));
+  $el->setAttribute('onclick','rest_addpayment("'.$usr.'",document.getElementById("addpayment").value);');
+  $div->appendChild($doc->createElement('br'));
+  echo $doc->saveHTML() . "\n";
 }
 
 /*

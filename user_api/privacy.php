@@ -1,14 +1,19 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        header( "Location: ".$actual_link );
-        die();
+include '../php/ovbox.inc';
+{
+    $sitecfg = get_properties('site','config');
+    if( $sitecfg['forcehttps'] ){
+        if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+            if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+                $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".$actual_link );
+                die();
+            }
+        }
     }
 }
 
-include '../php/ovbox.inc';
 include '../php/rest.inc';
 include '../php/user.inc';
 

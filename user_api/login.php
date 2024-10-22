@@ -1,21 +1,23 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        header( "Location: ".$actual_link );
-        die();
+include '../php/ovbox.inc';
+{
+    $sitecfg = get_properties('site','config');
+    if( $sitecfg['forcehttps'] ){
+        if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+            if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+                $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".$actual_link );
+                die();
+            }
+        }
     }
 }
 
-include '../php/ovbox.inc';
 include '../php/rest.inc';
 include '../php/user.inc';
 
-$gprop = array('preamble'=>'<div>The <em>ovbox</em> is a remote collaboration system developed by
-the ORLANDOviols ensemble during the Covid19 pandemic. Our primary
-goal is to enable freelance musicians to rehearse and amateur
-musicians to reduce the effects of social isolation.</div>'."\n");
+$gprop = array('preamble'=>'<div>The <em>ovbox</em> is a remote music collaboration system developed by the ORLANDOviols ensemble during the Covid19 pandemic.</div>');
 
 // style settings:
 $urlgroup = '';
@@ -93,20 +95,29 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         print_head('',$style,$urlgroup);
         // display login box: username, password
         echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
-        echo $gprop['preamble'];
+        echo translate($gprop['preamble']);
         if( isset($_GET['fail']) )
             echo '<div class="failure">Sorry, invalid user name or password.</div>';
-        echo '<h2>Login:</h2>';
+        $dispuser = '';
+        $focuser = 'autofocus';
+        $focpw = '';
+        if( isset($_GET['usr']) ){
+            $dispuser = $_GET['usr'];
+            $focuser = '';
+            $focpw = 'autofocus';
+        }
+        echo '<h2>'.translate('Login:').'</h2>';
         echo '<form class="login" method="POST">';
-        echo '<div class="loginlab">User name:</div>';
-        echo '<input class="logininp" type="text" name="username"><br>';
-        echo '<div class="loginlab">Password:</div>';
-        echo '<input class="logininp" type="password" name="password"><br>';
+        echo '<div class="loginlab">'.translate('User name:').'</div>';
+        echo '<input class="logininp" type="text" name="username" value="'.$dispuser.'" '.$focuser.'><br>';
+        echo '<div class="loginlab">'.translate('Password:').'</div>';
+        echo '<input class="logininp" type="password" name="password" '.$focpw.'><br>';
         echo '<input type="hidden" name="login">';
-        echo '<button class="uibutton">Login</button>';
+        echo '<button class="uibutton">'.translate('login').'</button>';
         echo '</form>';
-        echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">Register as new user</a> &nbsp; '.
-            '<a href="forgotpw.php?grp='.grouphash($urlgroup).'">I forgot my password</a></p>';
+        echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">'.translate('Register as new user').'</a> &nbsp; '.
+                                            '<a href="forgotpw.php?grp='.grouphash($urlgroup).'">'.translate('I forgot my password').'</a></p>';
+        echo '<p>'.translate('If you have not used your account for more than one year, you must re-register as a new user to use the system again.').'</p>';
         echo '</div>';
         print_foot( $style, false );
         die();
@@ -155,6 +166,8 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
     session_regenerate_id();
     // auth okay, setup session
     $_SESSION['user'] = $_POST['username'];
+    // select first active device (if any):
+    select_first_active_dev( $_POST['username'] );
     header( "Location: ?grp=".grouphash($urlgroup) );
     die();
 }

@@ -1,14 +1,19 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        header( "Location: ".$actual_link );
-        die();
+include '../php/ovbox.inc';
+{
+    $sitecfg = get_properties('site','config');
+    if( $sitecfg['forcehttps'] ){
+        if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+            if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+                $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".$actual_link );
+                die();
+            }
+        }
     }
 }
 
-include '../php/ovbox.inc';
 include '../php/rest.inc';
 include '../php/user.inc';
 
@@ -35,7 +40,7 @@ echo '<form name="register" class="login" action="/login.php?grp='.grouphash($ur
 echo '<label>e-mail address:</label><br>';
 echo '<input type="text" name="mail" required><br>';
 echo '<label>User name:</label><br>';
-echo '<input type="text" name="username" pattern="[a-zA-Z0-9-_]*" title="only letters and numbers" required><br>';
+echo '<input type="text" name="username" pattern="[a-zA-Z0-9\-_]*" title="only letters and numbers" required><br>';
 echo '<label>Password:</label><br>';
 echo '<input type="password" name="password" required><br>';
 echo '<span style="font-size: 70%;"><input type="checkbox" name="agreepriv" required><label for="agreepriv">I have read and accept the <a target="blank" href="privacy.php">privacy policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerkärung</a>.</label><br>';

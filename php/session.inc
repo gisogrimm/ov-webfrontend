@@ -2,8 +2,13 @@
 
 session_start();
 
+// style settings:
+$urlgroup = '';
+if( isset($_GET['grp'] ) )
+  $urlgroup = get_group_by_hash($_GET['grp']);
+
 if( !isset($_SESSION['user']) ){
-  header( "Location: /login.php" );
+  header( "Location: /login.php?grp=".grouphash($urlgroup) );
   die();
 }
 
@@ -18,6 +23,16 @@ if( !in_array($user,list_users()) ){
   die();
 }
 $userprop = get_properties( $user, 'user' );
+// session-specific language:
+$GLOBALS['langdb'] = array();
+$GLOBALS['userlang'] = $userprop['lang'];
+$fname = '../db/'.$GLOBALS['userlang'].'.lang';
+if( file_exists( $fname ) ){
+  $filec = json_decode( file_get_contents( $fname ), true );
+  if( is_array($filec) )
+    $GLOBALS['langdb'] = array_merge($GLOBALS['langdb'], $filec);
+}
+// end language
 $device = get_device( $user );
 $owneddevices = array_keys(owned_devices($user));
 if( !in_array($device,$owneddevices) )
@@ -44,10 +59,6 @@ flock($fp_dev, LOCK_UN );
 if( empty($devprop['owner']) )
   $devprop['owner'] = $user;
 
-// style settings:
-$urlgroup = '';
-if( isset($_GET['grp'] ) )
-  $urlgroup = get_group_by_hash($_GET['grp']);
 $style = '';
 if( !empty($urlgroup) ){
   $gprop = get_properties( $urlgroup, 'group' );

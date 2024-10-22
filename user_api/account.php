@@ -1,14 +1,19 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-  if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-    $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-    header( "Location: ".$actual_link );
-    die();
+include '../php/ovbox.inc';
+{
+  $sitecfg = get_properties('site','config');
+  if( $sitecfg['forcehttps'] ){
+    if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+      if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        header( "Location: ".$actual_link );
+        die();
+      }
+    }
   }
 }
 
-include '../php/ovbox.inc';
 include '../php/rest.inc';
 include '../php/user.inc';
 include '../php/session.inc';
@@ -44,7 +49,7 @@ if( isset($_POST['contact']) ){
 
 print_head( $user, $style, $urlgroup );
 
-echo '<div><span class="ovtitle">User profile</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
+echo '<div><span class="ovtitle">User profile</span><div class="help">'.translate('Need help?').' - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 $doc = new DOMDocument('1.0');
 $root = $doc->appendChild($doc->createElement('div'));
@@ -68,6 +73,57 @@ $root->setAttribute('class','userarea');
   $el->setAttribute('value','reset password');
   $el->setAttribute('type','button');
   $el->setAttribute('onclick','rest_setval_post_reload( \'mypwreset\',\'\');;');
+  $div->appendChild($doc->createElement('br'));
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('type','checkbox');
+  $el->setAttribute('id','allowninja');
+  if( $userprop['allowninja'] )
+    $el->setAttribute('checked','');
+  $el->setAttribute('onchange','rest_set_userprop("allowninja",event.target.checked);');
+  $ellab = $div->appendChild($doc->createElement('label'));
+  $ellab->setAttribute('for','allowninja');
+  $ellab->appendChild($doc->createTextNode('allow embedding of video service from https://vdo.ninja/'));
+  //XXX
+  $supp = $div->appendChild($doc->createElement('div'));
+  if( $userprop['subscription'] )
+    $msg = 'As a permanent supporter you have premium access.';
+  else if( $userprop['validsubscription'] )
+    $msg = 'You have premium access until '.date('Y-m-d',floatval($userprop['subscriptionend'])).' (yyyy-mm-dd).';
+  else{
+    if( !$userprop['institution'] )
+      $msg = 'You do not have premium access. Please consider a donation; your donation of '.$site['subscriptionrate'].' €/month allows us to rent a powerful server.';
+  }
+  $supp->appendChild($doc->createTextNode($msg));
+  if( (!$userprop['subscription']) && (!$userprop['institution']) ){
+    $form = $div->appendChild($doc->createElement('form'));
+    $form->setAttribute('action','https://www.paypal.com/donate');
+    $form->setAttribute('method','post');
+    $form->setAttribute('target','_top');
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','hosted_button_id');
+    $inp->setAttribute('value','7FETYJ93A7KWC');
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','item_name');
+    $inp->setAttribute('value','House of Consort - '.$user);
+    $inp = $form->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','image');
+    $inp->setAttribute('src','https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif');
+    $inp->setAttribute('border','0');
+    $inp->setAttribute('name','submit');
+    $inp->setAttribute('title','PayPal - The safer, easier way to pay online!');
+    $inp->setAttribute('alt','Donate with PayPal button');
+    $inp = $form->appendChild($doc->createElement('img'));
+    $inp->setAttribute('alt','');
+    $inp->setAttribute('border','0');
+    $inp->setAttribute('src','https://www.paypal.com/en_DE/i/scr/pixel.gif');
+    $inp->setAttribute('width','1');
+    $inp->setAttribute('height','1');
+    $supp = $div->appendChild($doc->createElement('div'));
+    $supp->setAttribute('class','foto');
+    $supp->appendChild($doc->createTextNode('Donations are processed manually. After a donation, it may take a few days for us to update your account status. If you think we missed your donation, please use the contact form below and provide the date and amount of your donation.'));
+  }
 }
 {
   // personal info:

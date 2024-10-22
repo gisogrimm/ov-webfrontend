@@ -1,14 +1,19 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-    if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        header( "Location: ".$actual_link );
-        die();
+include '../php/ovbox.inc';
+{
+    $sitecfg = get_properties('site','config');
+    if( $sitecfg['forcehttps'] ){
+        if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+            if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+                $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                header( "Location: ".$actual_link );
+                die();
+            }
+        }
     }
 }
 
-include '../php/ovbox.inc';
 include '../php/admin.inc';
 include '../php/user.inc';
 include '../php/session.inc';
@@ -20,6 +25,8 @@ if( !in_array($user,$site['admin']) ){
     header( "Location: /" );
     die();
 }
+
+$subscriptionadmin = in_array($user,$site['subscriptionadmin']);
 
 // get exclusive lock on database and users:
 flock($fp_dev, LOCK_EX );
@@ -126,7 +133,12 @@ if( $loadavg || $cpuload ){
     if( $cpuload )
         echo 'Server CPU load: '.round($cpuload,1).'% ';
     if( $loadavg )
-        echo 'Load average: '.$loadavg[0].'/'.$loadavg[1].'/'.$loadavg[2];
+        echo 'Load average: ' .
+                              number_format($loadavg[0], 2, '.', '') .
+                              '/' .
+                              number_format($loadavg[1], 2, '.', '') .
+                              '/' .
+                              number_format($loadavg[2], 2, '.', '');
     echo '</p>';
 }
 
@@ -137,7 +149,7 @@ if( isset($_GET['adm']) ){
 }
 
 if( $adm == 'devices' ){
-    html_admin_db('device',array('roomage','version'));
+    html_admin_db('device',array('version','uname_machine','uname_sysname','uname_release'));
     echo '<form><input type="hidden" name="rmolddevs"/><button>Remove inactive unclaimed devices</button></form>';
 }
 if( $adm == 'rooms' ){
@@ -148,6 +160,13 @@ if( $adm == 'users' ){
 }
 if( $adm == 'groups' ){
     html_admin_groups();
+}
+if( $adm == 'edituser' ){
+    $usr = '';
+    if( isset($_GET['admusr']) ){
+        $usr = $_GET['admusr'];
+        html_admin_edituser($usr, $site);
+    }
 }
 flock($fp_dev, LOCK_UN );
 flock($fp_user, LOCK_UN );

@@ -1,21 +1,26 @@
 <?php
 
-if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
-  if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
-    $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-    header( "Location: ".$actual_link );
-    die();
+include '../php/ovbox.inc';
+{
+  $sitecfg = get_properties('site','config');
+  if( $sitecfg['forcehttps'] ){
+    if( !(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ){
+      if( substr_compare( $_SERVER['HTTP_HOST'], 'localhost', 0, 9 )!= 0){
+        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        header( "Location: ".$actual_link );
+        die();
+      }
+    }
   }
 }
 
-include '../php/ovbox.inc';
 include '../php/user.inc';
 include '../php/rest.inc';
 include '../php/session.inc';
 
 print_head( $user, $style, $urlgroup );
 
-echo '<div><span class="ovtitle">Session map</span><div class="help">Need help? - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a> / <a target="blank" href="https://forum.digital-stage.org/">DS-Forum</a></div></div>';
+echo '<div><span class="ovtitle">Session map</span><div class="help">'.translate('Need help?').' - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
 

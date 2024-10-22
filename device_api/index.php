@@ -143,10 +143,26 @@ if ($user == 'device') {
                 $dprop['access'] = time();
                 $dprop['alsadevs'] = $jsmsg['alsadevs'];
                 $dprop['bandwidth'] = $jsmsg['bandwidth'];
+                if( isset($jsmsg['uname_sysname']) )
+                    $dprop['uname_sysname'] = $jsmsg['uname_sysname'];
+                else
+                    $dprop['uname_sysname'] = "";
+                if( isset($jsmsg['uname_release']) )
+                    $dprop['uname_release'] = $jsmsg['uname_release'];
+                else
+                    $dprop['uname_release'] = "";
+                if( isset($jsmsg['uname_machine']) )
+                    $dprop['uname_machine'] = $jsmsg['uname_machine'];
+                else
+                    $dprop['uname_machine'] = "";
                 if( isset($jsmsg['cpuload']) )
                     $dprop['cpuload'] = $jsmsg['cpuload'];
                 else
                     $dprop['cpuload'] = 0;
+                if( isset($jsmsg['thermal']) )
+                    $dprop['thermal'] = $jsmsg['thermal'];
+                else
+                    $dprop['thermal'] = array();
                 if( isset($jsmsg['localip']) )
                     $dprop['localip'] = $jsmsg['localip'];
                 else
@@ -163,9 +179,82 @@ if ($user == 'device') {
                     $dprop['isovbox'] = true;
                 if( isset($jsmsg['version']) )
                     $dprop['version'] = $jsmsg['version'];
+                if( isset($jsmsg['networkdevices']) )
+                    $dprop['networkdevices'] = $jsmsg['networkdevices'];
+                if( isset($jsmsg['backendperiodsize']) )
+                    $dprop['backendperiodsize'] = $jsmsg['backendperiodsize'];
+                if( isset($jsmsg['backendsrate']) )
+                    $dprop['backendsrate'] = $jsmsg['backendsrate'];
+                if( isset($jsmsg['backendxruns']) )
+                    $dprop['backendxruns'] = $jsmsg['backendxruns'];
+                //if( isset($jsmsg['effectplugincfg']) && $jsmsg['effectplugincfg'] ){
+                //    error_log('-----');
+                //    error_log(json_encode($jsmsg['effectplugincfg']));
+                //    foreach($dprop['inputchannels'] as $chn => &$ch){
+                //        foreach($ch['plugins'] as $key=>&$plug){
+                //            $plug = array_merge($plug,$jsmsg['effectplugincfg'][$chn][$key]);
+                //            error_log($key);
+                //            error_log(json_encode($plug));
+                //        }
+                //        error_log(json_encode($ch['plugins']));
+                //    }
+                //    //error_log(json_encode(array_merge($effectarr,$jsmsg['effectplugincfg'])));
+                //}
                 set_properties( $device, 'device', $dprop );
                 if( isset($jsmsg['pingstats']) )
                     set_properties( $device.'_'.$dprop['room'], 'pingstats', $jsmsg['pingstats'] );
+            }
+        }
+    }
+    if( isset($_GET['pluginscfg']) ){
+        $device = $_GET['pluginscfg'];
+        if( !empty($device) ){
+            $putdata = fopen("php://input", "r");
+            $jsmsg = '';
+            while ($data = fread($putdata,1024))
+                $jsmsg = $jsmsg . $data;
+            fclose($putdata);
+            $jsmsg = json_decode($jsmsg,true);
+            if( !is_null($jsmsg) ){
+                $dprop = get_properties($device,'device');
+                foreach($dprop['inputchannels'] as $chn => &$ch){
+                    foreach($ch['plugins'] as $key=>&$plug){
+                        if( $key == 'filter' ){
+                            if( isset($jsmsg[$chn][$key]['q']) ){
+                                $val = $jsmsg[$chn][$key]['q'];
+                                unset($jsmsg[$chn][$key]['q']);
+                                $jsmsg[$chn][$key]['Q'] = $val;
+                            }
+                        }
+                        $plug = array_merge($plug,$jsmsg[$chn][$key]);
+                    }
+                }
+                set_properties( $device, 'device', $dprop );
+            }
+        }
+    }
+    if( isset($_GET['objmixcfg']) ){
+        $device = $_GET['objmixcfg'];
+        if( !empty($device) ){
+            $putdata = fopen("php://input", "r");
+            $jsmsg = '';
+            while ($data = fread($putdata,1024))
+                $jsmsg = $jsmsg . $data;
+            fclose($putdata);
+            $jsmsg = json_decode($jsmsg,true);
+            if( !is_null($jsmsg) && !is_null($jsmsg['channels']) ){
+                $dprop = get_properties($device,'device');
+                if( count($jsmsg['channels'])==count($dprop['inputchannels']) ){
+                    foreach($dprop['inputchannels'] as $chn => &$ch){
+                        $ch['position']['x'] = floatval($jsmsg['channels'][$chn]['x']);
+                        $ch['position']['y'] = floatval($jsmsg['channels'][$chn]['y']);
+                        $ch['position']['z'] = floatval($jsmsg['channels'][$chn]['z']);
+                        $ch['gain'] = floatval($jsmsg['channels'][$chn]['gain']);
+                    }
+                    $dprop['rvbgain'] = floatval(0.1*round(200*log10(floatval($jsmsg['reverbgain']))));
+                    $dprop['mastergain'] = floatval(0.1*round(200*log10(floatval($jsmsg['main']))));
+                    set_properties( $device, 'device', $dprop );
+                }
             }
         }
     }
@@ -192,11 +281,14 @@ if ($user == 'room') {
             if( in_array( $_GET['grp'], list_groups()))
                 $group = $_GET['grp'];
         }
+        $roomver = '';
+        if( isset($_GET['version']) )
+            $roomver = $_GET['version'];
         // update database entry:
         if( isset($_GET['srvjit']) )
-            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $_GET['srvjit'] );
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver, $_GET['srvjit'] );
         else
-            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group );
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver );
         if( isset($_GET['empty']) )
             clear_room_lat( $clientip, $_GET['port'] );
     }

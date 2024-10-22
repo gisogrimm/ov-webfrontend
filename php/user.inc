@@ -12,12 +12,8 @@ function crypt_apr1_md5($plainpasswd, $salt)
   $len = strlen($plainpasswd);
   $text = $plainpasswd.'$apr1$'.$salt;
   $bin = pack("H32", md5($plainpasswd.$salt.$plainpasswd));
-    for ($i = $len; $i > 0; $i -= 16) {
-        $text .= substr($bin, 0, min(16, $i));
-    }
-    for ($i = $len; $i > 0; $i >>= 1) {
-        $text .= ($i & 1) ? chr(0) : $plainpasswd{0};
-    }
+  for($i = $len; $i > 0; $i -= 16) { $text .= substr($bin, 0, min(16, $i)); }
+  for($i = $len; $i > 0; $i >>= 1) { $text .= ($i & 1) ? chr(0) : $plainpasswd[0]; }
   $bin = pack("H32", md5($text));
     for ($i = 0; $i < 1000; $i++) {
     $new = ($i & 1) ? $plainpasswd : $bin;
@@ -92,7 +88,8 @@ function html_device_selector( $user, $currentdevice, $dprop )
   if( $dprop['age'] < 20 )
     $actclass = ' actmember';
   $select->setAttribute('class',$actclass);
-  foreach( owned_devices( $user ) as $dev=>$sdprop ){
+  $devlist = owned_devices( $user );
+  foreach( $devlist as $dev=>$sdprop ){
     $opt = $select->appendChild($doc->createElement('option'));
     $opt->setAttribute('value',$dev);
     if( $currentdevice == $dev )
@@ -127,6 +124,12 @@ function create_inputportcfg( &$doc, &$form, $devprop )
   $el->setAttribute('type','hidden');
   $el->setAttribute('id','hwinputchannels');
   $el->setAttribute('value',json_encode($devprop['hwinputchannels']));
+  // pass expert mode:
+  $el = $form->appendChild($doc->createElement('input'));
+  $el->setAttribute('type','hidden');
+  $el->setAttribute('id','devcfg');
+  $devprop['canplugins'] = (version_compare("ovclient-0.16.13",$devprop['version'])<0);
+  $el->setAttribute('value',json_encode($devprop));
   $div = $form->appendChild($doc->createElement('div'));
   $div->setAttribute('id','jsinputchannelsdiv');
   // load java scripts:
@@ -150,12 +153,12 @@ function add_input_element( &$parent, &$doc, &$devprop, $prop, $type, $label, $e
   return $el;
 }
 
-function add_expert_div( &$el, &$doc, $devprop = array() )
+function add_expert_div( &$el, &$doc, $devprop = array(), $prop = 'showexpertsettings' )
 {
   $div = $el->appendChild( $doc->createElement('div') );
-  $div->setAttribute('class','expert');
-  if( isset($devprop['showexpertsettings']) ){
-    if( $devprop['showexpertsettings'] )
+  $div->setAttribute('class',$prop);
+  if( isset($devprop[$prop]) ){
+    if( $devprop[$prop] )
       $div->setAttribute('style','display: block;');
     else
       $div->setAttribute('style','display: none;');
@@ -165,7 +168,7 @@ function add_expert_div( &$el, &$doc, $devprop = array() )
   return $div;
 }
 
-function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false )
+function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false, $toggleclass = false, $msgclass = '' )
 {
   if( $styled ){
     $lab = $div->appendChild($doc->createElement('label'));
@@ -182,16 +185,20 @@ function xml_add_checkbox( $id, $msg, $div, $doc, $devprop, $styled = false )
   $el->setAttribute('type','checkbox');
   if( $devprop[$id] )
     $el->setAttribute('checked','');
-  $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);');
+  if( $toggleclass )
+    $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);set_displayclass("'.$id.'",event.target.checked);');
+  else
+    $el->setAttribute('onchange','rest_set_devprop("'.$id.'",event.target.checked);');
   if( !$styled ){
     $ellab = $div->appendChild($doc->createElement('label'));
     $ellab->setAttribute('for',$id);
     $ellab->appendChild($doc->createTextNode($msg));
+    if( strlen($msgclass) > 0 )
+      $ellab->setAttribute('class',$msgclass);
   }
   $div->appendChild($doc->createElement('br'));
   return $el;
 }
-
 
 function xml_add_input_generic( $id, $msg, $div, $doc, $devprop, $bratend = true )
 {
@@ -214,17 +221,30 @@ function set_dev_room_pos( $room )
   $roomdev = get_devices_in_room( $room, true );
   ksort($roomdev);
   $stagewidth = 360;
+  $numchairs = 0;
+  foreach( $roomdev as $chair => $dev ){
+    $dprop = get_properties( $dev, 'device' );
+    if( !$dprop['nochair'] )
+      $numchairs = $numchairs + 1;
+  }
   $az = 0;
-  $daz = $stagewidth/count($roomdev)*(pi()/180);
+  $daz = pi();
+  if( $numchairs > 0 )
+    $daz = $stagewidth/$numchairs*(pi()/180);
   $az = $az*(pi()/180)-0.5*$daz;
   $radius = 1.2;
   foreach( $roomdev as $chair => $dev ){
-    $az = $az+$daz;
-    $pos_x = $radius * cos( -$az );
-    $pos_y = -$radius * sin( -$az );
     $dprop = get_properties( $dev, 'device' );
-    $dprop['position'] = array('x'=>$pos_x,'y'=>$pos_y,'z'=>0);
-    $dprop['orientation'] = array('z'=>(180/pi()*($az+pi())),'y'=>0,'x'=>0);
+    if( !$dprop['nochair'] ){
+      $az = $az+$daz;
+      $pos_x = $radius * cos( -$az );
+      $pos_y = -$radius * sin( -$az );
+      $dprop['position'] = array('x'=>$pos_x,'y'=>$pos_y,'z'=>0);
+      $dprop['orientation'] = array('z'=>(180/pi()*($az+pi())),'y'=>0,'x'=>0);
+    }else{
+      $dprop['position'] = array('x'=>0,'y'=>0,'z'=>0);
+      $dprop['orientation'] = array('z'=>0,'y'=>0,'x'=>0);
+    }
     set_properties( $dev, 'device', $dprop );
   }
 }
@@ -272,7 +292,7 @@ function html_show_device( $user, $device, $devprop )
     if( $devprop['metroactive'] )
       $inpactive->setAttribute('checked','');
     $inpactive->setAttribute('onchange','setmetro(\'active\',this.checked);');
-    $div->appendChild($doc->createTextNode(' metronome '));
+    $div->appendChild($doc->createTextNode(' '.translate('metronome').' '));
     $div = $div->appendChild($doc->createElement('div'));
     $div->setAttribute('id','metrocontrols');
     if( $devprop['metroactive'] )
@@ -394,29 +414,12 @@ function auth( $username, $password )
   return password_verify( $password, $pws[$username] );
 }
 
-function add_user_to_group( $user, $group )
-{
-  if( !(empty($group)||empty($user)) ){
-    $fname = '../db/groups';
-    if( file_exists( $fname ) ){
-      $groups = json_decode( file_get_contents( $fname ), true );
-      if( array_key_exists( $group, $groups ) ){
-        $users = $groups[$group];
-        if( !in_array( $user, $users ) ){
-          $users[] = $user;
-          $groups[$group] = $users;
-          file_put_contents( $fname, json_encode( $groups ));
-        }
-      }
-    }
-  }
-}
-
 function device_enter_room( $device, $room )
 {
+  $dprop = get_properties( $device, 'device' );
+  $prevroom = $dprop['room'];
   $othersinroom = get_devices_in_room( $room );
   if( !in_array( $device, $othersinroom ) ){
-    $dprop = get_properties( $device, 'device' );
     $dprop['room'] = $room;
     $dprop['chair'] = get_free_chair($room);
     if( empty($room) )
@@ -428,8 +431,13 @@ function device_enter_room( $device, $room )
     $dprop['position'] = array('x'=>0,'y'=>0,'z'=>0);
     $dprop['orientation'] = array('z'=>0,'y'=>0,'x'=>0);
     set_properties( $device, 'device', $dprop );
-    set_dev_room_pos( $room );
+    if( empty($room) )
+      set_dev_room_pos( $prevroom );
+    else
+      set_dev_room_pos( $room );
     modify_room_prop( $room, 'deventer', time() );
+    array_map('unlink', glob('../db/'.$device.'_*.pingstats'));
+    array_map('unlink', glob('../db/*_'.$room.'.pingstats'));
   }
 }
 
@@ -463,7 +471,7 @@ function request_passwd_reset( $username )
   $mailmsg = "Please follow this link to reset the password of your ovbox acount ".$username.":\n\n" . $actual_link . "&pwreset=".$reghash .
            "\n\nThis link is valid for one hour.\n\nIf you did not request a password reset, please ignore this mail.\n";
   file_put_contents( '../lastmailsg',$mailmsg);
-    sendmail($mail, 'ovbox password reset', $mailmsg);
+  sendmail($mail, 'ovbox password reset', $mailmsg);
 }
 
 function register_new_user( $mail, $username, $password, $group, &$msg )
@@ -515,9 +523,9 @@ function register_new_user( $mail, $username, $password, $group, &$msg )
     $mailmsg = $mailmsg."\n"."from ".$mail."\n";
   file_put_contents( '../lastmailsg',$mailmsg);
   if( $site['moderation'] )
-        sendmail($site['mail'], 'ovbox account activation request', $mailmsg);
+    sendmail($site['mail'], 'ovbox account activation request', $mailmsg);
   else
-        sendmail($mail, 'ovbox account activation', $mailmsg);
+    sendmail($mail, 'ovbox account activation', $mailmsg);
   return true;
 }
 
@@ -578,7 +586,7 @@ function terminate_account( $user )
     $pws = json_decode( file_get_contents( $fname ), true );
   if( !array_key_exists($user,$pws) ){
     $sitecfg = get_properties('site','config');
-        sendmail($sitecfg['mail'], 'manual ovbox account activation request', 'remove user ' . $user);
+    sendmail($sitecfg['mail'], 'manual ovbox account activation request', 'remove user ' . $user);
   }
   unset($pws[$user]);
   file_put_contents( $fname, json_encode( $pws ));
@@ -616,6 +624,7 @@ function claim_device_id( $user, $dev,  &$msg )
     modify_device_prop( $device, 'owner', $user);
     modify_device_prop( $device, 'access', $dprop['access']);
     modify_device_prop( $device, 'onlineaccess', $dprop['onlineaccess']);
+    select_userdev($user, $device);
     return true;
   }else{
     $msg = 'No device with MAC address or device ID '.$dev.' found in the data base. Probably the installation of the device failed, it has no network connection or is blocked by a firewall.';
@@ -651,7 +660,25 @@ function html_show_my_pwreset($user, $style, $urlgroup, $userprop)
   }
 }
 
-function print_head( $user = "", $style = "", $urlgroup = "" )
+function html_show_language_selector(){
+  $doc = new DOMDocument('1.0');
+  $div = $doc->appendChild($doc->createElement('div'));
+  //$div->appendChild($doc->createTextNode($GLOBALS['userlang']));
+  $inp = $div->appendChild($doc->createElement('select'));
+  $inp->setAttribute('class','navbar langsel');
+  $inp->setAttribute('oninput','rest_set_userprop("lang", event.target.value, true);');
+  $langs = get_languages();
+  foreach($langs as $us){
+    $opt = $inp->appendChild($doc->createElement('option'));
+    $opt->setAttribute('value',$us);
+    $opt->appendChild($doc->createTextNode($us));
+    if( $GLOBALS['userlang'] == $us )
+      $opt->setAttribute('selected','');
+  }
+  echo $doc->saveHTML();
+}
+
+function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true )
 {
   $sitecfg = get_properties('site','config');
   $css = '';
@@ -676,44 +703,46 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
     echo file_get_contents( '../css/'.$css );
   }
   echo '</style>';
+  echo '<script>const langdb = '.json_encode($GLOBALS['langdb']).';</script>'."\n";
   echo '<script src="/js/ovbox.js"></script>'."\n";
   echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
   echo '</head><body onload="starttimer();">';
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    #echo '<div class="ad"><b>Concert</b> 10 September, 19:00h CEST: <em>Sound out my voice!</em> Italian madrigals with diminutions <a href="https://orlandoviols.de/">orlandoviols.de</a> </div>'."\n";
+    //echo '<div class="ad">For enhanced security, the box.orlandoviols.com site has been successfully moved to a new server. We apologize for any inconvenience this may cause and are here to assist you. If you encounter any issues, please reach out to us at <a href="mailto:info@ovbox.de">info@ovbox.de</a>. Additionally, the installation of new devices experienced a brief disruption but has now been fixed. For more details, please visit  <a href="https://ovbox.de">ovbox.de</a>.<br/>Aus Sicherheitsgründen wurde die Website box.orlandoviols.com erfolgreich auf einen neuen Server umgezogen. Wir entschuldigen uns für etwaige Unannehmlichkeiten und stehen Ihnen gerne zur Verfügung. Sollten Sie auf Probleme stoßen, kontaktieren Sie uns bitte unter <a href="mailto:info@ovbox.de">info@ovbox.de</a>. Außerdem gab es eine kurze Unterbrechung bei der Installation neuer Geräte, die inzwischen behoben wurde. Weitere Informationen finden Sie auf <a href="https://ovbox.de">ovbox.de</a>.</div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
     $isadmin = in_array($user,$sitecfg['admin']);
-    echo '<div class="navbar ovhead">'. "\n";
-    echo '<button type="button"  onclick="toggle_ovnavh();" class="navbar-toggle">';
-    echo '<span class="sr-only">Toggle navigation</span>';
-    echo '<span class="icon-bar"></span>';
-    echo '<span class="icon-bar"></span>';
-    echo '<span class="icon-bar"></span>';
-    echo '</button>';
-    echo '<span class="ovnavnh">';
-    echo '<h1 class="navbar" onclick="location.href=\'/\';">'.$title.'</h1>' . "\n";
-    echo '<a class="ovlogout" href="/?grp='.grouphash($urlgroup).'&logout"><img src="logout.png" alt="Logout" class="navbaricon"/></a>';
-    echo '</span>';
-    echo '<span class="ovnavh" id="ovnavh">';
-    echo '<a class="navbar ovnav" href="/?grp='.grouphash($urlgroup).'">Session</a>';
-    echo '<a class="navbar ovnav" href="/device.php?grp='.grouphash($urlgroup).'">Device settings</a>';
-    if( $isadmin ){
-      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=devices">Devices</a>';
-      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=rooms">Rooms</a>';
-      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=users">Users</a>';
-      echo '<a class="navbar ovnav adminarea" href="admin.php?adm=groups">Groups</a>';
+    if( $show_menu ){
+      echo '<div class="navbar ovhead">'. "\n";
+      echo '<button type="button"  onclick="toggle_ovnavh();" class="navbar-toggle">';
+      echo '<span class="sr-only">Toggle navigation</span>';
+      echo '<span class="icon-bar"></span>';
+      echo '<span class="icon-bar"></span>';
+      echo '<span class="icon-bar"></span>';
+      echo '</button>';
+      echo '<span class="ovnavnh">';
+      echo '<h1 class="navbar" onclick="location.href=\'/\';">'.$title.'</h1>' . "\n";
+      echo '<a class="ovlogout" href="/?grp='.grouphash($urlgroup).'&logout"><img src="logout.png" alt="Logout" class="navbaricon"/></a>';
+      echo '</span>';
+      echo '<span class="ovnavh" id="ovnavh">';
+      echo '<a class="navbar ovnav" href="/?grp='.grouphash($urlgroup).'">'.translate('Session').'</a>';
+      echo '<a class="navbar ovnav" href="/device.php?grp='.grouphash($urlgroup).'">'.translate('Device settings').'</a>';
+      if( $isadmin ){
+        echo '<a class="navbar ovnav adminarea" href="admin.php?adm=devices">Devices</a>';
+        echo '<a class="navbar ovnav adminarea" href="admin.php?adm=rooms">Rooms</a>';
+        echo '<a class="navbar ovnav adminarea" href="admin.php?adm=users">Users</a>';
+        echo '<a class="navbar ovnav adminarea" href="admin.php?adm=groups">Groups</a>';
+      }
+      echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$user.'</a>' . "\n";
+      //echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$GLOBALS['userlang'].'</a>' . "\n";
+      html_show_language_selector();
+      echo '</span>';
+      echo '</div>'. "\n";
     }
-    echo '<a class="navbar ovuser" href="/account.php?grp='.grouphash($urlgroup).'">'.$user.'</a>' . "\n";
-    echo '</span>';
-    echo '</div>'. "\n";
     echo '<div class="ovcontent">'. "\n";
-    //// start ad:
-    //echo '<div class="ad"><b>Concert</b> June 23rd, 20:15h CEST: <em>Royal Coronation Consort</em> with ORLANDOviols - <a href="https://www.kultur-vor-ort.com/veranstaltungen/royal-coronation-consort/" style="font-family: Helvetica;">kultur|vor|ort</a> </div>'."\n";
-    //// end ad.
     if( isset($_SESSION['usermsg']) ){
       echo '<div class="deverror">'.$_SESSION['usermsg'].'</div>';
       unset($_SESSION['usermsg']);
@@ -722,7 +751,7 @@ function print_head( $user = "", $style = "", $urlgroup = "" )
   //echo '<div class="deverror"><b>Planned service downtime</b> (server maintenance): Thursday April 22nd 8pm - Friday April 23rd 9am<br/><b>Server-Wartung</b>: Von Donnerstag 22.4. 20 Uhr bis vorraussichtlich Freitag 23.4. 9 Uhr steht diese Seite nicht zur Verfügung.</div>'."\n";
 }
 
-function print_foot($style = '',$show_donate = true)
+function print_foot($style = '',$show_donate = -1)
 {
   $sitecfg = get_properties('site','config');
   $credits = $sitecfg['credits'];
@@ -731,8 +760,11 @@ function print_foot($style = '',$show_donate = true)
   if( !empty($style) ){
     $sprop = get_properties( $style, 'style' );
     $credits = $sprop['credits'];
-    $show_donate = $sprop['showdonate'];
+    if( $show_donate == -1 )
+      $show_donate = $sprop['showdonate'];
   }
+  if( $show_donate == -1 )
+    $show_donate = true;
   if( $show_donate ){
     echo '<div class="donate">';
     echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">';
@@ -742,10 +774,13 @@ function print_foot($style = '',$show_donate = true)
     echo '<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />';
     echo '</form>';
     echo '</div>';
+  }else{
+    echo '<div class="donate">';
+    echo '</div>';
   }
   echo '</div>'. "\n";// ovcontent
   echo '<div class="ovfoot">'. "\n";
-  echo '<div class="ovstage">A service by <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a> in cooperation with <a target="blank" href="https://digital-stage.org/">Digital Stage</a>.</div>';
+  echo '<div class="ovstage">'.translate('A service by').' <a target="blank" href="https://orlandoviols.com/">ORLANDOviols</a>.</div>';
   echo '<div class="foto">'.$credits.'</div>';
   echo '<div class="foto"><a target="blank" href="terms.php">Terms of Service</a> / <a target="blank" href="privacy.php">Privacy Policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerklärung</a></div>';
   echo '</div>'. "\n";// ovfoot
@@ -763,9 +798,12 @@ function create_section($parent, $doc, $title)
   return $div;
 }
 
-function clean_userdb()
-{
-  $rmusers = array();
+function clean_userdb(){
+  // number constants for time intervals:
+  $fiveDaysInSeconds = 5*24*3600;
+  $oneYearInSeconds = 365*24*3600;
+  //
+  $users_to_remove = array();
   $users = list_users();
   $udb = array();
   $alldev = list_devices();
@@ -781,12 +819,18 @@ function clean_userdb()
     $udb[$us] = $uprop;
   }
   foreach($udb as $us=>$uprop){
-    if( (($uprop['numdev']==0) && ($uprop['age']>31*24*3600)) ||
-        ((($uprop['numdev']>0) && (($uprop['devage']>181*24*3600) && $uprop['age']>181*24*3600))) ){
-      $rmusers[] = $us;
+    // do not remove users who have a valid subscription or are part of an institution:
+    if( (!$uprop['validsubscription']) and (!$uprop['institution']) ){
+      // remove users without device after 5 days, and incactive users
+      // with devices after a year:
+      if( (($uprop['numdev']==0) && ($uprop['age']>$fiveDaysInSeconds)) ||
+          ((($uprop['numdev']>0) && (($uprop['devage']>$oneYearInSeconds) && $uprop['age']>$oneYearInSeconds))) ){
+        $users_to_remove[] = $us;
+      }
     }
   }
-  foreach( $rmusers as $us ){
+  foreach( $users_to_remove as $us ){
+    // terminate the account of the user $us:
     terminate_account( $us );
   }
 }

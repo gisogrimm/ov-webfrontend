@@ -136,7 +136,6 @@ function set_getprop_post_float( &$prop, $key )
     }
 }
 
-
 /*
  * Local Variables:
  * c-basic-offset: 2
