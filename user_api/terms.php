@@ -78,7 +78,7 @@ any time via the website or by e-mail. By terminating an account, all
 associated data is irretrievably deleted.</p>';
 echo '<p>Inactive accounts are automatically deleted. Accounts without a
 linked device are considered inactive if the user has not logged on
-within the last 30 days. Accounts with a linked device are considered
+within the last 24 hours. Accounts with a linked device are considered
 inactive if the user has not accessed the ovbox services within the
 last year.</p>';
 
