@@ -808,7 +808,8 @@ function create_section( $parent, $doc, $title ){
 
 function clean_userdb(){
   // number constants for time intervals:
-  $fiveDaysInSeconds = 5*24*3600;
+  $oneDayInSeconds = 24*3600;
+  //$fiveDaysInSeconds = 5*24*3600;
   $oneYearInSeconds = 365*24*3600;
   //
   $users_to_remove = array();
@@ -831,7 +832,7 @@ function clean_userdb(){
     if( (!$uprop['validsubscription']) and (!$uprop['institution']) ){
       // remove users without device after 5 days, and incactive users
       // with devices after a year:
-      if( (($uprop['numdev']==0) && ($uprop['age']>$fiveDaysInSeconds)) ||
+      if( (($uprop['numdev']==0) && ($uprop['age']>$oneDayInSeconds)) ||
           ((($uprop['numdev']>0) && (($uprop['devage']>$oneYearInSeconds) && $uprop['age']>$oneYearInSeconds))) ){
         $users_to_remove[] = $us;
       }
