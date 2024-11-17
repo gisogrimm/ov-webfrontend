@@ -94,16 +94,18 @@ const synth2 = {
 const synth3 = {
     'simplesynth': {
         'autoconnect': 'true',
-        'decay': 20,
+        'decay': 40,
         'decaydamping': 0.07,
         'decayoffset': 0.2,
-        'detune': -6.25,
-        'f0': 440,
+        'detune': -0.75,
+        'f0': 415,
         'level': 79.2969,
-        'onset': 0.04,
+        'onset': 0.14,
         'noiseweigth': 0.1,
         'decaynoise': 0.1,
-        'noiseq': 0.3
+        'noiseq': 0.3,
+        'partialweights':'1 1 0.316 1 0.282 1 2 0.0891 0.0398 0.0398 0.398',
+        'tuning':'meantone4'
     }
 }
 
