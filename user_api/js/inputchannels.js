@@ -101,9 +101,10 @@ const synth3 = {
         'f0': 415,
         'level': 79.2969,
         'onset': 0.14,
-        'noiseweigth': 0.1,
+        'noiseweight': 0.1,
         'decaynoise': 0.1,
         'noiseq': 0.3,
+        'gamma': 0.2,
         'partialweights':'1 1 0.316 1 0.282 1 2 0.0891 0.0398 0.0398 0.398',
         'tuning':'meantone4'
     }
