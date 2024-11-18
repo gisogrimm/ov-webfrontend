@@ -106,7 +106,8 @@ const synth3 = {
         'noiseq': 0.3,
         'gamma': 0.2,
         'partialweights':'1 1 0.316 1 0.282 1 2 0.0891 0.0398 0.0398 0.398',
-        'tuning':'meantone4'
+        'tuning':'meantone4',
+        'noisemin':0.01
     }
 }
 
