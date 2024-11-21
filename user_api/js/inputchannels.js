@@ -521,7 +521,7 @@ function inputchannels_createUI() {
       box5.setAttribute('class', 'plugincategory');
       var tlab5 = box5.appendChild(document.createElement('div'));
       tlab5.setAttribute('class', 'plugincategorylab');
-      tlab5.appendChild(document.createTextNode('Plugin presets:'));
+        tlab5.appendChild(document.createTextNode(translate('Plugin presets:')));
       if (jsdevcfg.canplugins) {
         if (inchannels[k]['plugins'] == null) inchannels[k]['plugins'] = {};
         var el = box5.appendChild(document.createElement('input'));
@@ -604,19 +604,19 @@ function inputchannels_createUI() {
           fltslab.appendChild(document.createTextNode(translate('synths')));
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
-        el.setAttribute('value', 'synth1');
+          el.setAttribute('value', translate('synth1'));
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(synth1));inputchannels_createUI();}');
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
-        el.setAttribute('value', 'synth2');
+          el.setAttribute('value', translate('synth2'));
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(synth2));inputchannels_createUI();}');
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
-        el.setAttribute('value', 'synth3');
+          el.setAttribute('value', translate('synth3'));
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(synth3));inputchannels_createUI();}');
