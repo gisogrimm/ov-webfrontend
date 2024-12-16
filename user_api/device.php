@@ -252,6 +252,10 @@ if( !empty($device) ){
     $el = add_input_element( $divex, $doc, $devprop, 'jackbuffers', 'number',translate('Number of buffers (typically 2): '));
     $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
     $el->setAttribute('min',2);
+    $el = add_input_element( $divex, $doc, $devprop, 'jackpriority', 'number',translate('Jack realtime priority: '));
+    $el->setAttribute('oninput','dispvaluechanged_id("jackvaluechanged");');
+    $el->setAttribute('min',0);
+    $el->setAttribute('max',98);
     $el = $div->appendChild($doc->createElement('input'));
     $el->setAttribute('class','uibutton');
     $el->setAttribute('type','button');

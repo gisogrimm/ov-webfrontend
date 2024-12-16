@@ -143,6 +143,7 @@ if( isset($_POST['setdevprop']) ){
         set_getprop_post_float($prop,'jackrate');
         set_getprop_post_float($prop,'jackperiod');
         set_getprop_post_float($prop,'jackbuffers');
+        set_getprop_post_float($prop,'jackpriority');
         set_getprop_post_float($prop,'headtrackingport');
         set_getprop_post_float($prop,'headtrackingtauref');
         if( isset($_POST['xrecport']) )

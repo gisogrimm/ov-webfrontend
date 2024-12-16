@@ -133,6 +133,7 @@ $presetkeys = ['label',
                'jackrate',
                'jackperiod',
                'jackbuffers',
+               'jackpriority',
                'headtracking',
                'headtrackingrot',
                'headtrackingrotsrc',
@@ -211,6 +212,7 @@ if( isset($_POST['jackaudio']) ){
     set_getprop_post_float($dprop,'jackrate');
     set_getprop_post_float($dprop,'jackperiod');
     set_getprop_post_float($dprop,'jackbuffers');
+    set_getprop_post_float($dprop,'jackpriority');
     $dprop['preset'] = '';
     set_properties( $device, 'device', $dprop );
 }

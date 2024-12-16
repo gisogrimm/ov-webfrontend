@@ -173,6 +173,7 @@ function get_room_session( $device, $devhash )
   $audio['srate'] = floatval($devprop['jackrate']);
   $audio['periodsize'] = intval($devprop['jackperiod']);
   $audio['numperiods'] = intval($devprop['jackbuffers']);
+  $audio['priority'] = intval($devprop['jackpriority']);
   $audio['restart'] = boolval($devprop['jackrestart']);
   if( $devprop['jackrestart'] )
     modify_device_prop( $device, 'jackrestart', false );

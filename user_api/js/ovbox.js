@@ -1429,7 +1429,8 @@ function apply_jack_settings() {
     .checked + '&jackdevice=' + encodeURIComponent(get_value_by_id(
       'jackdevice')) + '&jackrate=' + get_value_by_id('jackrate') +
     '&jackperiod=' + get_value_by_id('jackperiod') + '&jackbuffers=' +
-    get_value_by_id('jackbuffers');
+    get_value_by_id('jackbuffers') +
+      '&jackpriority='+get_value_by_id('jackpriority');
   request.send(data);
 }
 

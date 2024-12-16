@@ -128,6 +128,7 @@ function defaults( $type )
       'jackrate'=>48000,
       'jackperiod'=>96,
       'jackbuffers'=>2,
+      'jackpriority'=>40,
       'jackrestart'=>false,
       'alsadevs'=>array(),
       'bandwidth'=>array('tx'=>0,'rx'=>0),
