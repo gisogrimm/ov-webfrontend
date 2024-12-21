@@ -110,8 +110,8 @@ function update_room( $host, $port, $name, $pin, $group, $version, $srvjit = -1 
 {
   $room = $host . ':' . $port;
   $dprop = get_room_prop( $room );
-  if( empty($dprop['label']) )
-    $dprop['label'] = $name;
+  //if( !empty( $name ) )
+  //  $dprop['label'] = $name;
   if( empty($dprop['group']) )
     $dprop['group'] = $group;
   $dprop['pin'] = $pin;
