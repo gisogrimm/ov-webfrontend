@@ -85,5 +85,10 @@
   "synths": "Synthesizer",
   "unlock room": "Raum aufschließen",
   "use plugin device layer": "Benutze ALSA plugin layer",
-  "videos": "Videos"
+  "videos": "Videos",
+  "Updating firmware - please do not disconnect from power or internet.": "Aktualisierung der Firmware – bitte nicht die Strom- oder Internetverbindung trennen.",
+  "Firmware update possibly failed. You may need to re-install your SD-card.": "Das Firmware-Update ist möglicherweise fehlgeschlagen. Eventuell musst du deine SD-Karte neu installieren.",
+  "Firmware update pending.": "Firmware-Update ausstehend.",
+  "No device is linked to this account.": "Es ist kein Gerät mit diesem Konto verbunden.",
+  "You own active devices - please check the device selector above to access them.": "Du besitzt aktive Geräte – bitte überprüfe die Geräteauswahl oben, um darauf zuzugreifen."
 }
