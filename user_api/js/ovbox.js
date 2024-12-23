@@ -1001,7 +1001,7 @@ function lat2rgb( lat, good, bad ) {
   return "#" + hexval( r ) + hexval( g ) + '00';
 }
 
-function tab_header( tab, data ) {
+function tab_header( tab, data, showfragsize = false ) {
   var tr = tab.appendChild( document.createElement( 'tr' ) );
   var td = tr.appendChild( document.createElement( 'td' ) );
   td = tr.appendChild( document.createElement( 'td' ) );
@@ -1010,6 +1010,11 @@ function tab_header( tab, data ) {
   td.setAttribute( 'colspan', numch );
   td.setAttribute( 'class', 'statcell statcellsend' );
   td.appendChild( document.createTextNode( 'sender' ) );
+  if ( showfragsize ) {
+    var td = tr.appendChild( document.createElement( 'td' ) );
+    td.setAttribute( 'class', 'statcell' );
+    td.appendChild( document.createTextNode( 'fragsize' ) );
+  }
   tr = tab.appendChild( document.createElement( 'tr' ) );
   td = tr.appendChild( document.createElement( 'td' ) );
   td.appendChild( document.createTextNode( 'receiver' ) );
@@ -1026,14 +1031,15 @@ function tab_header( tab, data ) {
   }
 }
 
-function create_tab_stat( div, title, data, header = true ) {
+function create_tab_stat( div, title, data, header = true, showfragsize =
+  false ) {
   var sec_ping = div.appendChild( document.createElement( 'div' ) );
   sec_ping.setAttribute( 'class', 'ovsection' );
   var h_ping = sec_ping.appendChild( document.createElement( 'div' ) );
   h_ping.setAttribute( 'class', 'ovsectiontitle devproptitle' );
   h_ping.appendChild( document.createTextNode( title ) );
   var tab = sec_ping.appendChild( document.createElement( 'table' ) );
-  if ( header ) tab_header( tab, data );
+  if ( header ) tab_header( tab, data, showfragsize );
   return tab;
 }
 
@@ -1074,49 +1080,55 @@ function sqr( x ) {
   return x * x;
 }
 
-function get_optimal_receiver_jitter( data, category ) {
-  var chidx = new Object();
-  var idx = 0;
-  var chairidx = new Object();
+function getOptimalReceiverJitter( data, category ) {
+  const chairIndices = {};
+  let idx = 0;
   for ( const chair in data.chairs ) {
-    chidx[ chair ] = idx;
-    chairidx[ idx ] = chair;
+    chairIndices[ chair ] = idx;
     idx++;
   }
+  // matrix with 99% percentile end-to-end times:
   const dp99 = data2mat( data, category, 'p99' );
+  // matrix with minimum end-to-end times:
   const dmin = data2mat( data, category, 'min' );
-  const mat_jitter = dp99.map( function( num, idx ) {
-    return num - dmin[ idx ];
-  } );
-  var vjitrec = {};
+  // jitter matrix:
+  const matJitter = dp99.map( ( num, idx ) => num - dmin[ idx ] );
+  // estimate optimal receiver jitter:
+  const receiverJitter = {};
   for ( const chair in data.chairs ) {
-    var jitrec = 1000;
-    for ( var k = data.n * chidx[ chair ]; k < data.n * ( chidx[ chair ] +
-      1 ); k++ ) {
-      if ( mat_jitter[ k ] > 0 ) jitrec = Math.min( jitrec, mat_jitter[ k ] );
-    }
-    vjitrec[ chair ] = jitrec;
-  }
-  var vjitsend = {};
-  for ( const chair in data.chairs ) {
-    var jitsend = 0;
-    for ( var k = 0; k < data.n; k++ ) {
-      if ( matelem( mat_jitter, chidx[ chair ], k, data.n ) > 0 ) {
-        var sq = Math.sqrt( sqr( matelem( mat_jitter, chidx[ chair ], k, data
-          .n ) ) - sqr( vjitrec[ chairidx[ k ] ] ) );
-        jitsend = Math.max( jitsend, sq );
+    let minJitter = 1000;
+    for ( let k = data.n * chairIndices[ chair ]; k < data.n * ( chairIndices[
+        chair ] + 1 ); k++ ) {
+      if ( matJitter[ k ] > 0 ) {
+        minJitter = Math.min( minJitter, matJitter[ k ] );
       }
     }
-    vjitsend[ chair ] = Math.ceil( Math.sqrt( sqr( jitsend ) + sqr( data
-      .fragsize[ data.chairs[ chair ] ] ) ) );
+    receiverJitter[ chair ] = minJitter;
   }
-  for ( const chair in vjitsend ) {
-    vjitrec[ chair ] = Math.ceil( Math.sqrt( sqr( vjitrec[ chair ] ) + sqr( data
-      .fragsize[ data.chairs[ chair ] ] ) ) );
+  // estimate optimal sender jitter:
+  const senderJitter = {};
+  for ( const chair in data.chairs ) {
+    let maxJitter = 0;
+    for ( let k = 0; k < data.n; k++ ) {
+      if ( matelem( matJitter, chairIndices[ chair ], k, data.n ) > 0 ) {
+        const sq = Math.sqrt( Math.pow( matelem( matJitter, chairIndices[
+          chair ], k, data.n ), 2 ) - Math.pow( receiverJitter[
+          chairIndices[ k ] ], 2 ) );
+        maxJitter = Math.max( maxJitter, sq );
+      }
+    }
+    senderJitter[ chair ] = Math.ceil( Math.sqrt( Math.pow( maxJitter, 2 ) +
+      Math.pow( data.fragsize[ data.chairs[ chair ] ], 2 ) ) );
+  }
+  // correct for fragment size:
+  for ( const chair in senderJitter ) {
+    receiverJitter[ chair ] = Math.ceil( Math.sqrt( Math.pow( receiverJitter[
+        chair ], 2 ) + Math.pow( data.fragsize[ data.chairs[ chair ] ],
+      2 ) ) );
   }
   return {
-    'rec': vjitrec,
-    'send': vjitsend
+    rec: receiverJitter,
+    send: senderJitter
   };
 }
 
@@ -1140,6 +1152,11 @@ function update_sessionmap( div ) {
 }
 
 function update_sessionstat( div ) {
+  // The function update_sessionstat takes a single argument div, which
+  // is expected to be an HTML element that will contain the updated
+  // session statistics. The function uses an XMLHttpRequest object to
+  // send a GET request to a PHP script (rest.php) to retrieve the
+  // session statistics in JSON format.
   let request = new XMLHttpRequest();
   request.onload = function() {
     var data = JSON.parse( request.response, ( key, value ) => {
@@ -1167,10 +1184,10 @@ function update_sessionstat( div ) {
         }
         if ( show ) {
           {
+            // show suggested jitter buffer settings:
             var tab = create_tab_stat( div, 'Suggestions ' + modes[ mode ],
               data, false );
-            const suggest = get_optimal_receiver_jitter( data, modes[
-            mode ] );
+            const suggest = getOptimalReceiverJitter( data, modes[ mode ] );
             var tr = tab.appendChild( document.createElement( 'tr' ) );
             td = tr.appendChild( document.createElement( 'td' ) );
             td = tr.appendChild( document.createElement( 'td' ) );
@@ -1198,10 +1215,12 @@ function update_sessionstat( div ) {
               else td.appendChild( document.createTextNode( 'srv' ) );
             }
           }
+          // create empty table for ping times:
           var tab_ping = create_tab_stat( div, 'Median ping times ' + modes[
             mode ], data );
+          // create empty table for jitter:
           var tab_jitter = create_tab_stat( div, 'Jitter ' + modes[ mode ],
-            data );
+            data, true, true );
           for ( const chair in data.chairs ) {
             const dev = data.chairs[ chair ];
             if ( dev && data.stats[ dev ] ) {
@@ -1241,6 +1260,11 @@ function update_sessionstat( div ) {
                   td.setAttribute( 'style', 'background-color: #AAAAAA' );
                 }
               }
+              var td = tr.appendChild( document.createElement( 'td' ) );
+              td.setAttribute( 'class', 'statcell' );
+              const fragsize = data.fragsize[ dev ];
+              td.appendChild( document.createTextNode( fragsize.toFixed( 1 ) +
+                'ms' ) );
             }
           }
         }
