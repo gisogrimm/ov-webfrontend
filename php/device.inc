@@ -58,6 +58,7 @@ function cleanup_rooms()
           unset($rprop['size']);
           unset($rprop['ambientsound']);
           unset($rprop['ambientlevel']);
+          unset($rprop['lock']);
           set_properties( $room, 'room', $rprop );
         }
       }
@@ -83,6 +84,7 @@ function cleanup_rooms()
               unset($rprop['size']);
               unset($rprop['ambientsound']);
               unset($rprop['ambientlevel']);
+              unset($rprop['lock']);
               set_properties( $room, 'room', $rprop );
             }
           }
