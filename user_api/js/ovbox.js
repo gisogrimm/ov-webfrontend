@@ -1334,35 +1334,37 @@ function update_sessionstat( div ) {
   request.send();
 }
 
-function update_gainhints( gainhint, levelstats ) {
+function update_gainhints( gainhint, levelstats, device ) {
   while ( gainhint.firstChild ) gainhint.removeChild( gainhint.firstChild );
   var show = false;
   var msg = '';
-  for ( var c = 0; c < levelstats.length; c++ ) {
-    var show_ch = false;
-    var ch = translate( 'channel' ) + ' ' + ( 1 + c ) + ': ';
-    var msg_ch = '';
-    const lstat = levelstats[ c ];
-    if ( lstat.rms[ 0 ] > -200 ) {
-      if ( lstat.peak[ 3 ] > -0.1 ) {
-        show_ch = true;
-        msg_ch += translate( 'clippingdecvol' ) + '. ';
-      } else {
-        if ( lstat.rms[ 4 ] - lstat.rms[ 0 ] < 6 ) {
+  if ( device.now - device.levelstats.time < 20 ) {
+    for ( var c = 0; c < levelstats.length; c++ ) {
+      var show_ch = false;
+      var ch = translate( 'channel' ) + ' ' + ( 1 + c ) + ': ';
+      var msg_ch = '';
+      const lstat = levelstats[ c ];
+      if ( lstat.rms[ 0 ] > -200 ) {
+        if ( lstat.peak[ 3 ] > -0.1 ) {
           show_ch = true;
-          msg_ch += translate( 'no48ormic' ) + '. ';
-        } else
-        if ( lstat.rms[ 2 ] < -60 ) {
-          show_ch = true;
-          msg_ch += translate( 'lowsig' ) + '. ';
+          msg_ch += translate( 'clippingdecvol' ) + '. ';
+        } else {
+          if ( lstat.rms[ 4 ] - lstat.rms[ 0 ] < 6 ) {
+            show_ch = true;
+            msg_ch += translate( 'no48ormic' ) + '. ';
+          } else
+          if ( lstat.rms[ 2 ] < -60 ) {
+            show_ch = true;
+            msg_ch += translate( 'lowsig' ) + '. ';
+          }
         }
-      }
-      if ( show_ch ) {
-        show = true;
-        msg += ch + msg_ch + ' ';
-      }
+        if ( show_ch ) {
+          show = true;
+          msg += ch + msg_ch + ' ';
+        }
         //console.log( lstat.peak );
-      //console.log( lstat.rms );
+        //console.log( lstat.rms );
+      }
     }
   }
   if ( show ) {
@@ -1403,8 +1405,8 @@ function everytenseconds() {
       if ( devstat )
         // update device display:
         update_devicestatus( user, device, owned_devices );
-      if ( gainhint && device.levelstats && ( device.levelstats.time < device
-          .now + 20 ) ) update_gainhints( gainhint, device.levelstats.data )
+      if ( gainhint && device.levelstats ) update_gainhints( gainhint, device
+        .levelstats.data, device );
       if ( devclaim ) update_unclaimed( user, unclaimed_devices );
       if ( droom ) {
         // delete unused rooms:
