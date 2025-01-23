@@ -84,5 +84,9 @@
   "equalizers":"Kiegyenlítő",
   "Switch configuration website":"Alternatív szerver",
   "open mixer":"Keverő pult és hangfelvevő",
-  "(works only when your browser is in the same network as your device)":"(csak ha a böngésző ugyan abban a hálózatban van mint az ovbox)"
+  "(works only when your browser is in the same network as your device)":"(csak ha a böngésző ugyan abban a hálózatban van mint az ovbox)",
+  "clippingdecvol":"A jel torzított. A bemeneti erősítést csökkenteni kell",
+  "no48ormic":"A fantomtáp (48V) ki van kapcsolva, vagy a mikrofon nincs csatlakoztatva",
+  "lowsig":"A jelszint nagyon alacsony. A bemeneti erősítést növelni kell",
+  "channel":"Bemenő csatorna"
 }

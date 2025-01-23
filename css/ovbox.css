@@ -279,6 +279,15 @@ tr {
     border-radius: 15px;
     overflow: auto;
 }
+.gainhint {
+    background-color: #5e9af390;
+    margin: 0px;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 3px solid #0c2447;
+    border-radius: 3px;
+    overflow: auto;
+}
 a.mixer {
     background-color: #909990;
     border-radius: 8px;

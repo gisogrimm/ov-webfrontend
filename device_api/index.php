@@ -163,6 +163,11 @@ if ($user == 'device') {
                     $dprop['thermal'] = $jsmsg['thermal'];
                 else
                     $dprop['thermal'] = array();
+                if( isset($jsmsg['levelstats']) ){
+                    $lstats = array('data'=>$jsmsg['levelstats'],'time'=>$dprop['now']);
+                    $dprop['levelstats'] = $lstats;
+                }else
+                    $dprop['levelstats'] = null;
                 if( isset($jsmsg['localip']) )
                     $dprop['localip'] = $jsmsg['localip'];
                 else

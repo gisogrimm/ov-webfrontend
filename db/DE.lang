@@ -90,5 +90,10 @@
   "Firmware update possibly failed. You may need to re-install your SD-card.": "Das Firmware-Update ist möglicherweise fehlgeschlagen. Eventuell musst du deine SD-Karte neu installieren.",
   "Firmware update pending.": "Firmware-Update ausstehend.",
   "No device is linked to this account.": "Es ist kein Gerät mit diesem Konto verbunden.",
-  "You own active devices - please check the device selector above to access them.": "Du besitzt aktive Geräte – bitte überprüfe die Geräteauswahl oben, um darauf zuzugreifen."
+  "You own active devices - please check the device selector above to access them.": "Du besitzt aktive Geräte – bitte überprüfe die Geräteauswahl oben, um darauf zuzugreifen.",
+  "decvol":"Die Eingangsverstärkung sollte reduziert werden.",
+  "channel":"Kanal",
+  "clippingdecvol":"Das signal ist übersteuert. Die Eingangsverstärkung sollte reduziert werden",
+  "no48ormic":"Phantom power (48V) ist aus oder Mikrofon ist nicht angeschlossen",
+  "lowsig":"Das Signal ist sehr niedrig ausgesteuert. Die Eingangsverstärkung sollte erhöht werden"
 }
