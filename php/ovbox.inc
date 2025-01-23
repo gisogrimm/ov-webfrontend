@@ -445,12 +445,10 @@ function owned_devices( $user, $alldev = null )
   }
   uasort( $devs, function ( $a, $b )
   {
-    if( ($a['age'] < 20) && ($b['age'] < 20) ){
-      if( $a['age'] > $b['age'] )
-        return 1;
-      if( $a['age'] < $b['age'] )
-        return -1;
-    }
+    if( $a['age'] > $b['age'] )
+      return 1;
+    if( $a['age'] < $b['age'] )
+      return -1;
     if( $a['label'] > $b['label'] )
       return 1;
     if( $a['label'] < $b['label'] )
