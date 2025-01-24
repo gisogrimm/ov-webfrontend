@@ -78,6 +78,7 @@ print_head( $user, $style, $urlgroup );
 echo '<div><span class="ovtitle">'.translate('Device settings').'</span><div class="help">'.translate('Need help?').' - <a target="blank" href="https://github.com/gisogrimm/ovbox/wiki">Wiki-Pages</a></div></div>';
 
 echo '<div class="devclaim" id="devclaim" style="display:none;"></div>';
+echo '<div class="gainhint" id="gainhint" style="display:none;"></div>';
 
 html_show_device( $user, $device, $devprop );
 
