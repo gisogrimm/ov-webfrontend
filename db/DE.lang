@@ -6,7 +6,7 @@
   "A service by": "Bereitgestellt von",
   "Apply settings": "Anwenden",
   "Audio interface": "Soundkarte",
-  "Before changing the front end, make sure you have registered an account on the new website. Without an account, you can lock your device by selecting a front end. In this case, please delete the file \"ov-client.cfg\" on the boot partition of the SD card.": "Bevor du das Frontend änderst, stelle sicher, dass du ein Konto auf der neuen Website registriert hast. Ohne ein Konto kannst du dein Gerät durch Auswahl eines Frontends sperren. In diesem Fall lösche bitte die Datei \"ov-client.cfg\" auf der Boot-Partition der SD-Karte.",
+  "Before changing the front end, make sure you have registered an account on the new website. Without an account, you can lock your device by selecting a front end. In this case, please delete the file \"ov-client.cfg\" on the boot partition of the SD card.": "Bevor du das Frontend änderst, stelle sicher, dass du ein Konto auf der neuen Website registriert hast. Ohne ein Konto kannst du dein Gerät durch Auswahl eines alternativen Servers sperren. In diesem Fall lösche bitte die Datei \"ov-client.cfg\" auf der Boot-Partition der SD-Karte.",
   "Create a live mixer when no room is selected": "Erstelle einen Live-Mixer, wenn kein Raum ausgewählt ist",
   "Device ownership": "Gerät an andere Nutzerin oder Nutzer übertragen",
   "Device settings": "Geräteeinstellungen",
