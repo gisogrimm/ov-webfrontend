@@ -774,7 +774,8 @@ function print_foot($style = '',$show_donate = -1)
   }
   if( $show_donate == -1 )
     $show_donate = true;
-  if( $show_donate ){
+  //if( $show_donate ){
+  if( false ){
     echo '<div class="donate">';
     echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">';
     echo '<input type="hidden" name="cmd" value="_s-xclick" />';
