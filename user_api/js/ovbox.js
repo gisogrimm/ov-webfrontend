@@ -582,8 +582,6 @@ function update_room( user, device, room, droom ) {
       xspan.setAttribute( 'class', 'latency' );
       xspan.appendChild( document.createTextNode( latdisp ) );
     }
-      console.log(dev.encryptstate);
-      console.log(device.encryptstate);
     if ( dev.isactive && dev.hasOwnProperty( 'encryptstate' ) && ( dev.encryptstate > 0 ) ) {
       if ( dev.encryptstate == 1 ) {
         var lck = mem.appendChild( document.createElement( 'img' ) );
@@ -594,6 +592,7 @@ function update_room( user, device, room, droom ) {
         lck.setAttribute( 'src', 'lock_red.svg' );
         lck.setAttribute( 'width', '14px' );
       }
+      mem.appendChild( document.createTextNode( ' ' ) );
     }
     if ( ( room.owner == device.owner ) || ( dev.owner == device.owner ) ) {
       var kick = mem.appendChild( document.createElement( 'input' ) );
