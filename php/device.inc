@@ -30,6 +30,7 @@ function get_dev_stage_settings( $device )
   $d['senddownmix'] = boolval($dprop['senddownmix']);
   $d['usetcptunnel'] = boolval($dprop['usetcptunnel']);
   $d['encryption'] = boolval($dprop['encryption']);
+  $d['encryptstate'] = intval($dprop['encryptstate']);
   $d['nozita'] = boolval($dprop['nozita']);
   $d['hiresping'] = boolval($dprop['hiresping']);
   return $d;
