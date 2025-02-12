@@ -582,6 +582,17 @@ function update_room( user, device, room, droom ) {
       xspan.setAttribute( 'class', 'latency' );
       xspan.appendChild( document.createTextNode( latdisp ) );
     }
+    if ( dev.isactive && dev.hasOwnProperty( 'encryptstate' ) && ( dev.encryptstate > 0 ) ) {
+      if ( dev.encryptstate == 1 ) {
+        var lck = mem.appendChild( document.createElement( 'img' ) );
+        lck.setAttribute( 'src', 'lock_grey.svg' );
+        lck.setAttribute( 'width', '14px' );
+      } else {
+        var lck = mem.appendChild( document.createElement( 'img' ) );
+        lck.setAttribute( 'src', 'lock_red.svg' );
+        lck.setAttribute( 'width', '14px' );
+      }
+    }
     if ( ( room.owner == device.owner ) || ( dev.owner == device.owner ) ) {
       var kick = mem.appendChild( document.createElement( 'input' ) );
       kick.setAttribute( 'value', 'X' );
