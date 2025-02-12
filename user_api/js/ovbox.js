@@ -582,6 +582,8 @@ function update_room( user, device, room, droom ) {
       xspan.setAttribute( 'class', 'latency' );
       xspan.appendChild( document.createTextNode( latdisp ) );
     }
+      console.log(dev.encryptstate);
+      console.log(device.encryptstate);
     if ( dev.isactive && dev.hasOwnProperty( 'encryptstate' ) && ( dev.encryptstate > 0 ) ) {
       if ( dev.encryptstate == 1 ) {
         var lck = mem.appendChild( document.createElement( 'img' ) );
