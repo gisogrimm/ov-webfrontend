@@ -548,6 +548,7 @@ if( !empty($device) ){
     xml_add_checkbox( 'headtracking', 'Head tracking', $el, $doc, $devprop, false, true );
     // apply headtracking:
     $divex = add_expert_div($divex,$doc,$devprop,'headtracking');
+    xml_add_checkbox( 'headtrackingserial', 'use USB serial instead of OSC', $divex, $doc, $devprop );
     xml_add_checkbox( 'headtrackingrot', 'apply rotation to receiver', $divex, $doc, $devprop );
     xml_add_checkbox( 'headtrackingrotsrc', 'apply rotation to source', $divex, $doc, $devprop );
     //
@@ -691,14 +692,22 @@ if( !empty($device) ){
     $el->setAttribute('step','1');
     // peer-to-peer:
     xml_add_checkbox( 'peer2peer', translate('peer-to-peer mode'), $div, $doc, $devprop );
+    
+    $divex = add_expert_div($div, $doc, $devprop );
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('Network transport:'));
+    xml_add_checkbox( 'encryption', 'use encryption of audio and user data whenever possible', $divex, $doc, $devprop );
     if( version_compare("ovclient-0.18.20",$devprop['version'])<0 ){
-      $divex = add_expert_div($div, $doc, $devprop );
       xml_add_checkbox( 'usetcptunnel', 'use TCP tunnel to server (not in peer-to-peer mode)', $divex, $doc, $devprop );
     }
-    if( version_compare("ovclient-0.19.24",$devprop['version'])<0 ){
-      $divex = add_expert_div($div, $doc, $devprop );
-      xml_add_checkbox( 'nozita', 'do not use zita-njbridge for audio transmission (requires manual setup of network)', $divex, $doc, $devprop );
+    xml_add_checkbox( 'sendlocal', 'send to local IP address if in same network', $divex, $doc, $devprop );
+    // proxy settings
+    if( version_compare("ovclient-0.6.120",$devprop['version'])<0 ){
+      xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $divex, $doc, $devprop );
+      xml_add_checkbox( 'useproxy', 'use an audio proxy if possible', $divex, $doc, $devprop );
     }
+    xml_add_checkbox( 'expeditedforwarding', 'activate expedited forwarding PHB (RFC2598)', $divex, $doc, $devprop );
     // wifi
     if( $devprop['isovbox'] ){
       if( version_compare("ovclient-0.6.151",$devprop['version'])<0 ){
@@ -720,7 +729,13 @@ if( !empty($device) ){
     }
     // extra destinations:
     $divex = add_expert_div($div, $doc, $devprop );
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('Network audio:'));
     //
+    if( version_compare("ovclient-0.19.24",$devprop['version'])<0 ){
+      xml_add_checkbox( 'nozita', 'do not use zita-njbridge for audio transmission (requires manual setup of network)', $divex, $doc, $devprop );
+    }
     $el = $divex->appendChild($doc->createElement('label'));
     $el->setAttribute('for','zitasampleformat');
     $el->appendChild($doc->createTextNode('Network sample format: '));
@@ -739,26 +754,22 @@ if( !empty($device) ){
     }
     $divex->appendChild($doc->createElement('br'));
     //
-    xml_add_checkbox( 'sendlocal', 'send to local IP address if in same network', $divex, $doc, $devprop );
     $el = xml_add_input_generic( 'secrec','additional local receiver delay for secondary receiver (0 for no secondary receiver):',$divex,$doc,$devprop);
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','100');
     $el->setAttribute('step','1');
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    $el->appendChild($doc->createTextNode('UDP port setup:'));
     $el = xml_add_input_generic( 'xrecport','additional UDP ports forwarded to other peers (space separated list):',$divex,$doc,$devprop);
     $el->setAttribute('type','text');
     $el->setAttribute('pattern','[0-9 ]*');
-    xml_add_checkbox( 'expeditedforwarding', 'activate expedited forwarding PHB (RFC2598)', $divex, $doc, $devprop );
     $el = xml_add_input_generic( 'sessionportoffset','session-wide port offset to allow multiple instances on same host:',$divex,$doc,$devprop);
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('max','10000');
     $el->setAttribute('step','1');
-    // proxy settings
-    if( version_compare("ovclient-0.6.120",$devprop['version'])<0 ){
-      xml_add_checkbox( 'isproxy', 'offer audio proxy service to other devices in local network', $divex, $doc, $devprop );
-      xml_add_checkbox( 'useproxy', 'use an audio proxy if possible', $divex, $doc, $devprop );
-    }
     xml_add_checkbox( 'hiresping', 'increase frequency of ping measurements at cost of data usage', $divex, $doc, $devprop );
     //$divex = add_expert_div($div, $doc, $devprop );
     // frontend:

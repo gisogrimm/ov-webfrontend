@@ -29,6 +29,7 @@ function get_dev_stage_settings( $device )
   $d['receivedownmix'] = boolval($dprop['receivedownmix']);
   $d['senddownmix'] = boolval($dprop['senddownmix']);
   $d['usetcptunnel'] = boolval($dprop['usetcptunnel']);
+  $d['encryption'] = boolval($dprop['encryption']);
   $d['nozita'] = boolval($dprop['nozita']);
   $d['hiresping'] = boolval($dprop['hiresping']);
   return $d;
@@ -146,6 +147,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['xport'] = $nxp;
   $rendersettings['peer2peer'] = boolval($devprop['peer2peer']);
   $rendersettings['usetcptunnel'] = boolval($devprop['usetcptunnel']);
+  $rendersettings['encryption'] = boolval($devprop['encryption']);
   $rendersettings['renderreverb'] = boolval($devprop['reverb']);
   $rendersettings['renderism'] = boolval($devprop['renderism']);
   $rendersettings['outputgain'] = pow(10.0,0.05*$devprop['mastergain']);
@@ -160,6 +162,7 @@ function get_room_session( $device, $devhash )
   $rendersettings['xrecport'] = $devprop['xrecport'];
   // old headtracking interface:
   $rendersettings['headtracking'] = boolval($devprop['headtracking']);
+  $rendersettings['headtrackingserial'] = boolval($devprop['headtrackingserial']);
   $rendersettings['headtrackingrot'] = boolval($devprop['headtrackingrot']);
   $rendersettings['headtrackingrotsrc'] = boolval($devprop['headtrackingrotsrc']);
   $rendersettings['headtrackingport'] = intval($devprop['headtrackingport']);
@@ -244,6 +247,7 @@ function get_room_session( $device, $devhash )
     }
   }
   $rendersettings['extracfg'] = array('headtrack'=>array('load'=>boolval($devprop['headtracking']),
+                                                         'serial'=>boolval($devprop['headtrackingserial']),
                                                          'applyrec'=>boolval($devprop['headtrackingrot']),
                                                          'applysrc'=>boolval($devprop['headtrackingrotsrc']),
                                                          'port'=>intval($devprop['headtrackingport']),
