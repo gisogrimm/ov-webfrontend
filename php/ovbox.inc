@@ -208,6 +208,7 @@ function defaults( $type )
       'uname_sysname'=>'',
       'uname_release'=>'',
       'uname_machine'=>'',
+      'encryptstate'=>0,
     );
     break;
   case 'room':
