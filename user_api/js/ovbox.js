@@ -5,57 +5,35 @@ function translate( from ) {
   console.log( 'missing translation: "' + from + '"' );
   return from;
 }
-/**
- * Compares two version strings.
- *
- * @param {string} v1 - The first version string to compare.
- * @param {string} v2 - The second version string to compare.
- * @param {object} [options] - Optional options object.
- * @param {boolean} [options.lexicographical=false] - Whether to perform a lexicographical comparison (i.e., consider non-numeric characters as part of the version).
- * @param {boolean} [options.zeroExtend=false] - Whether to zero-extend the shorter version string to match the length of the longer version string.
- *
- * @returns {number} - The result of the comparison:
- *   - `1` if `v1` is greater than `v2`.
- *   - `-1` if `v1` is less than `v2`.
- *   - `0` if `v1` and `v2` are equal.
- *   - `NaN` if either version string contains invalid parts.
- */
-function versionCompare( v1, v2, options ) {
-  var lexicographical = options && options.lexicographical,
-    zeroExtend = options && options.zeroExtend,
-    v1parts = v1.split( '.' ),
-    v2parts = v2.split( '.' );
 
-  function isValidPart( x ) {
-    return ( lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/ ).test( x );
-  }
-  if ( !v1parts.every( isValidPart ) || !v2parts.every( isValidPart ) ) {
-    return NaN;
-  }
-  if ( zeroExtend ) {
-    while ( v1parts.length < v2parts.length ) v1parts.push( "0" );
-    while ( v2parts.length < v1parts.length ) v2parts.push( "0" );
-  }
-  if ( !lexicographical ) {
-    v1parts = v1parts.map( Number );
-    v2parts = v2parts.map( Number );
-  }
-  for ( var i = 0; i < v1parts.length; ++i ) {
-    if ( v2parts.length == i ) {
-      return 1;
-    }
-    if ( v1parts[ i ] == v2parts[ i ] ) {
-      continue;
-    } else if ( v1parts[ i ] > v2parts[ i ] ) {
-      return 1;
-    } else {
-      return -1;
+function compareVersions( version1, version2 ) {
+  // Split each version into numeric and suffix parts
+  const splitV1 = version1.split( '-' );
+  const numericV1 = splitV1[ 0 ];
+  const suffixV1 = splitV1.length > 1 ? splitV1[ 1 ] : '';
+  const splitV2 = version2.split( '-' );
+  const numericV2 = splitV2[ 0 ];
+  const suffixV2 = splitV2.length > 1 ? splitV2[ 1 ] : '';
+  // Split numeric parts into segments
+  const segmentsV1 = numericV1.split( '.' ).map( Number );
+  const segmentsV2 = numericV2.split( '.' ).map( Number );
+  const maxLength = Math.max( segmentsV1.length, segmentsV2.length );
+  // Compare each segment
+  for ( let i = 0; i < maxLength; i++ ) {
+    const seg1 = i < segmentsV1.length ? segmentsV1[ i ] : 0;
+    const seg2 = i < segmentsV2.length ? segmentsV2[ i ] : 0;
+    if ( seg1 !== seg2 ) {
+      return seg1 - seg2;
     }
   }
-  if ( v1parts.length != v2parts.length ) {
+  // If all segments are equal, compare suffixes
+  if ( suffixV1 < suffixV2 ) {
     return -1;
+  } else if ( suffixV1 > suffixV2 ) {
+    return 1;
+  } else {
+    return 0;
   }
-  return 0;
 }
 
 function toggledisplay( id, msg ) {
@@ -425,6 +403,12 @@ function update_room( user, device, room, droom ) {
   var span = tit.appendChild( document.createElement( 'span' ) );
   span.setAttribute( 'class', 'rname' );
   span.appendChild( document.createTextNode( room[ 'label' ] + ' ' ) );
+  if ( compareVersions( room.version, '0.28.12-d474745' ) >= 0 ) {
+    var lck = span.appendChild( document.createElement( 'img' ) );
+    lck.setAttribute( 'src', 'lock_grey.svg' );
+    lck.setAttribute( 'width', '14px' );
+    span.appendChild( document.createTextNode( ' ' ) );
+  }
   span = tit.appendChild( document.createElement( 'span' ) );
   span.setAttribute( 'class', 'rdesc' );
   span.appendChild( document.createTextNode( '(' + room[ 'sx' ] + ' x ' + room[
@@ -582,7 +566,8 @@ function update_room( user, device, room, droom ) {
       xspan.setAttribute( 'class', 'latency' );
       xspan.appendChild( document.createTextNode( latdisp ) );
     }
-    if ( dev.isactive && dev.hasOwnProperty( 'encryptstate' ) && ( dev.encryptstate > 0 ) ) {
+    if ( dev.isactive && dev.hasOwnProperty( 'encryptstate' ) && ( dev
+        .encryptstate > 0 ) ) {
       if ( dev.encryptstate == 1 ) {
         var lck = mem.appendChild( document.createElement( 'img' ) );
         lck.setAttribute( 'src', 'lock_grey.svg' );
