@@ -194,6 +194,8 @@ if ($user == 'device') {
                     $dprop['backendxruns'] = $jsmsg['backendxruns'];
                 if( isset($jsmsg['encryptstate']) )
                     $dprop['encryptstate'] = $jsmsg['encryptstate'];
+                else
+                    $dprop['encryptstate'] = 0;
                 //if( isset($jsmsg['effectplugincfg']) && $jsmsg['effectplugincfg'] ){
                 //    error_log('-----');
                 //    error_log(json_encode($jsmsg['effectplugincfg']));
