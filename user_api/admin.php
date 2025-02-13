@@ -1,6 +1,7 @@
 <?php
 
 include '../php/ovbox.inc';
+
 {
     $sitecfg = get_properties('site','config');
     if( $sitecfg['forcehttps'] ){
@@ -126,19 +127,30 @@ if( isset($_GET['rmroom']) ){
 }
 print_head( $user, $style, $urlgroup );
 
+function print_val_class( $v, $t1, $t2, $c0, $c1, $c2, $decimals, $unit ){
+    if( $v < $t1 )
+        echo '<span class="'.$c0.'">';
+    else if( $v < $t2 )
+        echo '<span class="'.$c1.'">';
+    else
+        echo '<span class="'.$c2.'">';
+    echo number_format($v, $decimals ).$unit.'</span>';
+}
+
 $loadavg = sys_getloadavg();
 $cpuload = getServerLoad();
+$diskspace = disk_free_space('.')/1000000000;
 if( $loadavg || $cpuload ){
-    echo '<p>';
-    if( $cpuload )
-        echo 'Server CPU load: '.round($cpuload,1).'% ';
-    if( $loadavg )
-        echo 'Load average: ' .
-                              number_format($loadavg[0], 2, '.', '') .
-                              '/' .
-                              number_format($loadavg[1], 2, '.', '') .
-                              '/' .
-                              number_format($loadavg[2], 2, '.', '');
+    echo '<p>Server CPU load: ';
+    print_val_class( $cpuload, 10, 50, 'cputempgood','cputempwarn','cputempcritical',1,'%');
+    echo '<br/>Load average: ';
+    print_val_class( $loadavg[0], 1, 2, 'cputempgood','cputempwarn','cputempcritical',2,'');
+    echo '/';
+    print_val_class( $loadavg[1], 1, 2, 'cputempgood','cputempwarn','cputempcritical',2,'');
+    echo '/';
+    print_val_class( $loadavg[2], 1, 2, 'cputempgood','cputempwarn','cputempcritical',2,'');
+    echo '<br/>Disk space: ';
+    print_val_class( $diskspace, 1, 2, 'cputempcritical','cputempwarn','cputempgood',2,' GB');
     echo '</p>';
 }
 

@@ -710,6 +710,16 @@ a.adminarea:hover {
     padding: 5px;
     border-radius: 6px;
 }
+.cputempgood {
+    background-color: #c3ffa350;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid #000;
+}
 .cputempwarn {
     background-color: #ffb30050;
     padding-left: 3px;
