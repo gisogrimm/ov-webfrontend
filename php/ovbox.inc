@@ -101,7 +101,7 @@ function defaults( $type )
       'nozita'=>false,
       'peer2peer'=>true,
       'usetcptunnel'=>false,
-      'encryption'=>false,
+      'encryption'=>true,
       'secrec'=>0,
       'xrecport'=>array(),
       'sessionportoffset'=>0,
