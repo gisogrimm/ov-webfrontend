@@ -693,7 +693,7 @@ if( !empty($device) ){
     // peer-to-peer:
     xml_add_checkbox( 'peer2peer', translate('peer-to-peer mode'), $div, $doc, $devprop );
     if( version_compare("ovclient-0.28.8",$devprop['version'])<0 ){
-      xml_add_checkbox( 'encryption', 'use encryption of audio and user data whenever possible', $div, $doc, $devprop );
+      xml_add_checkbox( 'encryption', translate('use encryption of audio and user data whenever possible'), $div, $doc, $devprop );
     }
     
     $divex = add_expert_div($div, $doc, $devprop );

@@ -3,5 +3,6 @@
   "channel":"Channel",
   "clippingdecvol":"The signal is clipping. The input amplification should be reduced",
   "no48ormic":"Phantom power (48V) is off or microphone is not connected",
-  "lowsig":"The signal level is very low. The input gain should be increased"
+  "lowsig":"The signal level is very low. The input gain should be increased",
+  "use encryption of audio and user data whenever possible":"Verschlüsselung von Audio- und Benutzerdaten sofern möglich"
 }
