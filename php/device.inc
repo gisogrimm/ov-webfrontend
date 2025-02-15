@@ -151,8 +151,8 @@ function get_room_session( $device, $devhash )
   $rendersettings['encryption'] = boolval($devprop['encryption']);
   $rendersettings['renderreverb'] = boolval($devprop['reverb']);
   $rendersettings['renderism'] = boolval($devprop['renderism']);
-  $rendersettings['outputgain'] = pow(10.0,0.05*$devprop['mastergain']);
-  $rendersettings['mastergain'] = $rendersettings['outputgain'];
+  $rendersettings['outputgain'] = pow(10.0,0.05*floatval($devprop['mastergain']));
+  $rendersettings['mastergain'] = floatval($rendersettings['outputgain']);
   $rendersettings['rectype'] = $devprop['rectype'];
   $rendersettings['decorr'] = floatval($devprop['decorr']);
   $rendersettings['secrec'] = floatval($devprop['secrec']);
