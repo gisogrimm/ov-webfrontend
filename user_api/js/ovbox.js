@@ -1350,7 +1350,7 @@ function update_gainhints( gainhint, levelstats, device ) {
             show_ch = true;
             msg_ch += translate( 'no48ormic' ) + '. ';
           } else
-          if ( lstat.rms[ 2 ] < -60 ) {
+          if ( lstat.rms[ 3 ] < -40 ) {
             show_ch = true;
             msg_ch += translate( 'lowsig' ) + '. ';
           }
