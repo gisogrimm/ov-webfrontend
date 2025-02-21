@@ -176,6 +176,7 @@ function defaults( $type )
       'usehifiberry'=>'',
       'receivedownmix'=>false,
       'senddownmix'=>false,
+      'start_webmixer'=>true,
       'tscinclude'=>'',
       'mhaconfig'=>'',
       'jackrecsampleformat'=>'PCM_16',

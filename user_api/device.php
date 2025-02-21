@@ -196,6 +196,7 @@ if( !empty($device) ){
     $el->setAttribute('class','uibutton');
     $el->appendChild($doc->createTextNode('copy settings'));;
 
+    xml_add_checkbox( 'start_webmixer', translate('start node-js server for webmixer'), $divex, $doc, $devprop, false, true );
   }
   {
     // Audio interface

@@ -909,7 +909,8 @@ function update_devicestatus( user, device, owned_devices ) {
     // use IP address for mixer if possible:
     var mixer = device.localip;
     if ( mixer.length == 0 ) mixer = device.host;
-    if ( ( device.age < 20 ) && ( mixer.length > 0 ) ) {
+    if ( device.start_webmixer && ( device.age < 20 ) && ( mixer.length >
+      0 ) ) {
       // device is active and we know the host name:
       webm.setAttribute( 'style', 'display: block;' );
       var a = webm.appendChild( document.createElement( 'a' ) );

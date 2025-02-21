@@ -267,6 +267,7 @@ function get_room_session( $device, $devhash )
                                                          'level'=>floatval($devprop['metrolevel']),
                                                          'delay'=>floatval($devprop['metrodelay'])),
                                       'tscinclude'=>$devprop['tscinclude'],
+                                      'start_webmixer'=>boolval($devprop['start_webmixer']),
                                       'mhaconfig'=>$devprop['mhaconfig'],
                                       'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding']),
                                                        'sessionportoffset'=>intval($devprop['sessionportoffset'])),
