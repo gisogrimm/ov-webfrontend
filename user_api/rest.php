@@ -227,6 +227,11 @@ if( isset($_POST['getrawjsondev']) ){
     $dpropraw = get_properties( $_POST['getrawjsondev'], 'device' );
     echo(json_encode($dpropraw,JSON_PRETTY_PRINT));
 }
+if( isset($_POST['getlogdata']) ){
+    header('Content-Type: text/plain');
+    $dpropraw = file_get_contents( '../db/'.$_POST['getlogdata'].'.log' );
+    echo($dpropraw);
+}
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );
 }

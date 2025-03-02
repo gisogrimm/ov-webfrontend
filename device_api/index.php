@@ -42,6 +42,26 @@ if ($user == 'device') {
             modify_device_prop( $device, 'host', $host );
         }
     }
+    if( isset($_GET['sendlog']) ){
+        $device = $_GET['sendlog'];
+        if( !empty($device) ){
+            $clear = intval($_GET['clear']);
+            $dprop = get_properties($device,'device');
+            if( !empty( $dprop['owner'] ) ){
+                $logstr = '';
+                $putdata = fopen("php://input", "r");
+                while ($data = fread($putdata,1024))
+                    $logstr = $logstr . $data;
+                fclose($putdata);
+                $fname = '../db/' . $device . '.log';
+                if( $clear )
+                    file_put_contents( $fname, $logstr );
+                else
+                    file_put_contents( $fname, $logstr, FILE_APPEND );
+                modify_device_prop( $device, 'logaccess', time() );
+            }
+        }
+    }
     if( isset($_POST['dev']) ){
         $device = $_POST['dev'];
         if( !empty($device) ){

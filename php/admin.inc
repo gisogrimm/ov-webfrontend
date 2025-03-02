@@ -510,7 +510,7 @@ function html_admin_db($type, $showfields = array())
   $tab = $root->appendChild($doc->createElement('table'));
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
-  $headerfields = array_merge(array('id','age','onlineage'),$showfields,array('vid','cfg','owner','label'));
+  $headerfields = array_merge(array('id','age','onlineage','logage'),$showfields,array('vid','cfg','log','owner','label'));
   foreach( $headerfields as $field ){
     table_add_header($tr,$field,$sortkey,$doc,$type);
   }
@@ -520,10 +520,14 @@ function html_admin_db($type, $showfields = array())
     $age = numage2str($dprop['age']);
     if( $dprop['age'] < 20 )
       $tr->setAttribute('style','background-color: #dcc378;');
+    elseif( $dprop['logage'] < 20 )
+      $tr->setAttribute('style','background-color: #ff6e6e;');
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($dev));
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($age));
     $onlineage = numage2str($dprop['onlineage']);
     $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($onlineage));
+    $logage = numage2str($dprop['logage']);
+    $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode($logage));
     foreach( $showfields as $field ){
       if( $field == 'roomage' )
         $tr->appendChild($doc->createElement('td'))->appendChild($doc->createTextNode(numage2str($dprop[$field])));
@@ -547,7 +551,19 @@ function html_admin_db($type, $showfields = array())
     $inp->setAttribute('value',$dev);
     $inp = $frm->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','submit');
-    $inp->setAttribute('value','show');
+    $inp->setAttribute('value','cfg');
+    // raw log:
+    $td = $tr->appendChild($doc->createElement('td'));
+    $frm = $td->appendChild($doc->createElement('form'));
+    $frm->setAttribute('action','/rest.php');
+    $frm->setAttribute('method','POST');
+    $inp = $frm->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','hidden');
+    $inp->setAttribute('name','getlogdata');
+    $inp->setAttribute('value',$dev);
+    $inp = $frm->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','submit');
+    $inp->setAttribute('value','log');
     // user:
     $td = $tr->appendChild($doc->createElement('td'));
     $inp = $td->appendChild($doc->createElement('select'));

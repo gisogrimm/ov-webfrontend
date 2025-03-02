@@ -72,6 +72,7 @@ function defaults( $type )
     return array(
       'inittime'=>'',
       'access'=>0,
+      'logaccess'=>0,
       'onlineaccess'=>0,
       'chair'=>-1,
       'label'=>'',
@@ -317,6 +318,8 @@ function postproc_prop( &$prop, $type )
   $prop['now'] = time();
   if( array_key_exists('access',$prop) )
     $prop['age'] = time()-$prop['access'];
+  if( array_key_exists('logaccess',$prop) )
+    $prop['logage'] = time()-$prop['logaccess'];
   if( array_key_exists('onlineaccess',$prop) )
     $prop['onlineage'] = time()-$prop['onlineaccess'];
   if( $type == 'device' ){
