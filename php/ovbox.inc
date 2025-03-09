@@ -447,18 +447,30 @@ function owned_devices( $user, $alldev = null )
     $alldev = list_devices();
   $devs = array();
   foreach( $alldev as $dev=>$devprop ){
-    if( $devprop['owner'] == $user )
+    if( $devprop['owner'] == $user ){
+      $devprop['id'] = $dev;
       $devs[$dev] = $devprop;
+    }
   }
   uasort( $devs, function ( $a, $b )
   {
-    if( $a['age'] > $b['age'] )
+    // sort inactive devices by age, and active devices by label:
+    $age_a = max($a['age'],30);
+    $age_b = max($b['age'],30);
+    if( $age_a > $age_b )
       return 1;
-    if( $a['age'] < $b['age'] )
+    if( $age_a < $age_b )
       return -1;
+    // max(age,30) is the same, i.e., device is active or the age is
+    // the same, thus sort by label:
     if( $a['label'] > $b['label'] )
       return 1;
     if( $a['label'] < $b['label'] )
+      return -1;
+    // the labels are identical, therefore sort by device ID:
+    if( $a['id'] > $b['id'] )
+      return 1;
+    if( $a['id'] < $b['id'] )
       return -1;
     return 0;
   } );
