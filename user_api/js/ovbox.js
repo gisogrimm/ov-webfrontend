@@ -900,7 +900,33 @@ function update_devicestatus( user, device, owned_devices ) {
       devsel.add( opt );
     }
     if ( device.age < 20 ) devsel.setAttribute( 'class', 'actmember' );
+    else
+    if ( device.logage < 20 ) devsel.setAttribute( 'class', 'logmember' );
     else devsel.setAttribute( 'class', 'psvmember' );
+  }
+  // update device log:
+  if ( device.showexpertsettings ) {
+    if ( device.logage < device.age ) {
+      // get log from REST API:
+      let request = new XMLHttpRequest();
+      request.onload = function() {
+        var log = request.response;
+        var logwin = document.getElementById( 'devicelogwin' );
+        if ( log.length > 2 ) {
+          logwin.replaceChildren( document.createTextNode( log ) );
+          logwin.style = 'display: block;';
+          logwin.focus();
+          logwin.setSelectionRange( logwin.value.length, logwin.value
+          .length );
+        } else {
+          logwin.replaceChildren();
+          logwin.style = 'display: none;';
+        }
+      };
+      request.open( 'GET', 'rest.php?getlogdata=' + device.id );
+      request.reponseType = 'text';
+      request.send();
+    }
   }
   // update webmixer link:
   var webm = document.getElementById( 'webmixerlink' );

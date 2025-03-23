@@ -348,6 +348,13 @@ function html_show_device( $user, $device, $devprop )
     $inpdelay->setAttribute('onchange','setmetro(\'delay\',this.value);');
     $div->appendChild($doc->createTextNode(' local delay/ms'));
   }
+  // device log window:
+  $div = $root->appendChild($doc->createElement('textarea'));
+  $div->setAttribute('id','devicelogwin');
+  $div->setAttribute('class','devicelogwin');
+  $div->setAttribute('style','display: none;');
+  $div->setAttribute('readonly','');
+  $div->setAttribute('rows','30');
   // web mixer:
   $div = $root->appendChild($doc->createElement('div'));
   $div->setAttribute('id','webmixerlink');

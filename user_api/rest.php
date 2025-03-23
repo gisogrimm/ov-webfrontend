@@ -232,6 +232,11 @@ if( isset($_POST['getlogdata']) ){
     $dpropraw = file_get_contents( '../db/'.$_POST['getlogdata'].'.log' );
     echo($dpropraw);
 }
+if( isset($_GET['getlogdata']) ){
+    header('Content-Type: text/plain');
+    $dpropraw = file_get_contents( '../db/'.$_GET['getlogdata'].'.log' );
+    echo($dpropraw);
+}
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );
 }
