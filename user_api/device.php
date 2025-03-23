@@ -901,7 +901,22 @@ from.'));
       $opt->setAttribute('value',$berry);
       $opt->appendChild($doc->createTextNode($berry));
     }
-    $div->appendChild($doc->createElement('br'));
+    $divex->appendChild($doc->createElement('br'));
+    xml_add_checkbox( 'showdevlog', 'Show device logs', $divex, $doc, $devprop, false, true );
+    $divex->appendChild($doc->createTextNode('Last update of device log was '.numage2str($devprop['logage']).' ago.'));
+    $div = $divex->appendChild( $doc->createElement('textarea') );
+    $div->setAttribute('class','devicelogwin showdevlog');
+    $div->setAttribute('readonly','');
+    $div->setAttribute('rows','30');
+    if( isset($devprop['showdevlog']) ){
+      if( $devprop['showdevlog'] )
+        $div->setAttribute('style','display: block;');
+      else
+        $div->setAttribute('style','display: none;');
+    }else{
+      $div->setAttribute('style','display: none;');
+    }
+    $div->appendChild($doc->createTextNode(file_get_contents( '../db/'.$device.'.log' )));
   }
   {
     // device ownership:

@@ -79,6 +79,12 @@ function set_displayclass( id, value ) {
   }
 }
 
+function set_displayid( id, value ) {
+  var x = document.getElementById( id );
+  if ( value ) x.style.display = "block";
+  else x.style.display = "none";
+}
+
 function setmetro( name, value ) {
   let request = new XMLHttpRequest();
   request.open( 'GET', 'rest.php?metro' + name + '=' + value );

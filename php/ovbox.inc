@@ -211,6 +211,7 @@ function defaults( $type )
       'uname_release'=>'',
       'uname_machine'=>'',
       'encryptstate'=>0,
+      'showdevlog'=>false,
     );
     break;
   case 'room':

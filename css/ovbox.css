@@ -226,7 +226,8 @@ tr {
     font-family: monospace, monospace;
     font-weight: bold;
     font-size: 80%;
-    width: 90%;
+    box-sizing: border-box;
+    width: 100%;
 }
 .actdownmix {
     background-color: #d3a06e;
