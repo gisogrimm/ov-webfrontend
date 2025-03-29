@@ -93,8 +93,8 @@
   "You own active devices - please check the device selector above to access them.": "Du besitzt aktive Geräte – bitte überprüfe die Geräteauswahl oben, um darauf zuzugreifen.",
   "decvol":"Die Eingangsverstärkung sollte reduziert werden.",
   "channel":"Kanal",
-  "clippingdecvol":"Das signal ist übersteuert. Die Eingangsverstärkung sollte reduziert werden",
+  "clippingdecvol":"Das Mikrofonsignal ist übersteuert. Die Eingangsverstärkung am Audiointerface sollte reduziert werden",
   "no48ormic":"Phantom power (48V) ist aus oder Mikrofon ist nicht angeschlossen",
-  "lowsig":"Das Signal ist sehr niedrig ausgesteuert. Die Eingangsverstärkung sollte erhöht werden",
+  "lowsig":"Das Mikrofonsignal ist sehr niedrig ausgesteuert. Die Eingangsverstärkung am Audiointerface sollte erhöht werden",
   "use encryption of audio and user data whenever possible":"Verschlüsselung von Audio- und Benutzerdaten sofern möglich"
 }

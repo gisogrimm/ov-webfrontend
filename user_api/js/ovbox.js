@@ -1366,6 +1366,7 @@ function update_gainhints( gainhint, levelstats, device ) {
   var show = false;
   var msg = '';
   if ( device.now - device.levelstats.time < 20 ) {
+    // show level analysis only when recent data are available.
     for ( var c = 0; c < levelstats.length; c++ ) {
       var show_ch = false;
       var ch = translate( 'channel' ) + ' ' + ( 1 + c ) + ': ';
@@ -1377,10 +1378,12 @@ function update_gainhints( gainhint, levelstats, device ) {
           msg_ch += translate( 'clippingdecvol' ) + '. ';
         } else {
           if ( lstat.rms[ 4 ] - lstat.rms[ 0 ] < 6 ) {
+            // dynamic range is below 6 dB, probably no microphone.
             show_ch = true;
             msg_ch += translate( 'no48ormic' ) + '. ';
           } else
-          if ( lstat.rms[ 3 ] < -40 ) {
+          if ( lstat.rms[ 3 ] < -55 ) {
+            // input level is low (but dynamic range is high), probably low gain
             show_ch = true;
             msg_ch += translate( 'lowsig' ) + '. ';
           }
