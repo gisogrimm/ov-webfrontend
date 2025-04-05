@@ -63,6 +63,7 @@ if( isset($_GET['getdev']) ){
     unset($dprop['outputport1']);
     unset($dprop['outputport2']);
     unset($dprop['firmwareupdate']);
+    unset($dprop['firmwareupdategit']);
     unset($dprop['installopenmha']);
     echo(json_encode($dprop));
     flock($fp_dev, LOCK_UN );

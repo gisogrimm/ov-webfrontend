@@ -152,6 +152,7 @@ function defaults( $type )
       'sendlocal'=>true,
       'hwinputchannels'=>array('system:capture_1','system:capture_2'),
       'firmwareupdate'=>false,
+      'firmwareupdategit'=>false,
       'installopenmha'=>false,
       'isupdating'=>false,
       'usedevversion'=>false,

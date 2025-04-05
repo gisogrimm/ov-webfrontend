@@ -303,10 +303,12 @@ function get_room_session( $device, $devhash )
                     'owner'=>$devprop['owner'],
                     'roomdev'=>$roomdev,
                     'firmwareupdate'=>$devprop['firmwareupdate'],
+                    'firmwareupdategit'=>$devprop['firmwareupdategit'],
                     'installopenmha'=>$devprop['installopenmha'],
                     'usedevversion'=>$devprop['usedevversion']);
-  if( $devprop['firmwareupdate'] || $devprop['installopenmha']){
+  if( $devprop['firmwareupdate'] || $devprop['firmwareupdategit'] || $devprop['installopenmha']){
     modify_device_prop( $device, 'firmwareupdate', false );
+    modify_device_prop( $device, 'firmwareupdategit', false );
     modify_device_prop( $device, 'installopenmha', false );
     modify_device_prop( $device, 'isupdating', true );
   }else

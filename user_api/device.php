@@ -852,6 +852,12 @@ from.'));
           $inp->setAttribute('value','update now');
           $inp->setAttribute('class','uibutton');
 
+          //$inp = $div->appendChild($doc->createElement('input'));
+          //$inp->setAttribute('type','button');
+          //$inp->setAttribute('onclick','if( confirm("Do you really want to update? This may take a long time. Please do not disconnect from power or internet until the device appears active again (typically 10-30 minutes).")){ rest_set_devprop("firmwareupdategit",true); }');
+          //$inp->setAttribute('value','update now (compile from source)');
+          //$inp->setAttribute('class','uibutton');
+
         }else{
           $div->appendChild($doc->createTextNode('To update the firmware, please follow the instructions '));
           $a = $div->appendChild($doc->createElement('a'));
@@ -862,11 +868,15 @@ from.'));
       }
     }
     $divex = add_expert_div( $div, $doc, $devprop );
-    //xml_add_checkbox( 'firmwareupdate', 'force firmware and system update', $divex, $doc, $devprop );
     $inp = $divex->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
     $inp->setAttribute('onclick','rest_set_devprop("firmwareupdate",true);');
     $inp->setAttribute('value','force firmware update');
+    $inp->setAttribute('class','uibutton');
+    $inp = $divex->appendChild($doc->createElement('input'));
+    $inp->setAttribute('type','button');
+    $inp->setAttribute('onclick','rest_set_devprop("firmwareupdategit",true);');
+    $inp->setAttribute('value','force firmware update (git)');
     $inp->setAttribute('class','uibutton');
     $divex->appendChild($doc->createTextNode(translate(' Force firmware and system update. Takes up to 30 minutes.')));
     $divex->appendChild($doc->createElement('br'));
@@ -885,7 +895,7 @@ from.'));
     $inp->setAttribute('onclick','rest_set_devprop("usedevversion",true);');
     $inp->setAttribute('value','switch to development version');
     $inp->setAttribute('class','uibutton');
-    $divex->appendChild($doc->createTextNode(' Development version will be used until next reboot. Switching takes about 2 minutes.'));
+    $divex->appendChild($doc->createTextNode(' Development version will be used until next reboot. Switching takes about 20 minutes.'));
     $divex->appendChild($doc->createElement('br'));
     // hifiberry stuff
     $divex->appendChild($doc->createTextNode('Activate HifiBerry driver: '));
