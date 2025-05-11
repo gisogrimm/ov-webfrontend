@@ -726,7 +726,7 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    echo '<div class="ad">Die OVBOX Server sind zur Zeit h&auml;ufigen Cyberattacken ausgesetzt. Deswegen ist mit eingeschr&auml;kter Stabilit&auml;t des Systems zu rechnen.</div>'."\n";
+    //echo '<div class="ad">Die OVBOX Server sind zur Zeit h&auml;ufigen Cyberattacken ausgesetzt. Deswegen ist mit eingeschr&auml;kter Stabilit&auml;t des Systems zu rechnen.</div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
