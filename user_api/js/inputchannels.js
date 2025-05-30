@@ -35,6 +35,11 @@ const eq_6000 = {
     'gain': -3
   }
 }
+const pareq = {
+    'pareq4band': {
+        'b1ls_act':true
+  }
+}
 const tube_green = {
   'filter': {
     'mode': 'highpass',
@@ -504,7 +509,7 @@ function inputchannels_createUI() {
       box4a.setAttribute('class', 'plugincategory');
       var tlab4a = box4a.appendChild(document.createElement('div'));
       tlab4a.setAttribute('class', 'toplabel');
-        tlab4a.appendChild(document.createTextNode(translate('Gain')+':'));
+        tlab4a.appendChild(document.createTextNode(translate('Gain')+'/dB:'));
       el = box4a.appendChild(document.createElement('input'));
       el.setAttribute('onchange', '{inputchannels_onedit_gain(' + k.toString(
         10) + ',this.value);}');
@@ -596,6 +601,12 @@ function inputchannels_createUI() {
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(eq_6000));inputchannels_createUI();}');
+        var el = flts.appendChild(document.createElement('input'));
+        el.setAttribute('type', 'button');
+        el.setAttribute('value', 'par EQ 4band');
+        el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
+          .toString(10) +
+          ',JSON.stringify(pareq));inputchannels_createUI();}');
         // synths:
         var flts = box5.appendChild(document.createElement('div'));
         flts.setAttribute('class', 'plugincategory');
