@@ -568,7 +568,7 @@ function activate_new_user( $acthash )
   $fname = '../db/'.$acthash.'.registration';
   if( !file_exists( $fname ) )
     return false;
-  if( time()-filemtime($fname) > 3600 ){
+  if( time()-filemtime($fname) > 24*3600 ){
     unlink($fname);
     return false;
   }
