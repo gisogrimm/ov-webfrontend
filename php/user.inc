@@ -493,6 +493,8 @@ function request_passwd_reset( $username )
 
 function register_new_user( $mail, $username, $password, $group, &$msg )
 {
+  $msg = 'Registration of new users is currently disabled due to abuse by hackers.';
+  return false;
   if( empty($mail) ){
     $msg = 'No mail address was provided.';
     return false;
