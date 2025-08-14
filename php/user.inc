@@ -458,38 +458,47 @@ function device_enter_room( $device, $room )
   }
 }
 
-function cleanup_registrations()
+function register_new_user_simple( $username, $password, &$msg, $emptypw = false )
 {
-  foreach( list_db('registration') as $r=>$dpro ){
-    $fname = '../db/'.$r.'.registration';
-    if( time()-filemtime($fname) > 3600 )
-      unlink($fname);
+  if( empty($username) ){
+    $msg = 'No user name was provided.';
+    return false;
   }
-  foreach( list_db('pwreset') as $r=>$dpro ){
-    $fname = '../db/'.$r.'.pwreset';
-    if( time()-filemtime($fname) > 3600 )
-      unlink($fname);
+  $errs = array();
+  if( !checkUsername($username,$errs) ){
+    foreach($errs as $err)
+      $msg = $msg . '<br/>'.$err;
+    return false;
   }
+  if( !$emptypw ){
+    if( empty($password) ){
+      $msg = 'No password was provided.';
+      return false;
+    }
+    $errs = array();
+    if( !checkPassword($password,$errs) ){
+      foreach($errs as $err)
+        $msg = $msg . '<br/>'.$err;
+      return false;
+    }
+  }
+  $users = list_users();
+  if( in_array( $username, $users ) ){
+    $msg = 'The user "'.$username.'" already exists. Please chose another user name.';
+    return false;
+  }
+  $fname = '../db/passwd';
+  $pws = array();
+  if( file_exists( $fname ) )
+    $pws = json_decode( file_get_contents( $fname ), true );
+  $pws[$username] = password_hash( $password, PASSWORD_DEFAULT );
+  file_put_contents( $fname, json_encode( $pws ));
+  if( $emptypw ){
+    modify_user_prop( $username, 'validpw', false );
+  }
+  return true;
 }
 
-function request_passwd_reset( $username )
-{
-  cleanup_registrations();
-  $users = list_users();
-  if( !in_array( $username, $users ) )
-    return;
-  $uprop = get_properties($username,'user');
-  if( empty($uprop['mail']))
-    return;
-  $mail = $uprop['mail'];
-  $reghash = md5(random_bytes(5) . $mail );
-  set_properties( $reghash, 'pwreset', array('m'=>$mail,'u'=>$username) );
-  $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-  $mailmsg = "Please follow this link to reset the password of your ovbox acount ".$username.":\n\n" . $actual_link . "&pwreset=".$reghash .
-           "\n\nThis link is valid for one hour.\n\nIf you did not request a password reset, please ignore this mail.\n";
-  file_put_contents( '../lastmailsg',$mailmsg);
-  mail( $mail, 'ovbox password reset', $mailmsg, array('From'=>'info@ovbox.de') );
-}
 
 function register_new_user( $mail, $username, $password, $group, &$msg )
 {
@@ -501,6 +510,12 @@ function register_new_user( $mail, $username, $password, $group, &$msg )
   }
   if( empty($username) ){
     $msg = 'No user name was provided.';
+    return false;
+  }
+  $errs = array();
+  if( !checkUsername($username,$errs) ){
+    foreach($errs as $err)
+      $msg = $msg . '<br/>'.$err;
     return false;
   }
   if( empty($password) ){

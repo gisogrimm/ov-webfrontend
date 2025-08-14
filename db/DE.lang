@@ -96,5 +96,11 @@
   "clippingdecvol":"Das Mikrofonsignal ist übersteuert. Die Eingangsverstärkung am Audiointerface sollte reduziert werden",
   "no48ormic":"Phantom power (48V) ist aus oder Mikrofon ist nicht angeschlossen",
   "lowsig":"Das Mikrofonsignal ist sehr niedrig ausgesteuert. Die Eingangsverstärkung am Audiointerface sollte erhöht werden",
-  "use encryption of audio and user data whenever possible":"Verschlüsselung von Audio- und Benutzerdaten sofern möglich"
+  "use encryption of audio and user data whenever possible":"Verschlüsselung von Audio- und Benutzerdaten sofern möglich",
+  "Your instrument/voice":"Instrument/Stimme",
+  "optional":"optional",
+  "Other users of the OVBOX system you know":"Andere Nutzerinnen/Nutzer, welche du kennst",
+  "Groups you would like to join":"Gruppen, denen du beitreten möchtest",
+  "Send":"Absenden",
+  "An email window will popup. We will send a confirmation link as soon as possible, typically within a day.":"Ein Email-Fenster wird sich öffnen. Wir werden eine Bestätigungsmail sobald wie möglich verschicken, in der regel innerhalb eines Tages."
 }

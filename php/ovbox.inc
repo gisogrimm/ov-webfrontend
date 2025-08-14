@@ -749,6 +749,51 @@ function translate( $from )
   return $from;
 }
 
+function checkUsername($usrn, &$errors) {
+  $errors_init = $errors;
+  if (strlen($usrn) < 3) {
+    $errors[] = "User name too short!";
+  }
+  if (preg_match("#[[:blank:]]+#", $usrn)) {
+    $errors[] = "User name can not contain spaces!";
+  }
+  return ($errors == $errors_init);
+}
+
+function request_passwd_reset( $username )
+{
+  cleanup_registrations();
+  $users = list_users();
+  if( !in_array( $username, $users ) )
+    return "";
+  $uprop = get_properties($username,'user');
+  //if( empty($uprop['mail']))
+  //  return;
+  //$mail = $uprop['mail'];
+  $reghash = md5(random_bytes(5) . $username );
+  set_properties( $reghash, 'pwreset', array('u'=>$username) );
+  //$actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+  $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+  //$mailmsg = "Please follow this link to reset the password of your ovbox acount ".$username.":\n\n" . $actual_link . "&pwreset=".$reghash .
+  //         "\n\nThis link is valid for one hour.\n\nIf you did not request a password reset, please ignore this mail.\n";
+  //file_put_contents( '../lastmailsg',$mailmsg);
+  //mail( $mail, 'ovbox password reset', $mailmsg, array('From'=>'info@ovbox.de') );
+  return $actual_link . "/login.php?pwreset=" . $reghash;//file_put_contents( '../lastmsg',$msg);
+}
+
+function cleanup_registrations()
+{
+  foreach( list_db('registration') as $r=>$dpro ){
+    $fname = '../db/'.$r.'.registration';
+    if( time()-filemtime($fname) > 3600 )
+      unlink($fname);
+  }
+  foreach( list_db('pwreset') as $r=>$dpro ){
+    $fname = '../db/'.$r.'.pwreset';
+    if( time()-filemtime($fname) > 3600 )
+      unlink($fname);
+  }
+}
 
 /*
  * Local Variables:

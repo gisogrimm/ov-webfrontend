@@ -28,26 +28,33 @@ if( !empty($urlgroup) ){
 
 $site = get_properties('site','config');
 
-$title = 'Register as new user:';
-if($site['moderation'])
-    $title = 'Request registration from moderator:';
+//$title = 'Register as new user:';
+//if($site['moderation'])
+$title = 'Request registration from moderator:';
 
 print_head('',$style);
 // display registration box: username, username, password
 echo '<div style="padding: 20px; background-color: #ffffff70;margin: 8px;">';
 echo '<h2>'.$title.'</h2>'."\n";
-echo '<form name="register" class="login" action="/login.php?grp='.grouphash($urlgroup).'" method="POST">'."\n";
-echo '<label>e-mail address:</label><br>';
-echo '<input type="text" name="mail" required><br>';
-echo '<label>User name:</label><br>';
+echo '<form name="register" class="login" action="mailto:info@ovbox.de?subject=registeruser" method="POST" enctype="text/plain">'."\n";
+//echo '<label>e-mail address:</label><br>';
+//echo '<input type="text" name="mail" required><br>';
+echo '<label>'.translate('User name:').'</label><br>';
 echo '<input type="text" name="username" pattern="[a-zA-Z0-9\-_]*" title="only letters and numbers" required><br>';
-echo '<label>Password:</label><br>';
-echo '<input type="password" name="password" required><br>';
-echo '<span style="font-size: 70%;"><input type="checkbox" name="agreepriv" required><label for="agreepriv">I have read and accept the <a target="blank" href="privacy.php">privacy policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerkärung</a>.</label><br>';
-echo '<input type="checkbox" name="agreeterms" required><label for="agreeterms">I have read and accept the <a target="blank" href="terms.php">terms of service</a>.</label></span><br>';
-echo '<input type="hidden" name="register">';
-echo '<input type="submit" value="Register">';
+echo '<label>'.translate('Your instrument/voice').' ('.translate('optional').'):</label><br>';
+echo '<input type="text" name="voice"><br>';
+echo '<label>'.translate('Other users of the OVBOX system you know').' ('.translate('optional').'):</label><br>';
+echo '<input type="text" name="users"><br>';
+echo '<label>'.translate('Groups you would like to join').' ('.translate('optional').'):</label><br>';
+echo '<input type="text" name="groups"><br>';
+//echo '<label>Password:</label><br>';
+//echo '<input type="password" name="password" required><br>';
+//echo '<span style="font-size: 70%;"><input type="checkbox" name="agreepriv" required><label for="agreepriv">I have read and accept the <a target="blank" href="privacy.php">privacy policy</a> / <a target="blank" href="datenschutz.php">Datenschutzerkärung</a>.</label><br>';
+//echo '<input type="checkbox" name="agreeterms" required><label for="agreeterms">I have read and accept the <a target="blank" href="terms.php">terms of service</a>.</label></span><br>';
+//echo '<input type="hidden" name="register">';
+echo '<input type="submit" value="'.translate('Send').'">';
 echo '</form>';
+echo '<p>'.translate('An email window will popup. We will send a confirmation link as soon as possible, typically within a day.').'</p>';
 echo '<p><a href="/?grp='.grouphash($urlgroup).'">Back to login page</a></p>';
 echo '</div>';
     

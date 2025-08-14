@@ -115,8 +115,9 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         echo '<input type="hidden" name="login">';
         echo '<button class="uibutton">'.translate('login').'</button>';
         echo '</form>';
-        echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">'.translate('Register as new user').'</a> &nbsp; '.
-                                            '<a href="forgotpw.php?grp='.grouphash($urlgroup).'">'.translate('I forgot my password').'</a></p>';
+        //echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">'.translate('Register as new user').'</a> &nbsp; '.
+        //                                       '<a href="forgotpw.php?grp='.grouphash($urlgroup).'">'.translate('I forgot my password').'</a></p>';
+        echo '<p><a href="register.php?grp='.grouphash($urlgroup).'">'.translate('Register as new user').'</a></p>';
         echo '<p>'.translate('If you have not used your account for more than one year, you must re-register as a new user to use the system again.').'</p>';
         echo '</div>';
         print_foot( $style, false );

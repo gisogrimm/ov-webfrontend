@@ -46,12 +46,16 @@ if ( empty( $device ) ) {
   }
 }
 
-
+error_log('---: '.$user);
 modify_user_prop( $user, 'access', time() );
-if( isset($_POST['agreepriv']) )
+if( isset($_POST['agreepriv']) ){
     modify_user_prop( $user, 'agreedprivacy', true );
-if( isset($_POST['agreeterms']) )
+    $userprop['agreedprivacy'] = true;
+}
+if( isset($_POST['agreeterms']) ){
     modify_user_prop( $user, 'agreedterms', true );
+    $userprop['agreedterms'] = true;
+}
 flock($fp_user, LOCK_UN );
 flock($fp_dev, LOCK_EX );
 $devprop = get_properties( $device, 'device' );

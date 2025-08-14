@@ -176,6 +176,13 @@ function html_admin_users()
   $s = $el->appendChild($doc->createElement('span'));
   $s->setAttribute('style','font-size: small;');
   $s->appendChild($doc->createTextNode('('.count($users).')'));
+  //
+  $form = $root->appendChild($doc->createElement('form'));
+  $inp = $form->appendChild($doc->createElement('input'));
+  $inp->setAttribute('type','text');
+  $inp->setAttribute('value','');
+  $inp->setAttribute('name','adduser');
+  $form->appendChild($doc->createElement('button'))->appendChild($doc->createTextNode('add new user'));
   $tab = $root->appendChild($doc->createElement('table'));
   $tab->setAttribute('class','admintable');
   $tr = $tab->appendChild($doc->createElement('tr'));
@@ -784,6 +791,13 @@ function html_admin_edituser( $usr, $siteconfig )
   $div = create_section($root,$doc,$usr);
   xml_add_usr_checkbox('seesall','Sees public rooms',$div,$doc,$auprop,$usr);
   xml_add_usr_checkbox('institution','Is institutional account',$div,$doc,$auprop,$usr);
+  // password reset button:
+  $el = $div->appendChild($doc->createElement('input'));
+  $el->setAttribute('type','button');
+  $el->setAttribute('value','reset password');
+  $el->setAttribute('onclick','window.open("rest.php?newpw='.$usr.'","_blank");');
+  $div->appendChild($doc->createElement('br'));
+  // email display:
   $el = $div->appendChild($doc->createElement('label'));
   $el->setAttribute('class','roomctl');
   $el->appendChild($doc->createTextNode($auprop['mail']));

@@ -398,6 +398,10 @@ $site = get_properties('site','config');
 if( in_array($user,$site['admin']) ){
     // below this point only admin functions are available:
     // modify properties of other users defined in 'admusr':
+    if( isset($_GET['newpw']) ){
+        $url = request_passwd_reset( $_GET['newpw'] );
+        header( 'Location: '.'/?showqr='.urlencode($url));
+    }
     if( isset($_POST['admusrprop']) && isset($_POST['admusr']) && isset($_POST[$_POST['admusrprop']]) && in_array(isset($_POST['admusr']),list_users()) ){
         $value = $_POST[$_POST['admusrprop']];
         if( isset($_POST['type']) ){

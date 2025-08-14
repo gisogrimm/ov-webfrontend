@@ -72,6 +72,13 @@ if( isset($_GET['setgrpstyle'])){
     header( "Location: /admin.php?adm=groups" );
     die();
 }
+if( isset($_GET['adduser']) ){
+    $msg = '';
+    if( !register_new_user_simple( $_GET['adduser'], '', $msg, true ) )
+        echo '<p class="deverror">'.$msg.'</p>';
+    header( "Location: /admin.php?adm=users" );
+    die();
+}
 if( isset($_GET['moduser']) ){
     modify_user_prop( $_GET['moduser'], 'seesall', isset($_GET['seesall']));
     modify_user_prop( $_GET['moduser'], 'maingroup', $_GET['maingroup']);

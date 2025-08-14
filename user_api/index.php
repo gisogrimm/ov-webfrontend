@@ -74,6 +74,19 @@ if( isset($_GET['enterroom']) ) {
     die();
 }
 
+if( isset($_GET['showqr']) ){
+    echo "<!DOCTYPE html>\n";
+    echo '<html lang="en"><head>';
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1"/>';
+    echo '</head><body><div class="qrpage">';
+    //echo '<img src="qrcode.php?w=300&h=300&s=qr-l&wq=0&d='.urlencode($_GET['showqr'].'&scan=1').'" title=""/>';
+    if( isset($_GET['showqrtitle']) )
+        echo '<span class="qrtitle">'.$_GET['showqrtitle'].'</span>';
+    echo '<div class="qrcodetxt">'.$_GET['showqr'].'</div>';
+    echo '</div></body></html>';
+    die();
+}
+
 if( isset($_GET['swapdev']) ){
     if( !empty( $device ) ){
         room_swap_devices( $device, $_GET['swapdev'] );
