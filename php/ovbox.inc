@@ -785,12 +785,12 @@ function cleanup_registrations()
 {
   foreach( list_db('registration') as $r=>$dpro ){
     $fname = '../db/'.$r.'.registration';
-    if( time()-filemtime($fname) > 3600 )
+    if( time()-filemtime($fname) > 3600*24*3 )
       unlink($fname);
   }
   foreach( list_db('pwreset') as $r=>$dpro ){
     $fname = '../db/'.$r.'.pwreset';
-    if( time()-filemtime($fname) > 3600 )
+    if( time()-filemtime($fname) > 3600*24*3 )
       unlink($fname);
   }
 }

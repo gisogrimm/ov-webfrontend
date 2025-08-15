@@ -568,7 +568,7 @@ function validate_pwreset( $acthash, &$pwr )
   $fname = '../db/'.$acthash.'.pwreset';
   if( !file_exists( $fname ) )
     return false;
-  if( time()-filemtime($fname) > 3600 ){
+  if( time()-filemtime($fname) > 3600*24*3 ){
     unlink($fname);
     return false;
   }
