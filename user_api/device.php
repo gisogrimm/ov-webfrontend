@@ -213,7 +213,6 @@ if( !empty($device) ){
     foreach( $alsadevs as $adev=>$desc ){
       $opt = $el->appendChild($doc->createElement('option'));
       $opt->setAttribute('value',$adev);
-      //$opt->appendChild($doc->createTextNode($desc . ' ('.$adev.')'));
       $opt->appendChild($doc->createTextNode($desc));
       if( $devprop['jackdevice'] == $adev )
         $opt->setAttribute('selected','');
@@ -675,6 +674,36 @@ if( !empty($device) ){
     $el = $form->appendChild($doc->createElement('button'));
     $el->appendChild($doc->createTextNode('Save'));
     $el->setAttribute('onclick','rest_set_devprop("mhaconfig",document.getElementById("mhaconfig").value);');
+  }
+  if( version_compare("ovclient-0.31.5",$devprop['version'])<0 ){
+    // tuner settings
+    $div = create_section($root, $doc,translate('Instrument tuner'));
+    // jitter (send):
+    $el = xml_add_input_generic( 'tuner_f0',translate('pitch a:'),$div,$doc,$devprop);
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','300');
+    $el->setAttribute('max','600');
+    $el->setAttribute('step','0.2');
+    $div->appendChild($doc->createTextNode(translate('Tuning temperament:')));
+    $div->appendChild($doc->createElement('br'));
+    $el = $div->appendChild($doc->createElement('select'));
+    $el->setAttribute('id','tuner_tuning');
+    $el->setAttribute('onchange','rest_set_devprop("tuner_tuning",event.target.value);');
+    //
+    $tunings = array('equal'=>translate('Equal temperament'),
+                     'werkmeister3'=>'Werckmeister 3',
+                     'meantone4'=>translate('Quarter-comma meantone'),
+                     'meantone6'=>translate('Sixth-comma meantone'),
+                     'valotti'=>'Vallotti');
+    foreach( $tunings as $tun=>$desc ){
+      $opt = $el->appendChild($doc->createElement('option'));
+      $opt->setAttribute('value',$tun);
+      $opt->appendChild($doc->createTextNode($desc));
+      if( $devprop['tuner_tuning'] == $tun )
+        $opt->setAttribute('selected','');
+    }
+    $div->appendChild($doc->createElement('br'));
+    xml_add_checkbox( 'tuner_active', translate('start with activated tuner'), $div, $doc, $devprop );
   }
   {
     // network settings

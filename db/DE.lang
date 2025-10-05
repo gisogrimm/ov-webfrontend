@@ -102,5 +102,11 @@
   "Other users of the OVBOX system you know":"Andere Nutzerinnen/Nutzer, welche du kennst",
   "Groups you would like to join":"Gruppen, denen du beitreten möchtest",
   "Send":"Absenden",
-  "An email window will popup. We will send a confirmation link as soon as possible, typically within a day.":"Ein Email-Fenster wird sich öffnen. Wir werden eine Bestätigungsmail sobald wie möglich verschicken, in der regel innerhalb eines Tages."
+  "An email window will popup. We will send a confirmation link as soon as possible, typically within a day.":"Ein Email-Fenster wird sich öffnen. Wir werden eine Bestätigungsmail sobald wie möglich verschicken, in der regel innerhalb eines Tages.",
+  "Instrument tuner":"Stimmgerät",
+  "pitch a:":"Kammerton a",
+  "Tuning temperament:":"Stimmung",
+  "Equal temperament":"gleichstufig",
+  "Quarter-comma meantone":"1/4 Komma mitteltönig",
+  "Sixth-comma meantone":"1/6 Komma mitteltönig"
 }
