@@ -400,10 +400,10 @@ if( in_array($user,$site['admin']) ){
     // modify properties of other users defined in 'admusr':
     if( isset($_GET['newpw']) ){
         $url = request_passwd_reset( $_GET['newpw'] );
-        $url_pre = 'Hi '.$_GET['newpw'].",<br><br>\n\nPlease find below the activation link four your OVBOX account:<br><br>\n\n";
-        $url_post = "<br><br>\n\nBest regards,\n\n";
-        $url_pre_de = '<br>---<br>Hallo '.$_GET['newpw'].",<br><br>\n\nhier ist der Aktivierungslink für den OVBOX Account:<br><br>\n\n";
-        $url_post_de = "<br><br>\n\nBei Problemen oder Fragen bitte einfach melden!\n\n";
+        $url_pre = 'Hi '.$_GET['newpw'].",<br><br>\n\nPlease find the activation link for your OVBOX account below:<br><br>\n\n";
+        $url_post = "<br><br>\n\nThis link is valid for 24 hours.  If you have any questions or encounter any problems, please do not hesitate to contact us.\n\n";
+        $url_pre_de = '<br><br>---<br><br>Hallo '.$_GET['newpw'].",<br><br>\n\nhier ist der Aktivierungslink für den OVBOX Account:<br><br>\n\n";
+        $url_post_de = "<br><br>\n\nDieser Link ist 24 Stunden lang gültig. Bei Problemen oder Fragen bitte einfach melden!\n\n";
         header( 'Location: '.'/?showqr='.urlencode($url_pre.$url.$url_post.$url_pre_de.$url.$url_post_de));
     }
     if( isset($_POST['admusrprop']) && isset($_POST['admusr']) && isset($_POST[$_POST['admusrprop']]) && in_array(isset($_POST['admusr']),list_users()) ){
