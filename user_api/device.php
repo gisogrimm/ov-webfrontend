@@ -675,7 +675,7 @@ if( !empty($device) ){
     $el->appendChild($doc->createTextNode('Save'));
     $el->setAttribute('onclick','rest_set_devprop("mhaconfig",document.getElementById("mhaconfig").value);');
   }
-  if( version_compare("ovclient-0.31.5",$devprop['version'])<0 ){
+  if( version_compare("ovclient-0.31.19",$devprop['version'])<0 ){
     // tuner settings
     $div = create_section($root, $doc,translate('Instrument tuner'));
     // jitter (send):
@@ -693,8 +693,12 @@ if( !empty($device) ){
     $tunings = array('equal'=>translate('Equal temperament'),
                      'werkmeister3'=>'Werckmeister 3',
                      'meantone4'=>translate('Quarter-comma meantone'),
+                     'meantone4#'=>translate('Quarter-comma meantone, sharps'),
+                     'meantone4b'=>translate('Quarter-comma meantone, flats'),
                      'meantone6'=>translate('Sixth-comma meantone'),
-                     'valotti'=>'Vallotti');
+                     'valotti'=>'Vallotti',
+                     'Bach-Kellner1977'=>'Bach-Kellner (1977)',
+                     'Neidhardt-1724-GrosseStadt'=>'Neidhardt (1724) Grosse Stadt');
     foreach( $tunings as $tun=>$desc ){
       $opt = $el->appendChild($doc->createElement('option'));
       $opt->setAttribute('value',$tun);
