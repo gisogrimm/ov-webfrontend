@@ -191,7 +191,7 @@ function get_room_session( $device, $devhash )
                          'devgain'=>pow(10.0,0.05*($devprop['rvbgain'])),
                          'gain'=>pow(10.0,0.05*($devprop['rvbgain'])));
   $room['size'] = array('x'=>floatval($devprop['snmon_rvb_sx']),'y'=>floatval($devprop['snmon_rvb_sy']),'z'=>floatval($devprop['snmon_rvb_sz']));
-  if( !empty($devprop['room']) ){
+  if( !(empty($devprop['room']) || boolval($devprop['standalonemixer']))){
     $roomprop = get_room_prop( $devprop['room'] );
     if( $roomprop['age'] < 3600 ) {
       $rendersettings['stagedevid'] = intval($devprop['chair']);
@@ -267,7 +267,7 @@ function get_room_session( $device, $devhash )
                                                          'level'=>floatval($devprop['metrolevel']),
                                                          'delay'=>floatval($devprop['metrodelay'])),
                                       'tscinclude'=>$devprop['tscinclude'],
-                                      'start_webmixer'=>boolval($devprop['start_webmixer']),
+                                      'start_webmixer'=>(boolval($devprop['start_webmixer'])||boolval($devprop['standalonemixer'])),
                                       'mhaconfig'=>$devprop['mhaconfig'],
                                       'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding']),
                                                        'sessionportoffset'=>intval($devprop['sessionportoffset'])),
@@ -293,7 +293,7 @@ function get_room_session( $device, $devhash )
                                                       'useloudspeaker'=>boolval($devprop['useloudspeaker']),
                                                       'fdnforwardstages'=>intval($devprop['fdnforwardstages']),
                                                       'fdnorder'=>intval($devprop['fdnorder']),
-                                                      'emptysessionismonitor'=>boolval($devprop['emptysessionismonitor']),
+                                                      'emptysessionismonitor'=>boolval($devprop['emptysessionismonitor'])||boolval($devprop['standalonemixer']),
                                                       'echoc_level'=>floatval($devprop['echoc_level']),
                                                       'echoc_nrep'=>intval($devprop['echoc_nrep']),
                                                       'echoc_filterlen'=>intval($devprop['echoc_filterlen']),
@@ -305,6 +305,7 @@ function get_room_session( $device, $devhash )
                     'room'=>$room,
                     'owner'=>$devprop['owner'],
                     'roomdev'=>$roomdev,
+                    'standalonemixer' => boolval($devprop['standalonemixer']),
                     'firmwareupdate'=>$devprop['firmwareupdate'],
                     'firmwareupdategit'=>$devprop['firmwareupdategit'],
                     'installopenmha'=>$devprop['installopenmha'],

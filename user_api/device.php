@@ -160,6 +160,10 @@ if( !empty($device) ){
     $inp->setAttribute('onclick','if( confirm("Do you really want to reset settings of this device?")) rest_setval_post_reload("devreset","");');
     $inp->setAttribute('value',translate('Reset all device settings to default values'));
     $inp->setAttribute('class','uibutton');
+    if( version_compare("ovclient-0.31.21",$devprop['version'])<0 ){
+      $div->appendChild($doc->createElement('br'));
+      xml_add_checkbox( 'standalonemixer', translate('start standalone mixer instead of ovbox system'), $div, $doc, $devprop, false, true );
+    }
     $divex = add_expert_div( $div, $doc, $devprop );
     $a = $divex->appendChild($doc->createElement('a'));
     $a->setAttribute('href','rest.php?getrawjson=');

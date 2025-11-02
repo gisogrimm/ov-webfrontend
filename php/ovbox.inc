@@ -216,6 +216,7 @@ function defaults( $type )
       'uname_machine'=>'',
       'encryptstate'=>0,
       'showdevlog'=>false,
+      'standalonemixer'=>false,
     );
     break;
   case 'room':
