@@ -280,8 +280,10 @@ if ($user == 'device') {
                         $ch['position']['z'] = floatval($jsmsg['channels'][$chn]['z']);
                         $ch['gain'] = floatval($jsmsg['channels'][$chn]['gain']);
                     }
-                    $dprop['rvbgain'] = floatval(0.1*round(200*log10(floatval($jsmsg['reverbgain']))));
-                    $dprop['mastergain'] = floatval(0.1*round(200*log10(floatval($jsmsg['main']))));
+                    if( isset($jsmsg['reverbgain']))
+                        $dprop['rvbgain'] = floatval(0.1*round(200*log10(floatval($jsmsg['reverbgain']))));
+                    if( isset($jsmsg['main']))
+                        $dprop['mastergain'] = floatval(0.1*round(200*log10(floatval($jsmsg['main']))));
                     set_properties( $device, 'device', $dprop );
                 }
             }
