@@ -19,7 +19,7 @@ foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
     }else{
       if( array_key_exists('primarytag',$splits) ){
         if( in_array( strtoupper($splits['primarytag']), $langs ) ){
-          $GLOBALS['browserlang'] = strtoupper($splits['subtag']);
+          $GLOBALS['browserlang'] = strtoupper($splits['primarytag']);
           break;
         }
       }
