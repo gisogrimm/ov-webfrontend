@@ -230,13 +230,19 @@ if( isset($_POST['getrawjsondev']) ){
 }
 if( isset($_POST['getlogdata']) ){
     header('Content-Type: text/plain');
-    $dpropraw = file_get_contents( '../db/'.$_POST['getlogdata'].'.log' );
-    echo($dpropraw);
+    $fname = '../db/'.$_GET['getlogdata'].'.log';
+    if( file_exists($fname) ){
+        $dpropraw = file_get_contents($fname  );
+        echo($dpropraw);
+    }
 }
 if( isset($_GET['getlogdata']) ){
     header('Content-Type: text/plain');
-    $dpropraw = file_get_contents( '../db/'.$_GET['getlogdata'].'.log' );
-    echo($dpropraw);
+    $fname = '../db/'.$_GET['getlogdata'].'.log';
+    if( file_exists($fname) ){
+        $dpropraw = file_get_contents($fname  );
+        echo($dpropraw);
+    }
 }
 if( isset($_GET['devselect']) ){
     select_userdev( $user, $_GET['devselect'] );

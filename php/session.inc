@@ -46,7 +46,6 @@ if ( empty( $device ) ) {
   }
 }
 
-error_log('---: '.$user);
 modify_user_prop( $user, 'access', time() );
 if( isset($_POST['agreepriv']) ){
     modify_user_prop( $user, 'agreedprivacy', true );

@@ -963,7 +963,11 @@ from.'));
     }else{
       $div->setAttribute('style','display: none;');
     }
-    $div->appendChild($doc->createTextNode(file_get_contents( '../db/'.$device.'.log' )));
+    $logfname = '../db/'.$device.'.log';
+    if( file_exists($logfname) ){
+      $dpropraw = file_get_contents($logfname  );
+      $div->appendChild($doc->createTextNode($dpropraw));
+    }
   }
   {
     // device ownership:

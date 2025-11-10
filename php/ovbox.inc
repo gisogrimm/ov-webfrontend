@@ -403,7 +403,8 @@ function set_properties( $id, $type, $dprop )
 {
   $fname = '../db/'.$id.'.'.$type;
   if( !empty($id) )
-    file_put_contents( $fname, json_encode( $dprop ));
+    if( is_object( $dprop )||is_array($dprop) )
+      file_put_contents( $fname, json_encode( $dprop ));
 }
 
 function rm_device( $dev )
@@ -649,7 +650,8 @@ function cleanup_groups()
           }
         }
     }
-    file_put_contents( $fname, json_encode( $groups ));
+    if( is_object( $groups )||is_array($groups) )
+      file_put_contents( $fname, json_encode( $groups ));
   }
 }
 
@@ -702,7 +704,8 @@ function add_user_to_group( $user, $group )
         if( !in_array( $user, $users ) ){
           $users[] = $user;
           $groups[$group] = $users;
-          file_put_contents( $fname, json_encode( $groups ));
+          if( is_object( $groups )||is_array($groups) )
+            file_put_contents( $fname, json_encode( $groups ));
         }
       }
     }
@@ -721,7 +724,8 @@ function remove_user_from_group( $user, $group )
         if( $us !== false ){
           unset($users[$us]);
           $groups[$group] = $users;
-          file_put_contents( $fname, json_encode( $groups ));
+          if( is_object( $groups )||is_array($groups) )
+            file_put_contents( $fname, json_encode( $groups ));
         }
       }
     }
