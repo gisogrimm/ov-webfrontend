@@ -11,9 +11,13 @@ foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
     
   $splits = array();
   if (preg_match($pattern, $lang, $splits)) {
-    if( in_array( strtoupper($splits['subtag']), $langs ) ){
-      $GLOBALS['browserlang'] = strtoupper($splits['subtag']);
-      break;
+    if( array_key_exists('subtag',$splits) ){
+      if( in_array( strtoupper($splits['subtag']), $langs ) ){
+        $GLOBALS['browserlang'] = strtoupper($splits['subtag']);
+        break;
+      }
+    }else{
+      error_log(json_encode($splits));
     }
   }
 }
