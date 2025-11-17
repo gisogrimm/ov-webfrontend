@@ -171,6 +171,10 @@ if( !empty($device) ){
     $a->appendChild($doc->createTextNode(translate('show raw device configuration in new tab')));
     $divex->appendChild($doc->createTextNode(' (device '.$device.' '.$devprop['uname_sysname'].' '.$devprop['uname_release'].' '.$devprop['uname_machine'].')'));
     $divex->appendChild($doc->createElement('br'));
+    $a = $divex->appendChild($doc->createElement('a'));
+    $a->setAttribute('href','login.php?udid='.$device);
+    $a->appendChild($doc->createTextNode(translate('login link for this device')));
+    $divex->appendChild($doc->createElement('br'));
     // video URLs
     $divex->appendChild($doc->createTextNode('Video: '));
     $a = $divex->appendChild($doc->createElement('a'));

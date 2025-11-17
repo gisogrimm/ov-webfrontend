@@ -23,8 +23,28 @@ $gprop = array('preamble'=>'<div>The <em>ovbox</em> is a remote music collaborat
 $urlgroup = '';
 if( isset($_GET['grp'] ) )
     $urlgroup = get_group_by_hash($_GET['grp']);
-$style = '';
 
+// a username is provided in the URL:
+$urlusr = '';
+if( isset($_GET['usr'] ) )
+    $urlusr = $_GET['usr'];
+
+// a device ID is provided in the URL:
+$urldev = '';
+if( isset($_GET['udid']) )
+    $urldev = $_GET['udid'];
+if( !empty($urldev) ){
+    $dprop = get_properties( $urldev, 'device' );
+    if( !empty($dprop['owner']) )
+        $urlusr = $dprop['owner'];
+}
+
+if( !empty($urlusr) ){
+    $uprop = get_properties( $urlusr, 'user' );
+    $urlgroup = $uprop['maingroup'];
+}
+
+$style = '';
 if( !empty($urlgroup) ){
     $gprop = get_properties( $urlgroup, 'group' );
     $style = $gprop['style'];
@@ -101,8 +121,8 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
         $dispuser = '';
         $focuser = 'autofocus';
         $focpw = '';
-        if( isset($_GET['usr']) ){
-            $dispuser = $_GET['usr'];
+        if( !empty($urlusr) ){
+            $dispuser = $urlusr;
             $focuser = '';
             $focpw = 'autofocus';
         }
@@ -168,9 +188,15 @@ folder. Maybe your account was deleted due to inactivity - then please create a 
     // auth okay, setup session
     $_SESSION['user'] = $_POST['username'];
     // select first active device (if any):
-    select_first_active_dev( $_POST['username'] );
+    if( empty($urldev) )
+        select_first_active_dev( $_POST['username'] );
+    else
+        select_userdev( $_POST['username'], $urldev );
     header( "Location: ?grp=".grouphash($urlgroup) );
     die();
+}else{
+    if( !empty($urldev) )
+        select_userdev( $_SESSION['user'], $urldev );
 }
 
 header( "Location: /?grp=".grouphash($urlgroup) );
