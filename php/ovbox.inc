@@ -88,7 +88,7 @@ function defaults( $type )
       'owner'=>'',
       'version'=>'',
       'selfmonitor'=>true,
-      'egogain'=>0,
+      'egogain'=>-6,
       'selfmonitordelay'=>0,
       'selfmonitoronlyreverb'=>false,
       'host'=>'',
