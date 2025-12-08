@@ -340,6 +340,7 @@ function postproc_prop( &$prop, $type )
   if( $type == 'device' ){
     $prop['rawmode'] = !boolval($prop['virtualacoustics']);
 
+    $prop['egogain'] = floatval($prop['egogain']);
     foreach(array_keys($prop) as $key){
       if( is_numeric($key) )
         unset($prop[$key]);
