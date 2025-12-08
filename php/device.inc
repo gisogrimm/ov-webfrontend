@@ -133,7 +133,7 @@ function get_room_session( $device, $devhash )
   $rendersettings = get_dev_stage_settings( $device );
   // relevant settings:
   if( $devprop['selfmonitor'] )
-    $rendersettings['egogain'] = pow(10.0,0.05*$devprop['egogain']);
+    $rendersettings['egogain'] = pow(10.0,0.05*floatval($devprop['egogain']));
   else
     $rendersettings['egogain'] = 0;
   $rendersettings['outputport1']=$devprop['outputport1'];
