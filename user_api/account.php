@@ -18,6 +18,7 @@ include '../php/rest.inc';
 include '../php/user.inc';
 include '../php/session.inc';
 
+$msg = '';
   
 if( isset($_POST['claimdevid']) ){
   $msg = '';
