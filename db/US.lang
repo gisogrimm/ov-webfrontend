@@ -5,5 +5,6 @@
   "no48ormic":"Phantom power (48V) is off or microphone is not connected",
   "lowsig":"The signal level is very low. The input gain should be increased",
   "inactive since":"inactive since",
+  "If you have not used your account for more than one year, you must re-register as a new user to use the system again.":"If you have not used your account for more than one year, or if you forgot your password, click 'Register as new user' to use the system again. You may re-use the previous user name.",
   "use encryption of audio and user data whenever possible":"Verschlüsselung von Audio- und Benutzerdaten sofern möglich"
 }
