@@ -487,7 +487,7 @@ function register_new_user_simple( $username, $password, &$msg, $emptypw = false
     $msg = 'The user "'.$username.'" already exists. Please chose another user name.';
     return false;
   }
-  $fname = '../db/passwd';
+  $fname = '../db/ovpasswd';
   $pws = array();
   if( file_exists( $fname ) )
     $pws = json_decode( file_get_contents( $fname ), true );
