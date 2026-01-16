@@ -743,7 +743,7 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    //echo '<div class="ad">Die OVBOX Server sind zur Zeit h&auml;ufigen Cyberattacken ausgesetzt. Deswegen ist mit eingeschr&auml;kter Stabilit&auml;t des Systems zu rechnen.</div>'."\n";
+    echo '<div class="ad">Bei Problemen mit dem Login bitte auf <em>Neu registrieren</em> gehen und den aktuellen Nutzernamen eingeben. -- If you are having trouble logging in, please select <em>Register as a new user</em> and enter your current username..</div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
