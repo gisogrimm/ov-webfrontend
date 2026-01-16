@@ -441,8 +441,9 @@ function update_room( user, device, room, droom ) {
     translate( 'managed by' ) + ' ' + room.owner ) );
   if ( room[ 'editable' ] ) span.appendChild( document.createTextNode( ', ' +
     translate( 'acoustics can be changed' ) ) );
-  if ( room.version.startsWith( '0.18.32' ) || room.version.startsWith(
-    '0.24' ) ) {
+  //if ( room.version.startsWith( '0.18.32' ) || room.version.startsWith(
+  //  '0.24' ) ) {
+  if ( room.cantcp ) {
     span.appendChild( document.createTextNode( ' TCP ' ) );
   }
   var srvjit = Number( room[ 'srvjit' ] );

@@ -110,7 +110,7 @@ function update_room_lat( $host, $port, $src, $dest, $lat, $jit )
   set_properties( $room, 'room', $dprop );
 }
 
-function update_room( $host, $port, $name, $pin, $group, $version, $srvjit = -1 )
+function update_room( $host, $port, $name, $pin, $group, $version, $cantcp, $srvjit = -1 )
 {
   $room = $host . ':' . $port;
   $dprop = get_room_prop( $room );
@@ -122,6 +122,7 @@ function update_room( $host, $port, $name, $pin, $group, $version, $srvjit = -1 
   $dprop['access'] = time();
   $dprop['srvjit'] = $srvjit;
   $dprop['version'] = $version;
+  $dprop['cantcp'] = boolval($cantcp);
   set_properties( $room, 'room', $dprop );
   cleanup_rooms();
 }

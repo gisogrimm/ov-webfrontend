@@ -315,11 +315,14 @@ if ($user == 'room') {
         $roomver = '';
         if( isset($_GET['version']) )
             $roomver = $_GET['version'];
+        $cantcp = false;
+        if( isset($_GET['tcp']) )
+            $cantcp = floatval($_GET['tcp'])>0;
         // update database entry:
         if( isset($_GET['srvjit']) )
-            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver, $_GET['srvjit'] );
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver, $cantcp, $_GET['srvjit'] );
         else
-            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver );
+            update_room( $clientip, $_GET['port'], $_GET['name'], $_GET['pin'], $group, $roomver, $cantcp );
         if( isset($_GET['empty']) )
             clear_room_lat( $clientip, $_GET['port'] );
     }

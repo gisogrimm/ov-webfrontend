@@ -253,6 +253,7 @@ function defaults( $type )
       'premium'=>false,
       'clearowned'=>false,
       'version'=>'',
+      'cantcp'=>false,
     );
     break;
   case 'user':
