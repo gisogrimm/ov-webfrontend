@@ -327,13 +327,13 @@ if( isset($_POST['jsinputchannels']) ){
 if( isset($_POST['jsfrontendconfig']) )
     modify_device_prop($device,'frontendconfig',json_decode($_POST['jsfrontendconfig']));
 if( isset($_POST['devreset']) ){
-    if( $dprop['owner'] = $user ){
+    if( $dprop['owner'] == $user ){
         rm_device( $device );
         modify_device_prop( $device, 'owner', $user);
     }
 }
 if( isset($_POST['unclaimdevice']) ){
-    if( $devprop['owner'] = $user )
+    if( $devprop['owner'] == $user )
         rm_device( $device );
 }
 if( isset($_POST['wifi']) && isset($_POST['wifissid'])  && isset($_POST['wifipasswd']) ){
