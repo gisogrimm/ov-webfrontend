@@ -43,7 +43,7 @@ if ($user == 'device') {
         }
     }
     if( isset($_GET['sendlog']) ){
-        $device = $_GET['sendlog'];
+        $device = basename($_GET['sendlog']);
         if( !empty($device) ){
             $clear = intval($_GET['clear']);
             $dprop = get_properties($device,'device');
@@ -63,7 +63,7 @@ if ($user == 'device') {
         }
     }
     if( isset($_POST['dev']) ){
-        $device = $_POST['dev'];
+        $device = basename($_POST['dev']);
         if( !empty($device) ){
             $devhash = '';
             if( isset($_GET['hash']) )
@@ -83,7 +83,7 @@ if ($user == 'device') {
         }
     }
     if( isset($_GET['devinit']) ){
-        $device = $_GET['devinit'];
+        $device = basename($_GET['devinit']);
         if( !empty($device) ){
             $dprop = get_properties($device,'device');
             echo json_encode( $dprop );
@@ -100,7 +100,7 @@ if ($user == 'device') {
         }
     }
     if( isset($_GET['ovclientmsg']) ){
-        $device = $_GET['ovclientmsg'];
+        $device = basename($_GET['ovclientmsg']);
         if( !empty($device) ){
             $putdata = fopen("php://input", "r");
             $devmsg = '';
@@ -114,7 +114,7 @@ if ($user == 'device') {
         $host = '';
         if( isset($_GET['host']) )
             $host = $_GET['host'];
-        $device = $_GET['ovclient'];
+        $device = basename($_GET['ovclient']);
         if( !empty($device) ){
             $devhash = '';
             if( isset($_GET['hash']) )
@@ -141,7 +141,7 @@ if ($user == 'device') {
         $host = '';
         if( isset($_GET['host']) )
             $host = $_GET['host'];
-        $device = $_GET['ovclient2'];
+        $device = basename($_GET['ovclient2']);
         if( !empty($device) ){
             $devhash = '';
             if( isset($_GET['hash']) )
