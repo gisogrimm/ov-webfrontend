@@ -399,7 +399,7 @@ function postproc_prop( &$prop, $type )
 
 function get_properties( $id, $type )
 {
-  $fname = '../db/'.$id.'.'.$type;
+  $fname = '../db/'.basename($id).'.'.$type;
   $prop = defaults($type);
   if( !empty($id) && file_exists( $fname ) ){
     $filec = json_decode( file_get_contents( $fname ), true );
@@ -412,7 +412,7 @@ function get_properties( $id, $type )
 
 function set_properties( $id, $type, $dprop )
 {
-  $fname = '../db/'.$id.'.'.$type;
+  $fname = '../db/'.basename($id).'.'.$type;
   if( !empty($id) )
     if( is_object( $dprop )||is_array($dprop) )
       file_put_contents( $fname, json_encode( $dprop ));
@@ -420,7 +420,7 @@ function set_properties( $id, $type, $dprop )
 
 function rm_device( $dev )
 {
-  $fname = '../db/' . $dev . '.device';
+  $fname = '../db/' . basename($dev) . '.device';
   unlink($fname);
 }
 

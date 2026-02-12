@@ -234,7 +234,7 @@ if( isset($_POST['getrawjsondev']) ){
 }
 if( isset($_POST['getlogdata']) ){
     header('Content-Type: text/plain');
-    $fname = '../db/'.$_GET['getlogdata'].'.log';
+    $fname = '../db/'.basename($_POST['getlogdata']).'.log';
     if( file_exists($fname) ){
         $dpropraw = file_get_contents($fname  );
         echo($dpropraw);
@@ -242,7 +242,7 @@ if( isset($_POST['getlogdata']) ){
 }
 if( isset($_GET['getlogdata']) ){
     header('Content-Type: text/plain');
-    $fname = '../db/'.$_GET['getlogdata'].'.log';
+    $fname = '../db/'.basename($_GET['getlogdata']).'.log';
     if( file_exists($fname) ){
         $dpropraw = file_get_contents($fname  );
         echo($dpropraw);
