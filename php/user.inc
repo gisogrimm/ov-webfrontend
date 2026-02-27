@@ -743,7 +743,7 @@ function print_head( $user = "", $style = "", $urlgroup = "", $show_menu = true 
   if( empty($user) ){
     echo '<div class="ovcontent">'. "\n";
     // start ad:
-    echo '<div class="ad">Bei Problemen mit dem Login bitte auf <em>Neu registrieren</em> gehen und den aktuellen Nutzernamen eingeben. -- If you are having trouble logging in, please select <em>Register as a new user</em> and enter your current username. A server error was corrected and the system is now working correctly.</div>'."\n";
+    //echo '<div class="ad">Bei Problemen mit dem Login bitte auf <em>Neu registrieren</em> gehen und den aktuellen Nutzernamen eingeben. -- If you are having trouble logging in, please select <em>Register as a new user</em> and enter your current username. A server error was corrected and the system is now working correctly.</div>'."\n";
     // end ad.
     echo '<h1>'.$title.'</h1>' . "\n";
   }else{
