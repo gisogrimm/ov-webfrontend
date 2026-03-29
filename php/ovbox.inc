@@ -1,31 +1,70 @@
 <?php
 
-// internationalization:
-$langs = get_languages();
-$GLOBALS['browserlang'] = 'US';
-if( array_key_exists( 'HTTP_ACCEPT_LANGUAGE', $_SERVER ) ){
-foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
-  $pattern = '/^(?P<primarytag>[a-zA-Z]{2,8})'.
-           '(?:-(?P<subtag>[a-zA-Z]{2,8}))?(?:(?:;q=)'.
-           '(?P<quantifier>\d\.\d))?$/';
-    
-  $splits = array();
-  if (preg_match($pattern, $lang, $splits)) {
-    if( array_key_exists('subtag',$splits) ){
-      if( in_array( strtoupper($splits['subtag']), $langs ) ){
-        $GLOBALS['browserlang'] = strtoupper($splits['subtag']);
-        break;
-      }
-    }else{
-      if( array_key_exists('primarytag',$splits) ){
-        if( in_array( strtoupper($splits['primarytag']), $langs ) ){
-          $GLOBALS['browserlang'] = strtoupper($splits['primarytag']);
-          break;
+function redirect_https(){
+  // 1. Check if SERVER_SOFTWARE is set and starts with 'PHP'
+  // We use the null coalescing operator (??) to prevent warnings if the index is missing.
+  $server_is_php = isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'PHP') === 0;
+
+  // 2. Only proceed if NOT hosted by the built-in PHP server
+  if (!$server_is_php) {
+    // Ideally, load config only when needed.
+    // If get_properties() is expensive, consider caching this result.
+    $sitecfg = get_properties('site', 'config');
+
+    // 3. Check if force HTTPS is enabled in config
+    if (!empty($sitecfg['forcehttps'])) {
+
+      // 4. Check if HTTPS is currently off
+      // Note: Some load balancers use 'off' or empty strings.
+      // This checks if it is not explicitly 'on'.
+      $is_https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+
+      if (!$is_https) {
+
+        // 5. Allowlist check: Prevent redirect loops on localhost or local IPs
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $is_local = ($host === 'localhost') || (strpos($host, '127.') === 0) || (strpos($host, '192.168.') === 0);
+
+        if (!$is_local) {
+          // 6. Perform the redirect
+          // Using header() directly prevents potential XSS injection via HTTP_HOST poisoning
+          // compared to echoing the URL into a variable.
+          $redirect_url = "https://" . $host . $_SERVER['REQUEST_URI'];
+
+          header("Location: " . $redirect_url);
+          exit();
         }
       }
     }
   }
 }
+
+// internationalization:
+$langs = get_languages();
+$GLOBALS['browserlang'] = 'US';
+if( array_key_exists( 'HTTP_ACCEPT_LANGUAGE', $_SERVER ) ){
+  foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
+    $pattern = '/^(?P<primarytag>[a-zA-Z]{2,8})'.
+             '(?:-(?P<subtag>[a-zA-Z]{2,8}))?(?:(?:;q=)'.
+             '(?P<quantifier>\d\.\d))?$/';
+
+    $splits = array();
+    if (preg_match($pattern, $lang, $splits)) {
+      if( array_key_exists('subtag',$splits) ){
+        if( in_array( strtoupper($splits['subtag']), $langs ) ){
+          $GLOBALS['browserlang'] = strtoupper($splits['subtag']);
+          break;
+        }
+      }else{
+        if( array_key_exists('primarytag',$splits) ){
+          if( in_array( strtoupper($splits['primarytag']), $langs ) ){
+            $GLOBALS['browserlang'] = strtoupper($splits['primarytag']);
+            break;
+          }
+        }
+      }
+    }
+  }
 }
 if( !array_key_exists( 'langdb', $GLOBALS) ){
   // user browser settings only if no session
