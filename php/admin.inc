@@ -19,7 +19,7 @@ function table_add_header( &$tr, $field, $sortkey, &$doc, $type )
 
 function sort_comp_key( &$db, $sortkey, $sortkey2 = '' )
 {
-  if( $sortkey == 'version' ){
+  if( ($sortkey == 'version')||($sortkey == 'uname_release') ){
     uasort( $db, function ( $a, $b ) use ($sortkey, $sortkey2)
     {
       $rv = version_compare( $a[$sortkey], $b[$sortkey] );
