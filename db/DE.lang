@@ -109,5 +109,7 @@
   "Equal temperament":"gleichstufig",
   "Quarter-comma meantone":"1/4 Komma mitteltönig",
   "Sixth-comma meantone":"1/6 Komma mitteltönig",
-  "login link for this device":"Login-Link für dieses Gerät"
+  "login link for this device":"Login-Link für dieses Gerät",
+  "use encryption of audio and user data whenever possible":"Verschlüsseln von Audio- und Benutzerdaten, wann immer dies möglich ist",
+  "noemailstored":"Im OVBOX-System werden keine personenbezogenen Daten gespeichert. Falls Sie zuvor Ihre E-Mail-Adresse angegeben haben, wurde diese aus der Datenbank gelöscht, da sie für den Betrieb des Dienstes nicht erforderlich ist."
 }

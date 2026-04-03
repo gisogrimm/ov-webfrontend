@@ -89,5 +89,6 @@
   "no48ormic":"A fantomtáp (48V) ki van kapcsolva, vagy a mikrofon nincs csatlakoztatva",
   "lowsig":"A jelszint nagyon alacsony. A bemeneti erősítést növelni kell",
   "channel":"Bemenő csatorna",
-  "use encryption of audio and user data whenever possible":"A hang- és felhasználói adatok titkosítása, ahol lehetséges"
+  "use encryption of audio and user data whenever possible":"A hang- és felhasználói adatok titkosítása, ahol lehetséges",
+  "noemailstored":"Az OVBOX rendszerben nem tárolunk személyes adatokat. Ha korábban megadta e-mail címét, azt eltávolítottuk az adatbázisból, mivel a szolgáltatás működéséhez nincs rá szükség."
 }

@@ -6,5 +6,5 @@
   "lowsig":"The signal level is very low. The input gain should be increased",
   "inactive since":"inactive since",
   "If you have not used your account for more than one year, you must re-register as a new user to use the system again.":"If you have not used your account for more than one year, or if you forgot your password, click 'Register as new user' to use the system again. You may re-use the previous user name.",
-  "use encryption of audio and user data whenever possible":"Verschlüsselung von Audio- und Benutzerdaten sofern möglich"
+  "noemailstored":"No personal information is stored in the OVBOX system. If you previously provided your e-mail address, it was removed from the database because it is not needed for the functioning of the service."
 }

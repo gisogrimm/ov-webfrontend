@@ -66,6 +66,7 @@ if( array_key_exists( 'HTTP_ACCEPT_LANGUAGE', $_SERVER ) ){
     }
   }
 }
+
 if( !array_key_exists( 'langdb', $GLOBALS) ){
   // user browser settings only if no session
   $GLOBALS['userlang'] = $GLOBALS['browserlang'];
@@ -433,6 +434,7 @@ function postproc_prop( &$prop, $type )
   }
   if( $type == 'user' ){
     $prop['validsubscription'] = validsubscription( $prop );
+    $prop['mail'] = '';
   }
 }
 
@@ -453,8 +455,10 @@ function set_properties( $id, $type, $dprop )
 {
   $fname = '../db/'.basename($id).'.'.$type;
   if( !empty($id) )
-    if( is_object( $dprop )||is_array($dprop) )
-      file_put_contents( $fname, json_encode( $dprop ));
+    if( is_object( $dprop )||is_array($dprop) ){
+      ksort($dprop);
+      file_put_contents( $fname, json_encode( $dprop, JSON_PRETTY_PRINT ), LOCK_EX);
+    }
 }
 
 function rm_device( $dev )
