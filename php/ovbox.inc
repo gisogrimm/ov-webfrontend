@@ -461,10 +461,22 @@ function set_properties( $id, $type, $dprop )
     }
 }
 
-function rm_device( $dev )
-{
-  $fname = '../db/' . basename($dev) . '.device';
-  unlink($fname);
+function rm_device($dev) {
+    // Sanitize the device name to prevent directory traversal
+    $safeName = basename($dev);
+    $directory = '../db/';
+
+    // Define the file extensions associated with a device
+    $extensions = ['.device', '.log', '.devpresets'];
+
+    foreach ($extensions as $ext) {
+        $filePath = $directory . $safeName . $ext;
+
+        // Check if file exists before attempting to delete
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
 }
 
 function modify_device_prop( $device, $key, $value )

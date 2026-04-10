@@ -323,7 +323,7 @@ if( isset($_POST['devreset']) ){
     }
 }
 if( isset($_POST['unclaimdevice']) ){
-    if( $devprop['owner'] == $user )
+    if( $dprop['owner'] == $user )
         rm_device( $device );
 }
 if( isset($_POST['wifi']) && isset($_POST['wifissid'])  && isset($_POST['wifipasswd']) ){
