@@ -1,11 +1,10 @@
 input {
-    margin-left: 4px;
-    margin-right: 4px;
     margin-top: 2px;
     margin-bottom: 4px;
     padding: 5px;
     border-radius: 7px;
     background: #eee;
+    box-sizing: border-box;
 }
 input[type="button"]:hover {
     background: #aaa;
@@ -38,6 +37,10 @@ body {
     font-family: Helvetica,Arial,sans-serif;
     font-size: 20px;
     margin: 0px;
+}
+.xconfig {
+    width: 100%;
+    box-sizing: border-box;
 }
 .important {
     color: #aa0000;

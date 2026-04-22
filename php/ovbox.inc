@@ -243,6 +243,8 @@ function defaults( $type )
       'locmcrecautoconnect'=>false,
       'locmcsendchannels'=>2,
       'emptysessionismonitor'=>false,
+      'spkcalib'=>false,
+      'spkcalibfirlen'=>1025,
       'usebcf2000'=>false,
       'snmon_rvb_sx'=>25,
       'snmon_rvb_sy'=>13,

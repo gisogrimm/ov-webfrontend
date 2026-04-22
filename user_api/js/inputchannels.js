@@ -36,8 +36,8 @@ const eq_6000 = {
   }
 }
 const pareq = {
-    'pareq4band': {
-        'b1ls_act':true
+  'pareq4band': {
+    'b1ls_act': true
   }
 }
 const tube_green = {
@@ -79,41 +79,41 @@ const spksim1 = {
   }
 }
 const synth1 = {
-    'simplesynth':{
-        'autoconnect': 'true',
-        'level': 73
-    }
+  'simplesynth': {
+    'autoconnect': 'true',
+    'level': 73
+  }
 }
 const synth2 = {
-    'simplesynth': {
-        'autoconnect': 'true',
-        'decay': 20,
-        'decaydamping': 0.07,
-        'decayoffset': 0.2,
-        'detune': -6.25,
-        'f0': 440,
-        'level': 79.2969,
-        'onset': 0.04
-    }
+  'simplesynth': {
+    'autoconnect': 'true',
+    'decay': 20,
+    'decaydamping': 0.07,
+    'decayoffset': 0.2,
+    'detune': -6.25,
+    'f0': 440,
+    'level': 79.2969,
+    'onset': 0.04
+  }
 }
 const synth3 = {
-    'simplesynth': {
-        'autoconnect': 'true',
-        'decay': 40,
-        'decaydamping': 0.07,
-        'decayoffset': 0.2,
-        'detune': -0.75,
-        'f0': 415,
-        'level': 79.2969,
-        'onset': 0.14,
-        'noiseweight': 0.1,
-        'decaynoise': 0.1,
-        'noiseq': 0.3,
-        'gamma': 0.2,
-        'partialweights':'1 1 0.316 1 0.282 1 2 0.0891 0.0398 0.0398 0.398',
-        'tuning':'meantone4',
-        'noisemin':0.01
-    }
+  'simplesynth': {
+    'autoconnect': 'true',
+    'decay': 40,
+    'decaydamping': 0.07,
+    'decayoffset': 0.2,
+    'detune': -0.75,
+    'f0': 415,
+    'level': 79.2969,
+    'onset': 0.14,
+    'noiseweight': 0.1,
+    'decaynoise': 0.1,
+    'noiseq': 0.3,
+    'gamma': 0.2,
+    'partialweights': '1 1 0.316 1 0.282 1 2 0.0891 0.0398 0.0398 0.398',
+    'tuning': 'meantone4',
+    'noisemin': 0.01
+  }
 }
 
 function inputchannels_add() {
@@ -143,9 +143,14 @@ function inputchannels_remove(rk) {
 
 function inputchannels_onedit_plugins(rk, value) {
   if (value.length > 0) {
-    inchannels[rk]['plugins'] = JSON.parse(value);
-    jsinputchannels.value = JSON.stringify(inchannels);
-    rest_setval_post('jsinputchannels', jsinputchannels.value);
+    try {
+      inchannels[rk]['plugins'] = JSON.parse(value);
+      jsinputchannels.value = JSON.stringify(inchannels);
+      rest_setval_post('jsinputchannels', jsinputchannels.value);
+    } catch (e) {
+      console.error("Invalid JSON provided for plugins:", e);
+      alert("Invalid JSON configuration. Please check your syntax.");
+    }
   }
 }
 
@@ -345,9 +350,9 @@ function inputchannels_createUI() {
   }
   // show label:
   var el = document.createElement('label');
-  el.appendChild(document.createTextNode(
-      translate('configure input channels (to which your microphones/instruments are connected):')
-    ));
+  el.appendChild(document.createTextNode(translate(
+    'configure input channels (to which your microphones/instruments are connected):'
+    )));
   jsinputchannelsdiv.appendChild(el);
   jsinputchannelsdiv.appendChild(document.createElement('br'));
   // preset selector:
@@ -357,7 +362,8 @@ function inputchannels_createUI() {
   var opt = el.appendChild(document.createElement('option'));
   opt.setAttribute('value', 'none');
   opt.setAttribute('selected', '');
-    opt.appendChild(document.createTextNode('-- '+translate('select channel preset')+' --'));
+  opt.appendChild(document.createTextNode('-- ' + translate(
+    'select channel preset') + ' --'));
   var opt = el.appendChild(document.createElement('option'));
   opt.setAttribute('value', 'p0');
   opt.appendChild(document.createTextNode('send first input, vocals'));
@@ -393,18 +399,18 @@ function inputchannels_createUI() {
   adiv.setAttribute('class', 'devprop');
   jsinputchannelsdiv.appendChild(adiv);
   var el = document.createElement('input');
-    el.setAttribute('value', translate('add channel'));
+  el.setAttribute('value', translate('add channel'));
   el.setAttribute('type', 'button');
   el.setAttribute('onclick', '{inputchannels_add();inputchannels_createUI()}');
   adiv.appendChild(el);
   var el = document.createElement('label');
-  el.appendChild(document.createTextNode(
-      ' ('+translate('positions are relative to the center of your head, in meters')+')'));
+  el.appendChild(document.createTextNode(' (' + translate(
+    'positions are relative to the center of your head, in meters') + ')'));
   adiv.appendChild(el);
   adiv.appendChild(document.createElement('br'));
   if (inchannels) {
     for (var k = 0; k < inchannels.length; k++) {
-      var cdiv = adiv.appendChild(document.createElement('dev'));
+      var cdiv = adiv.appendChild(document.createElement('div'));
       cdiv.setAttribute('class', 'channelcfg');
       var box0 = cdiv.appendChild(document.createElement('div'));
       box0.setAttribute('class', 'plugincategory');
@@ -413,15 +419,15 @@ function inputchannels_createUI() {
       box1.setAttribute('class', 'toplabelbox');
       var tlab1 = box1.appendChild(document.createElement('div'));
       tlab1.setAttribute('class', 'toplabel');
-        tlab1.appendChild(document.createTextNode(translate('source port')+':'));
+      tlab1.appendChild(document.createTextNode(translate('source port') +
+      ':'));
       var el = document.createElement('select');
       el.setAttribute('onchange', '{inputchannels_onedit_port(' + k.toString(
         10) + ',this.value);inputchannels_createUI();}');
       var eopt = el.appendChild(document.createElement('option'));
       eopt.setAttribute('value', '');
       eopt.appendChild(document.createTextNode('- select channel -'));
-      el.appendChild(eopt);
-
+      //el.appendChild(eopt);
       function add_opt(optv, ind, options) {
         var opt = el.appendChild(document.createElement('option'));
         opt.setAttribute('value', optv);
@@ -436,7 +442,7 @@ function inputchannels_createUI() {
       box2.setAttribute('class', 'toplabelbox');
       var tlab2 = box2.appendChild(document.createElement('div'));
       tlab2.setAttribute('class', 'toplabel');
-        tlab2.appendChild(document.createTextNode(translate('position')+':'));
+      tlab2.appendChild(document.createTextNode(translate('position') + ':'));
       var el = document.createElement('input');
       el.setAttribute('value', (inchannels[k]['position']['x']).toFixed(2));
       el.setAttribute('onchange', '{inputchannels_onedit_x(' + k.toString(10) +
@@ -465,7 +471,8 @@ function inputchannels_createUI() {
       box3.setAttribute('class', 'toplabelbox');
       var tlab3 = box3.appendChild(document.createElement('div'));
       tlab3.setAttribute('class', 'toplabel');
-        tlab3.appendChild(document.createTextNode(translate('directivity')+':'));
+      tlab3.appendChild(document.createTextNode(translate('directivity') +
+      ':'));
       var el = document.createElement('select');
       el.setAttribute('onchange', '{inputchannels_onedit_directivity(' + k
         .toString(10) + ',this.value);inputchannels_createUI();}');
@@ -486,7 +493,7 @@ function inputchannels_createUI() {
       box4.setAttribute('class', 'toplabelbox');
       var tlab4 = box4.appendChild(document.createElement('div'));
       tlab4.setAttribute('class', 'toplabel');
-        tlab4.appendChild(document.createTextNode(translate('name')+':'));
+      tlab4.appendChild(document.createTextNode(translate('name') + ':'));
       var el = document.createElement('input');
       if (inchannels[k]['name']) el.setAttribute('value', inchannels[k][
       'name']);
@@ -509,7 +516,7 @@ function inputchannels_createUI() {
       box4a.setAttribute('class', 'plugincategory');
       var tlab4a = box4a.appendChild(document.createElement('div'));
       tlab4a.setAttribute('class', 'toplabel');
-        tlab4a.appendChild(document.createTextNode(translate('Gain')+'/dB:'));
+      tlab4a.appendChild(document.createTextNode(translate('Gain') + '/dB:'));
       el = box4a.appendChild(document.createElement('input'));
       el.setAttribute('onchange', '{inputchannels_onedit_gain(' + k.toString(
         10) + ',this.value);}');
@@ -526,7 +533,7 @@ function inputchannels_createUI() {
       box5.setAttribute('class', 'plugincategory');
       var tlab5 = box5.appendChild(document.createElement('div'));
       tlab5.setAttribute('class', 'plugincategorylab');
-        tlab5.appendChild(document.createTextNode(translate('Plugin presets:')));
+      tlab5.appendChild(document.createTextNode(translate('Plugin presets:')));
       if (jsdevcfg.canplugins) {
         if (inchannels[k]['plugins'] == null) inchannels[k]['plugins'] = {};
         var el = box5.appendChild(document.createElement('input'));
@@ -538,7 +545,7 @@ function inputchannels_createUI() {
         odrv.setAttribute('class', 'plugincategory');
         var odrvlab = odrv.appendChild(document.createElement('div'));
         odrvlab.setAttribute('class', 'plugincategorylab');
-          odrvlab.appendChild(document.createTextNode(translate('overdrives')));
+        odrvlab.appendChild(document.createTextNode(translate('overdrives')));
         var el = odrv.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
         el.setAttribute('value', 'tube1');
@@ -564,7 +571,7 @@ function inputchannels_createUI() {
         flts.setAttribute('class', 'plugincategory');
         var fltslab = flts.appendChild(document.createElement('div'));
         fltslab.setAttribute('class', 'plugincategorylab');
-          fltslab.appendChild(document.createTextNode(translate('low cuts')));
+        fltslab.appendChild(document.createTextNode(translate('low cuts')));
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
         el.setAttribute('value', '120 Hz');
@@ -588,7 +595,7 @@ function inputchannels_createUI() {
         flts.setAttribute('class', 'plugincategory');
         var fltslab = flts.appendChild(document.createElement('div'));
         fltslab.setAttribute('class', 'plugincategorylab');
-          fltslab.appendChild(document.createTextNode(translate('equalizers')));
+        fltslab.appendChild(document.createTextNode(translate('equalizers')));
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
         el.setAttribute('value', 'EQ 300 +3 (warm)');
@@ -605,29 +612,29 @@ function inputchannels_createUI() {
         el.setAttribute('type', 'button');
         el.setAttribute('value', 'par EQ 4band');
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
-          .toString(10) +
-          ',JSON.stringify(pareq));inputchannels_createUI();}');
+          .toString(10) + ',JSON.stringify(pareq));inputchannels_createUI();}'
+          );
         // synths:
         var flts = box5.appendChild(document.createElement('div'));
         flts.setAttribute('class', 'plugincategory');
         var fltslab = flts.appendChild(document.createElement('div'));
         fltslab.setAttribute('class', 'plugincategorylab');
-          fltslab.appendChild(document.createTextNode(translate('synths')));
+        fltslab.appendChild(document.createTextNode(translate('synths')));
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
-          el.setAttribute('value', translate('synth1'));
+        el.setAttribute('value', translate('synth1'));
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(synth1));inputchannels_createUI();}');
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
-          el.setAttribute('value', translate('synth2'));
+        el.setAttribute('value', translate('synth2'));
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(synth2));inputchannels_createUI();}');
         var el = flts.appendChild(document.createElement('input'));
         el.setAttribute('type', 'button');
-          el.setAttribute('value', translate('synth3'));
+        el.setAttribute('value', translate('synth3'));
         el.setAttribute('onclick', '{inputchannels_onedit_plugins(' + k
           .toString(10) +
           ',JSON.stringify(synth3));inputchannels_createUI();}');
@@ -649,7 +656,8 @@ function inputchannels_createUI() {
         if (!jsdevcfg.showexpertsettings) ediv.setAttribute('style',
           'display: none;');
         var el = ediv.appendChild(document.createElement('label'));
-          el.appendChild(document.createTextNode(translate('source port')+': '));
+        el.appendChild(document.createTextNode(translate('source port') +
+        ': '));
         var el = ediv.appendChild(document.createElement('input'));
         el.setAttribute('value', inchannels[k]['sourceport']);
         el.setAttribute('onchange', '{inputchannels_onedit_port(' + k.toString(
@@ -664,7 +672,7 @@ function inputchannels_createUI() {
         ], null, 2)));
         el.setAttribute('onchange', '{inputchannels_onedit_plugins(' + k
           .toString(10) + ',this.value);inputchannels_createUI();}');
-        el.setAttribute('style', 'width: 98%;');
+        el.setAttribute('class', 'xconfig');
       }
     }
   }

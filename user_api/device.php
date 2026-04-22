@@ -23,7 +23,7 @@ if( isset($_POST['transferownership']) ){
     print_foot($style);
   }else{
     modify_device_prop( $device, 'owner', $newowner );
-    $fname = '../'.$user.'.userdevice';
+    $fname = '../'.basename($user).'.userdevice';
     if( file_exists( $fname ) )
       unlink($fname);
     header( "Location: /device.php" );
@@ -110,8 +110,6 @@ if( !empty($device) ){
     }
     $div_save = $div->appendChild($doc->createElement('div'));
     // settings presets:
-    //$span = $div_save->appendChild($doc->createElement('span'));
-    //$span->setAttribute('class','presetspan');
     $inp = $div_save->appendChild($doc->createElement('input'));
     $inp->setAttribute('id','savepresetname');
     //$inp->setAttribute('class','presetspan');
@@ -137,13 +135,6 @@ if( !empty($device) ){
     $el->setAttribute('value',$devprop['label']);
     $el->setAttribute('onchange','rest_set_devprop("label",event.target.value);');
     $div->appendChild($doc->createElement('br'));
-    //$el = $div->appendChild($doc->createElement('input'));
-    //$el->setAttribute('type','checkbox');
-    //if( $devprop['showexpertsettings'] )
-    //  $el->setAttribute('checked','');
-    //$div->appendChild($doc->createTextNode('show expert settings (danger zone)'));
-    //$el->setAttribute('onchange','rest_set_devprop("showexpertsettings",event.target.checked);set_displayclass("expert",event.target.checked);');
-    //$el = $div->appendChild($doc->createElement('br'));
     // reset settings
     $inp = $div->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
@@ -192,7 +183,7 @@ if( !empty($device) ){
     $el->setAttribute('type','hidden');
     $el = $form->appendChild($doc->createElement('button'));
     $el->setAttribute('class','uibutton');
-    $el->appendChild($doc->createTextNode('copy settings'));;
+    $el->appendChild($doc->createTextNode('copy settings'));
 
     xml_add_checkbox( 'start_webmixer', translate('start node-js server for webmixer'), $divex, $doc, $devprop, false, true );
   }
@@ -294,8 +285,9 @@ if( !empty($device) ){
     $divex->appendChild($doc->createElement('br'));
     //$el = $divex->appendChild($doc->createElement('input'));
     $el = $divex->appendChild($doc->createElement('textarea'));
+    $el->setAttribute('class','xconfig');
     //$el->setAttribute('size','45');
-    $el->setAttribute('style','width: 98%;');
+    //$el->setAttribute('style','width: 98%;');
     $el->setAttribute('rows','5');
     //$el->setAttribute('value',$devprop['xport']);
     $el->appendChild($doc->createTextNode(json_encode(json_decode($devprop['xport']),JSON_PRETTY_PRINT| JSON_UNESCAPED_SLASHES)));
@@ -538,6 +530,32 @@ if( !empty($device) ){
       $opt->appendChild($doc->createTextNode($smpfmt.': '.$desc));
     }
     $divex->appendChild($doc->createElement('br'));
+    // headphone equalization:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    xml_add_checkbox( 'spkcalib', 'Headphone equalization', $el, $doc, $devprop, false, true );
+    $divex = add_expert_div($divex,$doc,$devprop,'spkcalib');
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->appendChild($doc->createTextNode('Headphone equalization requires at least version 0.31.41, and at least Raspberry Pi 4B+, Raspberry Pi 5, or desktop versions.'));
+    $el = xml_add_input_generic( 'spkcalibfirlen','Number of FIR filter coefficients:',$divex,$doc,$devprop);
+    $el->setAttribute('value',round($devprop['spkcalibfirlen'],1));
+    $el->setAttribute('type','number');
+    $el->setAttribute('min','0');
+    $el->setAttribute('step','0.1');
+    $el->setAttribute('max','2049');
+    $el = xml_add_input_generic( 'spkcalibvfreq','Frequency vector (space separated) in Hz:',$divex,$doc,$devprop);
+    $el->setAttribute('type','text');
+    $el->setAttribute('style','width:100%;');
+    $el->setAttribute('value',$devprop['spkcalibvfreq']);
+    $el = xml_add_input_generic( 'spkcalibvgainl','Gain vector left (space separated) in dB:',$divex,$doc,$devprop);
+    $el->setAttribute('type','text');
+    $el->setAttribute('style','width:100%;');
+    $el->setAttribute('value',$devprop['spkcalibvgainl']);
+    $el = xml_add_input_generic( 'spkcalibvgainr','Gain vector right (space separated) in dB:',$divex,$doc,$devprop);
+    $el->setAttribute('type','text');
+    $el->setAttribute('style','width:100%;');
+    $el->setAttribute('value',$devprop['spkcalibvgainr']);
     // head tracking:
     $divex = add_expert_div($div,$doc,$devprop);
     $el = $divex->appendChild($doc->createElement('div'));
@@ -641,6 +659,7 @@ if( !empty($device) ){
     $el->appendChild($doc->createTextNode('User provided TASCAR configuration:'));
     $form = $divex->appendChild($doc->createElement('div'));
     $el = $form->appendChild($doc->createElement('textarea'));
+    $el->setAttribute('class','xconfig');
     $el->setAttribute('name','tscinclude');
     $el->setAttribute('rows','8');
     $el->setAttribute('cols','60');
@@ -660,6 +679,7 @@ if( !empty($device) ){
     $el->appendChild($doc->createTextNode('openMHA configuration:'));
     $form = $divex->appendChild($doc->createElement('div'));
     $el = $form->appendChild($doc->createElement('textarea'));
+    $el->setAttribute('class','xconfig');
     $el->setAttribute('name','mhaconfig');
     $el->setAttribute('rows','8');
     $el->setAttribute('cols','60');
@@ -826,7 +846,7 @@ if( !empty($device) ){
       $opt->appendChild($doc->createTextNode($frontend['label']));
     }
     $div->appendChild($doc->createElement('br'));
-    $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode(translate('Warning: ')));;
+    $div->appendChild($doc->createElement('b'))->appendChild($doc->createTextNode(translate('Warning: ')));
     $div->appendChild($doc->createTextNode(translate('Before changing the front end, make sure you have registered an account on the new website. Without an account, you can lock your device by selecting a front end. In this case, please delete the file "ov-client.cfg" on the boot partition of the SD card.')));
     $div->appendChild($doc->createElement('br'));
   }
@@ -980,7 +1000,7 @@ from.'));
     $el->setAttribute('type','hidden');
     $el = $form->appendChild($doc->createElement('button'));
     $el->setAttribute('class','uibutton');
-    $el->appendChild($doc->createTextNode('transfer ownership'));;
+    $el->appendChild($doc->createTextNode('transfer ownership'));
     // not my device:
     $inp = $form->appendChild($doc->createElement('input'));
     $inp->setAttribute('type','button');
