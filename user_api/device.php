@@ -539,7 +539,7 @@ if( !empty($device) ){
     $el = $divex->appendChild($doc->createElement('div'));
     $el->appendChild($doc->createTextNode('Headphone equalization requires at least version 0.31.41, and at least Raspberry Pi 4B+, Raspberry Pi 5, or desktop versions.'));
     $el = xml_add_input_generic( 'spkcalib_firlen','Number of FIR filter coefficients:',$divex,$doc,$devprop);
-    $el->setAttribute('value',round($devprop['spkcalibfirlen'],1));
+    $el->setAttribute('value',intval($devprop['spkcalib_firlen']));
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');
     $el->setAttribute('step','0.1');
