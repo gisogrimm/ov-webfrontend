@@ -44,7 +44,7 @@
   "configure input channels (to which your microphones/instruments are connected):": "Konfiguration der Eingangskanäle (an die deine Mikrofone/Instrumente angeschlossen sind):",
   "device label (appears in rooms and the mixer of the others): ": "Name (erscheint in Räumen und im Mixer der anderen): ",
   "directivity": "Abstrahlverhalten",
-  "ego monitor gain in dB (how much of your own microphone is added to your headphone):": "Monitorverstärkung in dB (wie viel von deinem eigenen Mikrofon zu deinem Kopfhörer hinzugefügt wird):",
+  "self monitor gain in dB (how much of your own microphone is added to your headphone):": "Monitorverstärkung in dB (wie viel von deinem eigenen Mikrofon zu deinem Kopfhörer hinzugefügt wird):",
   "enable self monitoring": "Monitorsignal",
   "enter": "eintreten",
   "equalizers": "Equalizer",

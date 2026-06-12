@@ -319,12 +319,12 @@ if( !empty($device) ){
     $el->setAttribute('min','-20');
     $el->setAttribute('max','20');
     $el->setAttribute('step','0.1');
-    // ego monitor:
+    // self monitor:
     // switch egomonitor
     $divva = add_expert_div($div,$doc,$devprop,'virtualacoustics');
     xml_add_checkbox( 'selfmonitor', translate('enable self monitoring'), $divva, $doc, $devprop, false, true );
     $divmon = add_expert_div($divva,$doc,$devprop,'selfmonitor');
-    $el = xml_add_input_generic( 'egogain', translate('ego monitor gain in dB (how much of your own microphone is added to your headphone):'), $divmon, $doc, $devprop, false );
+    $el = xml_add_input_generic( 'egogain', translate('self monitor gain in dB (how much of your own microphone is added to your headphone):'), $divmon, $doc, $devprop, false );
     $el->setAttribute('type','number');
     $el->setAttribute('min','-20');
     $el->setAttribute('max','20');
@@ -334,7 +334,7 @@ if( !empty($device) ){
       xml_add_checkbox( 'selfmonitoronlyreverb', translate('only reverb, no direct sound in self monitor'), $divmon, $doc, $devprop );
     }
     $divex = add_expert_div($divmon,$doc,$devprop);
-    // ego monitor delay:
+    // self monitor delay:
     $el = xml_add_input_generic( 'selfmonitordelay', translate('self monitor delay in milliseconds:'), $divex, $doc, $devprop );
     $el->setAttribute('type','number');
     $el->setAttribute('min','0');

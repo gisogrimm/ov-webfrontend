@@ -31,7 +31,7 @@
   "Gains and acoustic rendering":"Erősítési beállítások és akusztikai szimuláció",
   "playback gain in dB (equivalent to changing the input gain): ":"Bemeneti erősítés dB-ben (megfelel a mikrofonvezérlő változásának): ",
   "master gain in dB (equivalent to changing the headphone gain): ":"Kimeneti erősítés dB-ben (a fejhallgató vezérlőjének változásának felel meg): ",
-  "ego monitor gain in dB (how much of your own microphone is added to your headphone):":"Monitor erősítés dB-ben (mennyit ad a saját mikrofonból a fejhallgatóhoz):",
+  "self monitor gain in dB (how much of your own microphone is added to your headphone):":"Monitor erősítés dB-ben (mennyit ad a saját mikrofonból a fejhallgatóhoz):",
   "only reverb, no direct sound in self monitor":"csak visszhang, nincs közvetlen hang a monitorjelben",
   "self monitor delay in milliseconds:":"A monitorjel késleltetése ms-ban:",
   "Receive audio from other members":"A többiek hangjának vétele",
