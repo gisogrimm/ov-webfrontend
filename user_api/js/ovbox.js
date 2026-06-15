@@ -882,7 +882,7 @@ function update_devicestatus( user, device, owned_devices ) {
       if ( device.message.includes( 'Unable to connect to the JACK server' ) ) {
         deverr.appendChild( document.createElement( 'br' ) );
         deverr.appendChild( document.createTextNode(
-          'Is your sound card connected and configured correctly?' ) );
+          'Is your audio interface connected and configured correctly?' ) );
       }
     } else {
       deverr.setAttribute( 'style', 'display: none;' );

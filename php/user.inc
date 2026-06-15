@@ -84,7 +84,7 @@ function html_device_selector( $user, $currentdevice, $dprop )
     $div->appendChild($doc->createTextNode($dprop['message']));
     if( strpos($dprop['message'],'Unable to connect to the JACK server')!==false){
       $div->appendChild($doc->createElement('br'));
-      $div->appendChild($doc->createTextNode('Is your sound card connected and configured correctly?'));
+      $div->appendChild($doc->createTextNode('Is your audio interface connected and configured correctly?'));
     }
   }
   $div = $root->appendChild($doc->createElement('div'));
