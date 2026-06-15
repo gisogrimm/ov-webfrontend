@@ -692,6 +692,20 @@ if( !empty($device) ){
     $el = $form->appendChild($doc->createElement('button'));
     $el->appendChild($doc->createTextNode('Save'));
     $el->setAttribute('onclick','rest_set_devprop("mhaconfig",document.getElementById("mhaconfig").value);');
+    // OSC variable listing:
+    $divex = add_expert_div($div,$doc,$devprop);
+    $el = $divex->appendChild($doc->createElement('div'));
+    $el->setAttribute('class','devproptitle');
+    //$el->appendChild($doc->createTextNode('Head tracking:'));
+    xml_add_checkbox( 'getoscvarlist', 'List OSC variables', $el, $doc, $devprop, false, true );
+    $divex = add_expert_div($el,$doc,$devprop,'getoscvarlist');
+    $form = $divex->appendChild($doc->createElement('div'));
+    $el = $form->appendChild($doc->createElement('textarea'));
+    $el->setAttribute('class','xconfig');
+    $el->setAttribute('name','oscvarlist');
+    $el->setAttribute('rows','8');
+    $el->setAttribute('cols','60');
+    $el->setAttribute('id','oscvarlist');
   }
   if( version_compare("ovclient-0.31.19",$devprop['version'])<0 ){
     // tuner settings

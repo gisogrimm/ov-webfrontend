@@ -271,6 +271,7 @@ function defaults( $type )
       'encryptstate'=>0,
       'showdevlog'=>false,
       'standalonemixer'=>false,
+      'getoscvarlist'=>false,
     );
     break;
   case 'room':

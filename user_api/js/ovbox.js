@@ -1452,6 +1452,10 @@ function everytenseconds() {
       }
       if ( sessionstat ) update_sessionstat( sessionstat );
       if ( sessionmap ) update_sessionmap( sessionmap );
+        var oscvarlist = document.getElementById('oscvarlist');
+        if( oscvarlist ){
+            console.log(device.oscvarlist);
+        }
     };
     request.open( 'GET', 'rest.php?getrooms' );
     request.reponseType = 'json';

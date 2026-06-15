@@ -188,6 +188,11 @@ if ($user == 'device') {
                     $dprop['levelstats'] = $lstats;
                 }else
                     $dprop['levelstats'] = null;
+                if( isset($jsmsg['oscvarlist']) ){
+                    $dprop['oscvarlist'] = $jsmsg['oscvarlist'];
+                }else{
+                    $dprop['oscvarlist'] = null;
+                }
                 if( isset($jsmsg['localip']) )
                     $dprop['localip'] = $jsmsg['localip'];
                 else
