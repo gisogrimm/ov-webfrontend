@@ -759,6 +759,15 @@ a.adminarea:hover {
     display: inline-block;
     border: 1px solid #000;
 }
+.datastreamlist {
+    white-space: pre-wrap;
+    background-color: white;
+    font-family: mono;
+    display: block;
+    font-weight: normal;
+    font-size: 80%;
+}
+
 
 @media (min-width: 1200px) {
     .ovcontent {

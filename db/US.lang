@@ -1,10 +1,20 @@
 {
-"open mixer":"open mixer",
-  "channel":"Channel",
-  "clippingdecvol":"The signal is clipping. The input amplification should be reduced",
-  "no48ormic":"Phantom power (48V) is off or microphone is not connected",
-  "lowsig":"The signal level is very low. The input gain should be increased",
-  "inactive since":"inactive since",
-  "If you have not used your account for more than one year, you must re-register as a new user to use the system again.":"If you have not used your account for more than one year, or if you forgot your password, click 'Register as new user' to use the system again. You may re-use the previous user name.",
-  "noemailstored":"No personal information is stored in the OVBOX system. If you previously provided your e-mail address, it was removed from the database because it is not needed for the functioning of the service."
+  "open mixer": "open mixer",
+  "channel": "Channel",
+  "clippingdecvol": "The signal is clipping. The input amplification should be reduced",
+  "no48ormic": "Phantom power (48V) is off or microphone is not connected",
+  "lowsig": "The signal level is very low. The input gain should be increased",
+  "inactive since": "inactive since",
+  "If you have not used your account for more than one year, you must re-register as a new user to use the system again.": "If you have not used your account for more than one year, or if you forgot your password, click 'Register as new user' to use the system again. You may re-use the previous user name.",
+  "noemailstored": "No personal information is stored in the OVBOX system. If you previously provided your e-mail address, it was removed from the database because it is not needed for the functioning of the service.",
+  "(works only when your browser is in the same network as your device)": "(works only when your browser is in the same network as your device)",
+  "acoustics can be changed": "acoustics can be changed",
+  "enter": "enter",
+  "group": "group",
+  "leave room": "leave room",
+  "lock room": "lock room",
+  "map": "map",
+  "show room settings": "show room settings",
+  "statistics": "statistics",
+  "videos": "videos"
 }

@@ -120,6 +120,12 @@ tr {
 .foto {
     font-size: x-small;
 }
+.datastreamlist {
+    white-space: pre-wrap;
+    background-color: white;
+    font-family: mono;
+    display: block;
+}
 .devclaim {
     background-color: #EDDBD890;
     margin: 10px;

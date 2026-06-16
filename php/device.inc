@@ -270,6 +270,7 @@ function get_room_session( $device, $devhash )
                                       'tscinclude'=>$devprop['tscinclude'],
                                       'start_webmixer'=>(boolval($devprop['start_webmixer'])||boolval($devprop['standalonemixer'])),
                                       'mhaconfig'=>$devprop['mhaconfig'],
+                                      'scandatastreams'=>array('getoscvars'=>boolval($devprop['getoscvarlist'])),
                                       'network'=>array('expeditedforwarding'=>boolval($devprop['expeditedforwarding']),
                                                        'sessionportoffset'=>intval($devprop['sessionportoffset'])),
                                       'proxy'=>array('isproxy'=>boolval($devprop['isproxy']),
