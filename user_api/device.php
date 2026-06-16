@@ -697,13 +697,20 @@ if( !empty($device) ){
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
     //$el->appendChild($doc->createTextNode('Head tracking:'));
-    xml_add_checkbox( 'getoscvarlist', 'List OSC variables', $el, $doc, $devprop, false, true );
-    $divex = add_expert_div($el,$doc,$devprop,'getoscvarlist');
-    $form = $divex->appendChild($doc->createElement('div'));
-    $el = $form->appendChild($doc->createElement('div'));
-    $el->setAttribute('class','datastreamlist');
-    $el->setAttribute('name','oscvarlist');
-    $el->setAttribute('id','oscvarlist');
+    xml_add_checkbox( 'getoscvarlist', 'List data stream variables', $el, $doc, $devprop, false, true );
+    $divex = add_expert_div($divex,$doc,$devprop,'getoscvarlist');
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('OSC variables:'));
+    $divex->appendChild($doc->createElement('br'));
+    $el_vars = $divex->appendChild($doc->createElement('div'));
+    $el_vars->setAttribute('class','datastreamlist');
+    $el_vars->setAttribute('id','oscvarlist');
+    $el = $divex->appendChild($doc->createElement('label'));
+    $el->appendChild($doc->createTextNode('LSL variables:'));
+    $divex->appendChild($doc->createElement('br'));
+    $el_vars = $divex->appendChild($doc->createElement('div'));
+    $el_vars->setAttribute('class','datastreamlist');
+    $el_vars->setAttribute('id','lslvarlist');
   }
   if( version_compare("ovclient-0.31.19",$devprop['version'])<0 ){
     // tuner settings

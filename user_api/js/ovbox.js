@@ -1453,12 +1453,18 @@ function everytenseconds() {
       if (sessionstat) update_sessionstat(sessionstat);
       if (sessionmap) update_sessionmap(sessionmap);
       var oscvarlist = document.getElementById('oscvarlist');
-      if (oscvarlist) {
+      var lslvarlist = document.getElementById('lslvarlist');
+      if (oscvarlist && lslvarlist) {
         let s_oscvarlist = "";
-        Object.keys(device.oscvarlist).forEach(function(key) {
+        Object.keys(device.oscvarlist.osc).forEach(function(key) {
           s_oscvarlist += key + "\n";
         });
-          oscvarlist.replaceChildren(document.createTextNode(s_oscvarlist));
+        oscvarlist.replaceChildren(document.createTextNode(s_oscvarlist));
+        let s_lslvarlist = "";
+        Object.keys(device.oscvarlist.lsl).forEach(function(key) {
+          s_lslvarlist += key + "\n";
+        });
+        lslvarlist.replaceChildren(document.createTextNode(s_lslvarlist));
       }
     };
     request.open('GET', 'rest.php?getrooms');

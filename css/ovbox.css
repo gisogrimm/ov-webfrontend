@@ -766,6 +766,7 @@ a.adminarea:hover {
     display: block;
     font-weight: normal;
     font-size: 80%;
+    min-height: 32px;
 }
 
 
