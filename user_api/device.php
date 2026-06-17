@@ -697,7 +697,7 @@ if( !empty($device) ){
     $el = $divex->appendChild($doc->createElement('div'));
     $el->setAttribute('class','devproptitle');
     //$el->appendChild($doc->createTextNode('Head tracking:'));
-    xml_add_checkbox( 'getoscvarlist', 'List data stream variables', $el, $doc, $devprop, false, true );
+    xml_add_checkbox( 'getoscvarlist', 'List OSC + LSL streams', $el, $doc, $devprop, false, true );
     $divex = add_expert_div($divex,$doc,$devprop,'getoscvarlist');
     $el = $divex->appendChild($doc->createElement('label'));
     $el->appendChild($doc->createTextNode('OSC variables:'));
@@ -706,7 +706,7 @@ if( !empty($device) ){
     $el_vars->setAttribute('class','datastreamlist');
     $el_vars->setAttribute('id','oscvarlist');
     $el = $divex->appendChild($doc->createElement('label'));
-    $el->appendChild($doc->createTextNode('LSL variables:'));
+    $el->appendChild($doc->createTextNode('LSL streams:'));
     $divex->appendChild($doc->createElement('br'));
     $el_vars = $divex->appendChild($doc->createElement('div'));
     $el_vars->setAttribute('class','datastreamlist');
@@ -715,7 +715,8 @@ if( !empty($device) ){
   if( version_compare("ovclient-0.31.19",$devprop['version'])<0 ){
     // tuner settings
     $div = create_section($root, $doc,translate('Instrument tuner'));
-    // jitter (send):
+    $el = $div->appendChild($doc->createElement('div'));
+    $el->appendChild($doc->createTextNode('The instrument tuner is displayed in the mixer interface ("'.translate('open mixer').'" at top of this page).'));
     $el = xml_add_input_generic( 'tuner_f0',translate('pitch a:'),$div,$doc,$devprop);
     $el->setAttribute('type','number');
     $el->setAttribute('min','300');

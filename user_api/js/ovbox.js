@@ -1462,7 +1462,8 @@ function everytenseconds() {
         oscvarlist.replaceChildren(document.createTextNode(s_oscvarlist));
         let s_lslvarlist = "";
         Object.keys(device.oscvarlist.lsl).forEach(function(key) {
-          s_lslvarlist += key + "\n";
+          s_lslvarlist += device.oscvarlist.lsl[key] + " (" + key +
+          ")\n";
         });
         lslvarlist.replaceChildren(document.createTextNode(s_lslvarlist));
       }
