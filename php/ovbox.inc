@@ -473,7 +473,7 @@ function rm_device($dev) {
     $directory = '../db/';
 
     // Define the file extensions associated with a device
-    $extensions = ['.device', '.log', '.devpresets'];
+    $extensions = ['.device', '.log'];
 
     foreach ($extensions as $ext) {
         $filePath = $directory . $safeName . $ext;
